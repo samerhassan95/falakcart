@@ -23,22 +23,28 @@ export const metadata: Metadata = {
 };
 
 import { AuthProvider } from "@/context/AuthContext";
+import { cookies } from 'next/headers';
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const locale = cookieStore.get('NEXT_LOCALE')?.value || 'ar';
+  const dir = locale === 'ar' ? 'rtl' : 'ltr';
+  const fontFamily = locale === 'ar' ? 'var(--font-cairo)' : 'var(--font-geist-sans)';
+
   return (
     <html
-      lang="ar"
-      dir="rtl"
+      lang={locale}
+      dir={dir}
       className={`${geistSans.variable} ${geistMono.variable} ${cairo.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body 
         className="min-h-full flex flex-col" 
-        style={{ fontFamily: 'var(--font-cairo)' }}
+        style={{ fontFamily }}
         suppressHydrationWarning
       >
         <AuthProvider>{children}</AuthProvider>

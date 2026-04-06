@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #F8FAFC;
   --foreground: #171717;
 }
 
@@ -14,8 +14,8 @@
 
 @layer base {
   :root {
-    --background: #000000;
-    --foreground: #ffffff;
+    --background: #F8FAFC;
+    --foreground: #171717;
   }
 }
 
@@ -44,4 +44,143 @@
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+/* RTL Support - Comprehensive */
+[dir="rtl"] {
+  direction: rtl;
+}
+
+[dir="ltr"] {
+  direction: ltr;
+}
+
+/* Main content margin for sidebar */
+[dir="rtl"] main {
+  margin-left: 0 !important;
+  margin-right: 280px !important;
+}
+
+[dir="ltr"] main {
+  margin-left: 280px !important;
+  margin-right: 0 !important;
+}
+
+/* Sidebar positioning */
+[dir="rtl"] aside {
+  left: auto !important;
+  right: 0 !important;
+}
+
+[dir="ltr"] aside {
+  left: 0 !important;
+  right: auto !important;
+}
+
+/* Active indicator on nav items */
+[dir="rtl"] .nav-indicator-left {
+  left: auto !important;
+  right: 0 !important;
+  border-radius: 9999px 0 0 9999px !important;
+}
+
+[dir="ltr"] .nav-indicator-left {
+  left: 0 !important;
+  right: auto !important;
+  border-radius: 0 9999px 9999px 0 !important;
+}
+
+/* Padding and margins */
+[dir="rtl"] .pl-10 {
+  padding-left: 1rem !important;
+  padding-right: 2.5rem !important;
+}
+
+[dir="rtl"] .pr-4 {
+  padding-right: 1rem !important;
+  padding-left: 1rem !important;
+}
+
+[dir="rtl"] .pl-4 {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+[dir="rtl"] .ml-auto {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+[dir="rtl"] .mr-auto {
+  margin-right: 0 !important;
+  margin-left: auto !important;
+}
+
+/* Border positioning */
+[dir="rtl"] .border-l {
+  border-left: none !important;
+  border-right: 1px solid currentColor !important;
+}
+
+[dir="rtl"] .border-r {
+  border-right: none !important;
+  border-left: 1px solid currentColor !important;
+}
+
+/* Absolute positioning for dropdowns */
+[dir="rtl"] .dropdown-right {
+  right: auto !important;
+  left: 0 !important;
+}
+
+[dir="rtl"] .dropdown-left {
+  left: auto !important;
+  right: 0 !important;
+}
+
+/* Icon positioning in inputs */
+[dir="rtl"] .icon-left {
+  left: auto !important;
+  right: 0.75rem !important;
+}
+
+[dir="rtl"] .icon-right {
+  right: auto !important;
+  left: 0.75rem !important;
+}
+
+/* Text alignment */
+[dir="rtl"] .text-left {
+  text-align: right !important;
+}
+
+[dir="rtl"] .text-right {
+  text-align: left !important;
+}
+
+/* Flex direction for RTL */
+[dir="rtl"] .flex-row-reverse {
+  flex-direction: row !important;
+}
+
+/* Transform for RTL */
+[dir="rtl"] .transform-rtl {
+  transform: scaleX(-1);
+}
+
+/* Admin Dashboard Styling */
+.admin-dashboard {
+  background: #F8FAFC;
+}
+
+.admin-dashboard .card,
+.admin-dashboard .widget,
+.admin-dashboard .panel {
+  background: #FFFFFFCC;
+  backdrop-filter: blur(12px);
+}
+
+.admin-dashboard nav {
+  background: #FFFFFFCC;
+  backdrop-filter: blur(12px);
 }

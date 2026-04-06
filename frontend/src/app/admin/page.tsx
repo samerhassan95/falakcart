@@ -122,6 +122,12 @@ interface StatCardProps {
   trend?: 'up' | 'down';
 }
 
+interface InsightItemProps {
+  icon: ReactNode;
+  text: string;
+  subtext: string;
+}
+
 interface ActivityItemProps {
   icon: ReactNode;
   title: string;
@@ -129,6 +135,12 @@ interface ActivityItemProps {
   detail: string;
   time: string;
   iconBg: string;
+}
+
+interface MetricCardProps {
+  label: string;
+  value: string;
+  change: string;
 }
 
 interface AnalyticsViewProps {
@@ -408,7 +420,7 @@ export default function AdminDashboard() {
 
   if (loading || isSyncing) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen bg-[#F8FAFC]">
         <div className="flex flex-col items-center gap-3">
           <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
           <p className="text-gray-600 text-sm font-medium">Loading...</p>
@@ -419,7 +431,7 @@ export default function AdminDashboard() {
 
   if (!user || user.role !== 'admin') {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen bg-[#F8FAFC]">
         <div className="text-center">
           <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
@@ -430,9 +442,9 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#F8FAFC]">
       {/* Top Navigation */}
-      <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <nav className="bg-[#FFFFFFCC] backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             {/* Logo */}
@@ -460,14 +472,14 @@ export default function AdminDashboard() {
                 </button>
                 
                 {showNotifications && (
-                  <div className="absolute right-0 top-12 w-80 bg-white rounded-xl shadow-lg border border-gray-200 z-50">
+                  <div className="absolute right-0 top-12 w-80 bg-[#FFFFFFCC] backdrop-blur-md rounded-xl shadow-lg border border-gray-200 z-50">
                     <div className="p-4 border-b border-gray-100">
                       <h3 className="font-semibold text-gray-900">Notifications</h3>
                     </div>
                     <div className="p-4 space-y-3 max-h-96 overflow-y-auto">
                       {notifications.length > 0 ? (
                         notifications.map((notif, idx) => (
-                          <div key={idx} className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer">
+                          <div key={idx} className="flex items-start gap-3 p-3 hover:bg-[#F8FAFC] rounded-lg cursor-pointer">
                             <div className={`w-8 h-8 ${notif.icon === 'trending' ? 'bg-blue-100' : 'bg-green-100'} rounded-lg flex items-center justify-center flex-shrink-0`}>
                               {notif.icon === 'trending' ? (
                                 <TrendingUp className="w-4 h-4 text-blue-600" />
@@ -513,7 +525,7 @@ export default function AdminDashboard() {
                 </button>
                 
                 {showPlatformMenu && (
-                  <div className="absolute right-0 top-12 w-72 bg-white rounded-xl shadow-lg border border-gray-200 z-50">
+                  <div className="absolute right-0 top-12 w-72 bg-[#FFFFFFCC] backdrop-blur-md rounded-xl shadow-lg border border-gray-200 z-50">
                     {platformStats && (
                       <div className="p-4 border-b border-gray-100">
                         <h3 className="font-semibold text-gray-900 mb-3">System Status</h3>
@@ -546,7 +558,7 @@ export default function AdminDashboard() {
                           setShowPlatformMenu(false);
                           setActiveView('analytics');
                         }}
-                        className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"
+                        className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-[#F8FAFC] rounded-lg"
                       >
                         Performance Metrics
                       </button>
@@ -555,7 +567,7 @@ export default function AdminDashboard() {
                           setShowPlatformMenu(false);
                           setActiveView('settings');
                         }}
-                        className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"
+                        className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-[#F8FAFC] rounded-lg"
                       >
                         System Settings
                       </button>
@@ -563,7 +575,7 @@ export default function AdminDashboard() {
                       <a 
                         href="/api-docs" 
                         target="_blank"
-                        className="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg"
+                        className="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-[#F8FAFC] rounded-lg"
                       >
                         API Documentation
                       </a>
@@ -589,7 +601,7 @@ export default function AdminDashboard() {
       {/* Main Layout */}
       <div className="flex">
         {/* Sidebar */}
-        <aside className="w-64 bg-white border-r border-gray-200 min-h-[calc(100vh-73px)] sticky top-[73px]">
+        <aside className="w-64 bg-[#F8FAFC] min-h-[calc(100vh-73px)] sticky top-[73px]">
           <div className="p-6">
             {/* User Profile */}
             <div className="flex items-center gap-3 mb-8 pb-6 border-b border-gray-100">
@@ -653,7 +665,7 @@ export default function AdminDashboard() {
 
             {showLinkModal && (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-8">
-                <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl">
+                <div className="w-full max-w-lg rounded-3xl bg-[#FFFFFFCC] backdrop-blur-md p-6 shadow-2xl">
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h2 className="text-xl font-bold text-gray-900">Create Affiliate Link</h2>
@@ -677,7 +689,7 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                   <div className="mt-6 flex items-center justify-end gap-3">
-                    <button onClick={closeGenerateLinkModal} className="px-4 py-2 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                    <button onClick={closeGenerateLinkModal} className="px-4 py-2 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-[#F8FAFC]">
                       Cancel
                     </button>
                     <button
@@ -713,8 +725,8 @@ export default function AdminDashboard() {
           {activeView === 'overview' && <OverviewView summary={summary} affiliates={affiliates} clickStats={clickStats} setActiveView={setActiveView} updateStatus={updateStatus} />}
           {activeView === 'analytics' && <AnalyticsView summary={summary} clickStats={clickStats} affiliates={affiliates} exportCSV={exportCSV} />}
           {activeView === 'affiliates' && <AffiliatesView affiliates={affiliates} searchQuery={searchQuery} setSearchQuery={setSearchQuery} fetchData={fetchData} updateStatus={updateStatus} deleteAffiliate={deleteAffiliate} />}
-          {activeView === 'commissions' && <CommissionsView affiliates={affiliates} />}
-          {activeView === 'payouts' && <PayoutsView affiliates={affiliates} />}
+          {activeView === 'commissions' && <CommissionsView />}
+          {activeView === 'payouts' && <PayoutsView />}
           {activeView === 'settings' && <SettingsView />}
         </main>
       </div>
@@ -730,7 +742,7 @@ function NavItem({ icon, label, active, onClick }: NavItemProps) {
       className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
         active 
           ? 'bg-indigo-50 text-indigo-600' 
-          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+          : 'text-gray-600 hover:bg-[#F8FAFC] hover:text-gray-900'
       }`}
     >
       {icon}
@@ -784,14 +796,14 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
           <input 
             type="text"
             placeholder="Search affiliates, transactions, or reports..."
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
+            className="w-full pl-10 pr-4 py-2.5 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
           />
         </div>
         <div className="flex items-center gap-3">
           <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
             <Bell className="w-5 h-5" />
           </button>
-          <button className="px-4 py-2 text-sm font-medium text-indigo-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">
+          <button className="px-4 py-2 text-sm font-medium text-indigo-600 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg hover:bg-[#F8FAFC]">
             Platform Overview
           </button>
         </div>
@@ -903,7 +915,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
       {/* Revenue Performance Chart & Widgets */}
       <div className="grid grid-cols-3 gap-6">
         {/* Revenue Performance Chart */}
-        <div className="col-span-2 bg-white rounded-xl border border-gray-200 p-6">
+        <div className="col-span-2 bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-lg font-bold text-gray-900">Revenue Performance</h3>
@@ -959,7 +971,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
         {/* Right Side Widgets */}
         <div className="space-y-6">
           {/* Pending Actions Widget */}
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 overflow-hidden">
             <div className="bg-red-50 border-b border-red-100 px-4 py-3 flex items-center justify-between">
               <h3 className="font-bold text-gray-900 text-sm">Pending Actions</h3>
               <span className="px-2 py-0.5 bg-red-600 text-white text-xs font-bold rounded">
@@ -969,7 +981,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
             <div className="p-4 space-y-3 max-h-96 overflow-y-auto">
               {/* New Applications */}
               {affiliates.filter((a: Affiliate) => a.status === 'pending').slice(0, 2).map((aff: Affiliate) => (
-                <div key={aff.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                <div key={aff.id} className="flex items-start gap-3 p-3 bg-[#F8FAFC] rounded-lg">
                   <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <UserPlus className="w-4 h-4 text-indigo-600" />
                   </div>
@@ -996,7 +1008,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
 
               {/* Payout Requests */}
               {affiliates.filter((a: Affiliate) => (a.pending_balance || 0) > 50).slice(0, 2).map((aff: Affiliate) => (
-                <div key={`payout-${aff.id}`} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                <div key={`payout-${aff.id}`} className="flex items-start gap-3 p-3 bg-[#F8FAFC] rounded-lg">
                   <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <DollarSign className="w-4 h-4 text-green-600" />
                   </div>
@@ -1026,7 +1038,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
           </div>
 
           {/* Recent Activity Widget */}
-          <div className="bg-white rounded-xl border border-gray-200">
+          <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200">
             <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
               <h3 className="font-bold text-gray-900 text-sm">Recent Activity</h3>
               <button className="text-gray-400 hover:text-gray-600">
@@ -1095,7 +1107,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
       </div>
 
       {/* Top Performing Affiliates Table */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold text-gray-900">Top Performing Affiliates</h3>
           <button 
@@ -1126,7 +1138,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
             const cvr = clicks > 0 ? ((conversions / clicks) * 100).toFixed(1) : '0.0';
             
             return (
-              <div key={aff.id} className="grid grid-cols-6 gap-4 py-3 items-center hover:bg-gray-50 rounded-lg transition-colors">
+              <div key={aff.id} className="grid grid-cols-6 gap-4 py-3 items-center hover:bg-[#F8FAFC] rounded-lg transition-colors">
                 {/* Affiliate Info */}
                 <div className="flex items-center gap-3">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${
@@ -1186,7 +1198,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
       </div>
 
       {/* Recent Activity */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-bold text-gray-900">Recent Activity</h3>
             <button className="p-1 text-gray-400 hover:text-gray-600">
@@ -1233,7 +1245,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
         </div>
 
       {/* System Invite Code */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">SYSTEM INVITE CODE</p>
@@ -1256,7 +1268,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
 
 function StatCard({ label, value, change, trend }: StatCardProps) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4">
+    <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
       <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">{label}</p>
       <div className="flex items-end justify-between">
         <p className="text-2xl font-bold text-gray-900">{value}</p>
@@ -1360,7 +1372,7 @@ function AnalyticsView({ summary, clickStats, affiliates, exportCSV }: Analytics
           <p className="text-sm text-gray-500">Analyze platform performance and affiliate insights</p>
         </div>
         <div className="flex items-center gap-3">
-          <select className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium">
+          <select className="px-4 py-2 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg text-sm font-medium">
             <option>Last 7 days</option>
             <option>30 days</option>
             <option>Custom</option>
@@ -1386,7 +1398,7 @@ function AnalyticsView({ summary, clickStats, affiliates, exportCSV }: Analytics
       {/* Revenue Performance & Smart Insights */}
       <div className="grid grid-cols-3 gap-6">
         {/* Chart */}
-        <div className="col-span-2 bg-white rounded-xl border border-gray-200 p-6">
+        <div className="col-span-2 bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-lg font-bold text-gray-900">Revenue Performance</h3>
@@ -1412,7 +1424,7 @@ function AnalyticsView({ summary, clickStats, affiliates, exportCSV }: Analytics
         </div>
 
         {/* Smart Insights */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-6">
             <TrendingUp className="w-5 h-5 text-indigo-600" />
             <h3 className="text-lg font-bold text-gray-900">Smart Insights</h3>
@@ -1441,7 +1453,7 @@ function AnalyticsView({ summary, clickStats, affiliates, exportCSV }: Analytics
       {/* Affiliate Performance & Geographic Insights */}
       <div className="grid grid-cols-2 gap-6">
         {/* Affiliate Performance Table */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-6">Affiliate Performance</h3>
           <p className="text-sm text-gray-500 mb-4">Top performing partners ranked by revenue</p>
           
@@ -1474,7 +1486,7 @@ function AnalyticsView({ summary, clickStats, affiliates, exportCSV }: Analytics
         </div>
 
         {/* Geographic Insights */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-6">Geographic Insights</h3>
           <p className="text-sm text-gray-500 mb-6">Revenue distribution by region</p>
           
@@ -1505,7 +1517,7 @@ function AnalyticsView({ summary, clickStats, affiliates, exportCSV }: Analytics
 
       {/* Traffic Sources & Device Distribution */}
       <div className="grid grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-6">Traffic Sources</h3>
           <p className="text-sm text-gray-500 mb-6">Click volume by referral channel</p>
           
@@ -1520,7 +1532,7 @@ function AnalyticsView({ summary, clickStats, affiliates, exportCSV }: Analytics
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-6">Device Distribution</h3>
           <p className="text-sm text-gray-500 mb-6">User traffic by device type</p>
           
@@ -1543,7 +1555,7 @@ function AnalyticsView({ summary, clickStats, affiliates, exportCSV }: Analytics
 
 function MetricCard({ label, value, change }: MetricCardProps) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-4">
+    <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
       <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">{label}</p>
       <div className="flex items-end justify-between">
         <p className="text-2xl font-bold text-gray-900">{value}</p>
@@ -1629,7 +1641,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
             placeholder="Search by name or email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
+            className="w-full pl-10 pr-4 py-2.5 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
           />
         </div>
         <button
@@ -1642,7 +1654,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
 
       {/* Stats Cards */}
       <div className="grid grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
               <Users className="w-5 h-5 text-indigo-600" />
@@ -1653,7 +1665,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
           <p className="text-2xl font-bold text-gray-900">{stats.total.toLocaleString()}</p>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
               <CheckCircle className="w-5 h-5 text-green-600" />
@@ -1664,7 +1676,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
           <p className="text-2xl font-bold text-gray-900">{stats.active}</p>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
               <Clock className="w-5 h-5 text-amber-600" />
@@ -1674,7 +1686,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
           <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
               <XCircle className="w-5 h-5 text-red-600" />
@@ -1686,7 +1698,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
       </div>
 
       {/* Filters & Table */}
-      <div className="bg-white rounded-xl border border-gray-200">
+      <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200">
         {/* Filter Tabs */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <div className="flex items-center gap-2">
@@ -1731,7 +1743,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'performance' | 'name' | 'date')}
-              className="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium"
+              className="px-3 py-2 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg text-sm font-medium"
             >
               <option value="performance">Sort by: Performance</option>
               <option value="name">Sort by: Name</option>
@@ -1753,7 +1765,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
             </thead>
             <tbody className="divide-y divide-gray-100">
               {paginatedAffiliates.map((aff: Affiliate) => (
-                <tr key={aff.id} className="hover:bg-gray-50 transition-colors">
+                <tr key={aff.id} className="hover:bg-[#F8FAFC] transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center">
@@ -1832,7 +1844,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
       {/* Top Performers & Pending Approvals */}
       <div className="grid grid-cols-2 gap-6">
         {/* Top Performers */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-bold text-gray-900">Top Performers</h3>
             <button className="text-sm font-medium text-indigo-600 hover:text-indigo-700">This Month</button>
@@ -1869,7 +1881,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
         </div>
 
         {/* Pending Approvals */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <h3 className="text-lg font-bold text-gray-900">Pending Approvals</h3>
@@ -1878,7 +1890,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
           </div>
           
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+            <div className="flex items-center justify-between p-4 bg-[#F8FAFC] rounded-xl">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
                   <Shield className="w-5 h-5 text-indigo-600" />
@@ -1893,7 +1905,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
               </button>
             </div>
 
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+            <div className="flex items-center justify-between p-4 bg-[#F8FAFC] rounded-xl">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
                   <Shield className="w-5 h-5 text-indigo-600" />
@@ -1918,7 +1930,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
             <h3 className="text-2xl font-bold mb-2">Review Network Health Performance</h3>
             <p className="text-gray-300">Our algorithm identifies low-quality traffic patterns automatically.</p>
           </div>
-          <button className="px-6 py-3 bg-white text-gray-900 rounded-xl font-bold hover:bg-gray-100 transition-colors">
+          <button className="px-6 py-3 bg-[#FFFFFFCC] backdrop-blur-md text-gray-900 rounded-xl font-bold hover:bg-gray-100 transition-colors">
             RUN AUDIT
           </button>
         </div>
@@ -2007,7 +2019,7 @@ function CommissionsView() {
     const rows = [
       ['Date', 'Affiliate', 'Referral ID', 'Revenue', 'Commission', 'Status', 'Payment'],
       ...filteredCommissions.map((commission) => [
-        new Date(commission.created_at || '').toLocaleDateString(),
+        new Date(commission.created_at || new Date().toISOString()).toLocaleDateString(),
         commission.affiliate?.user?.name || 'Unknown',
         `REF-${commission.id}`,
         formatCurrency(commission.amount),
@@ -2044,7 +2056,7 @@ function CommissionsView() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
               <DollarSign className="w-5 h-5 text-indigo-600" />
@@ -2055,7 +2067,7 @@ function CommissionsView() {
           <p className="text-2xl font-bold text-gray-900">${(commissionsSummary?.total_commissions || 0).toLocaleString()}</p>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
               <Clock className="w-5 h-5 text-amber-600" />
@@ -2066,7 +2078,7 @@ function CommissionsView() {
           <p className="text-2xl font-bold text-gray-900">${(commissionsSummary?.pending || 0).toLocaleString()}</p>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
               <CheckCircle className="w-5 h-5 text-green-600" />
@@ -2077,7 +2089,7 @@ function CommissionsView() {
           <p className="text-2xl font-bold text-gray-900">${(commissionsSummary?.approved || 0).toLocaleString()}</p>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-emerald-600" />
@@ -2091,7 +2103,7 @@ function CommissionsView() {
 
       {/* Commission Performance Chart & Insight */}
       <div className="grid grid-cols-3 gap-6">
-        <div className="col-span-2 bg-white rounded-xl border border-gray-200 p-6">
+        <div className="col-span-2 bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-lg font-bold text-gray-900">Commission Performance</h3>
@@ -2140,14 +2152,14 @@ function CommissionsView() {
           <p className="text-indigo-100 text-sm mb-6">
             The recent Spring Affiliate Rush campaign has driven a significant uptick in high-ticket referrals from top-tier partners.
           </p>
-          <button className="w-full py-3 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-semibold transition-colors">
+          <button className="w-full py-3 bg-[#FFFFFFCC] backdrop-blur-md/20 hover:bg-[#FFFFFFCC] backdrop-blur-md/30 backdrop-blur-sm rounded-xl font-semibold transition-colors">
             View Campaign Breakdown
           </button>
         </div>
       </div>
 
       {/* Pending Approvals */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <Clock className="w-5 h-5 text-amber-600" />
@@ -2173,7 +2185,7 @@ function CommissionsView() {
               name={commission.affiliate?.user?.name || 'Unknown'}
               source={`Sale #${commission.id}`}
               amount={`$${formatCurrency(commission.commission_amount)}`}
-              date={new Date(commission.created_at || '').toLocaleDateString()}
+              date={new Date(commission.created_at || new Date().toISOString()).toLocaleDateString()}
               status="PENDING"
               onApprove={() => approveCommission(commission.id)}
               onReject={() => rejectCommission(commission.id)}
@@ -2190,7 +2202,7 @@ function CommissionsView() {
       </div>
 
       {/* All Commissions Table */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold text-gray-900">All Commissions</h3>
           <div className="flex items-center gap-3">
@@ -2200,7 +2212,7 @@ function CommissionsView() {
                 setStatusFilter(e.target.value as 'all' | 'pending' | 'approved' | 'paid');
                 setCurrentPage(1);
               }}
-              className="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium"
+              className="px-3 py-2 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg text-sm font-medium"
             >
               <option value="all">Status: All</option>
               <option value="pending">Pending</option>
@@ -2210,7 +2222,7 @@ function CommissionsView() {
             <select
               value={dateRange}
               onChange={(e) => setDateRange(e.target.value as '30' | '7' | '90')}
-              className="px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium"
+              className="px-3 py-2 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg text-sm font-medium"
             >
               <option value="30">Last 30 Days</option>
               <option value="7">Last 7 Days</option>
@@ -2236,7 +2248,7 @@ function CommissionsView() {
           {paginatedCommissions.map((commission: Sale) => (
             <AllCommissionRow 
               key={commission.id}
-              date={new Date(commission.created_at || '').toLocaleDateString()}
+              date={new Date(commission.created_at || new Date().toISOString()).toLocaleDateString()}
               affiliate={commission.affiliate?.user?.name || 'Unknown'}
               referralId={`#REF-${commission.id}`}
               revenue={`$${formatCurrency(commission.amount)}`}
@@ -2407,7 +2419,7 @@ function PayoutsView() {
       ['Transaction ID', 'Date', 'Affiliate', 'Amount', 'Method', 'Status'],
       ...filteredPayoutHistory.map((payout) => [
         `TXN-${payout.id}`,
-        new Date(payout.updated_at || payout.created_at).toLocaleString(),
+        new Date(payout.updated_at || payout.created_at || new Date().toISOString()).toLocaleString(),
         payout.affiliate?.user?.name || 'Unknown',
         `$${formatCurrency(payout.commission_amount)}`,
         payout.affiliate?.bank_name || 'Bank Transfer',
@@ -2434,7 +2446,7 @@ function PayoutsView() {
           <p className="text-sm text-gray-500">Manage affiliate payments and payout requests</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium text-gray-700">
+          <div className="flex items-center gap-2 px-4 py-2 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg text-sm font-medium text-gray-700">
             <Calendar className="w-4 h-4" />
             {dateRange}
           </div>
@@ -2443,13 +2455,13 @@ function PayoutsView() {
               <button
                 key={days}
                 onClick={() => setDaysRange(days)}
-                className={`px-3 py-2 rounded-lg text-sm font-medium ${daysRange === days ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50'}`}
+                className={`px-3 py-2 rounded-lg text-sm font-medium ${daysRange === days ? 'bg-indigo-600 text-white' : 'bg-[#FFFFFFCC] backdrop-blur-md text-gray-700 border border-gray-200 hover:bg-[#F8FAFC]'}`}
               >
                 {days === 7 ? '7D' : days === 30 ? '30D' : '90D'}
               </button>
             ))}
           </div>
-          <button onClick={fetchPayoutsData} className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50">
+          <button onClick={fetchPayoutsData} className="px-4 py-2 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg text-sm font-medium hover:bg-[#F8FAFC]">
             Filter Results
           </button>
         </div>
@@ -2470,7 +2482,7 @@ function PayoutsView() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">AVAILABLE BALANCE</p>
           <p className="text-2xl font-bold text-gray-900">${(payoutsSummary?.available_balance || 0).toLocaleString()}</p>
           <div className="flex items-center gap-1 mt-2">
@@ -2479,7 +2491,7 @@ function PayoutsView() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">TOTAL PAID (MTD)</p>
           <p className="text-2xl font-bold text-gray-900">${(payoutsSummary?.total_paid || 0).toLocaleString()}</p>
           <div className="flex items-center gap-1 mt-2">
@@ -2488,7 +2500,7 @@ function PayoutsView() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">PENDING PAYOUTS</p>
           <p className="text-2xl font-bold text-gray-900">${(payoutsSummary?.pending_payouts || 0).toLocaleString()}</p>
           <div className="flex items-center gap-1 mt-2">
@@ -2497,7 +2509,7 @@ function PayoutsView() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">FAILED PAYOUTS</p>
           <p className="text-2xl font-bold text-red-600">${(payoutsSummary?.failed_payouts || 0).toLocaleString()}</p>
           <div className="flex items-center gap-1 mt-2">
@@ -2510,7 +2522,7 @@ function PayoutsView() {
       {/* Pending Payout Requests & Payment Health */}
       <div className="grid grid-cols-3 gap-6">
         {/* Pending Requests */}
-        <div className="col-span-2 bg-white rounded-xl border border-gray-200 p-6">
+        <div className="col-span-2 bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-bold text-gray-900">Pending Payout Requests</h3>
             <button onClick={bulkApprovePending} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold text-sm">
@@ -2534,7 +2546,7 @@ function PayoutsView() {
                 name={affiliate.user?.name || 'Unknown'}
                 id={`ID: AFF-${affiliate.id}`}
                 amount={`$${formatCurrency(affiliate.pending_balance)}`}
-                date={new Date(affiliate.updated_at || Date.now()).toLocaleDateString()}
+                date={new Date(affiliate.updated_at || new Date().toISOString()).toLocaleDateString()}
                 method={affiliate.bank_name || 'Bank Transfer'}
                 status="PENDING"
                 onApprove={() => approvePayout(affiliate.id, affiliate.pending_balance || 0)}
@@ -2557,7 +2569,7 @@ function PayoutsView() {
         </div>
 
         {/* Payment Health */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <h3 className="text-lg font-bold text-gray-900 mb-6">Payment Health</h3>
           
           <div className="space-y-6">
@@ -2603,7 +2615,7 @@ function PayoutsView() {
       </div>
 
       {/* All Payout History */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-bold text-gray-900">All Payout History</h3>
           <div className="flex items-center gap-3">
@@ -2637,7 +2649,7 @@ function PayoutsView() {
             <PayoutHistoryRow 
               key={payout.id}
               txId={`TXN-${payout.id}`}
-              date={new Date(payout.updated_at || payout.created_at).toLocaleString()}
+              date={new Date(payout.updated_at || payout.created_at || new Date().toISOString()).toLocaleString()}
               affiliate={payout.affiliate?.user?.name || 'Unknown'}
               amount={`$${formatCurrency(payout.commission_amount)}`}
               method={payout.affiliate?.bank_name || 'Bank Transfer'}
@@ -2946,13 +2958,13 @@ function SettingsView() {
           <input 
             type="text"
             placeholder="Search parameters..."
-            className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
+            className="w-full pl-10 pr-4 py-2.5 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
           />
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="bg-white rounded-xl border border-gray-200">
+      <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200">
         <div className="flex items-center gap-8 px-6 py-4 border-b border-gray-100">
           <button 
             onClick={() => setActiveTab('general')}
@@ -3007,7 +3019,7 @@ function SettingsView() {
             <div className="grid grid-cols-2 gap-8">
               {/* General Settings */}
               <div className="space-y-6">
-                <div className="bg-gray-50 rounded-xl p-6">
+                <div className="bg-[#F8FAFC] rounded-xl p-6">
                   <h3 className="text-lg font-bold text-gray-900 mb-6">General Settings</h3>
                   
                   <div className="space-y-4">
@@ -3017,7 +3029,7 @@ function SettingsView() {
                         type="text"
                         value={platformName}
                         onChange={(e) => setPlatformName(e.target.value)}
-                        className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
+                        className="w-full px-4 py-2.5 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
                       />
                     </div>
 
@@ -3026,7 +3038,7 @@ function SettingsView() {
                       <select 
                         value={currency}
                         onChange={(e) => setCurrency(e.target.value)}
-                        className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
+                        className="w-full px-4 py-2.5 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
                       >
                         <option>USD ($)</option>
                         <option>EUR (€)</option>
@@ -3039,7 +3051,7 @@ function SettingsView() {
                       <select 
                         value={timezone}
                         onChange={(e) => setTimezone(e.target.value)}
-                        className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
+                        className="w-full px-4 py-2.5 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
                       >
                         <option>UTC +00:00</option>
                         <option>EST -05:00</option>
@@ -3058,7 +3070,7 @@ function SettingsView() {
                           value={logoBranding}
                           onChange={(e) => setLogoBranding(e.target.value.slice(0, 3).toUpperCase())}
                           maxLength={3}
-                          className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
+                          className="w-full px-4 py-2.5 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
                           placeholder="Brand initials"
                         />
                       </div>
@@ -3077,7 +3089,7 @@ function SettingsView() {
 
               {/* Payout Protocol & Security */}
               <div className="space-y-6">
-                <div className="bg-gray-50 rounded-xl p-6">
+                <div className="bg-[#F8FAFC] rounded-xl p-6">
                   <h3 className="text-lg font-bold text-gray-900 mb-6">Payout Protocol</h3>
                   
                   <div className="space-y-4">
@@ -3089,7 +3101,7 @@ function SettingsView() {
                           type="number"
                           value={minPayout}
                           onChange={(e) => setMinPayout(e.target.value)}
-                          className="w-full pl-8 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
+                          className="w-full pl-8 pr-4 py-2.5 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
                         />
                       </div>
                     </div>
@@ -3132,7 +3144,7 @@ function SettingsView() {
                       <select
                         value={payoutSchedule}
                         onChange={(e) => setPayoutSchedule(e.target.value)}
-                        className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
+                        className="w-full px-4 py-2.5 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
                       >
                         <option>Monthly</option>
                         <option>Bi-weekly</option>
@@ -3168,7 +3180,7 @@ function SettingsView() {
                       <span className="text-sm font-medium text-gray-700">Two-Factor (2FA)</span>
                       <label className="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" className="sr-only peer" />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[#FFFFFFCC] backdrop-blur-md after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                       </label>
                     </div>
                   </div>
@@ -3188,7 +3200,7 @@ function SettingsView() {
 
           {activeTab === 'affiliate' && (
             <div className="max-w-2xl space-y-6">
-              <div className="bg-gray-50 rounded-xl p-6">
+              <div className="bg-[#F8FAFC] rounded-xl p-6">
                 <h3 className="text-lg font-bold text-gray-900 mb-6">Affiliate Performance</h3>
                 
                 <div className="space-y-4">
@@ -3198,7 +3210,7 @@ function SettingsView() {
                       type="number"
                       value={commissionRate}
                       onChange={(e) => setCommissionRate(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
+                      className="w-full px-4 py-2.5 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
                     />
                   </div>
 
@@ -3208,7 +3220,7 @@ function SettingsView() {
                       type="number"
                       value={cookieDuration}
                       onChange={(e) => setCookieDuration(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
+                      className="w-full px-4 py-2.5 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
                     />
                   </div>
 
@@ -3224,7 +3236,7 @@ function SettingsView() {
                         onChange={(e) => setAutoApprove(e.target.checked)}
                         className="sr-only peer" 
                       />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[#FFFFFFCC] backdrop-blur-md after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                     </label>
                   </div>
                 </div>
@@ -3242,7 +3254,7 @@ function SettingsView() {
 
           {activeTab === 'security' && (
             <div className="max-w-2xl space-y-6">
-              <div className="bg-gray-50 rounded-xl p-6">
+              <div className="bg-[#F8FAFC] rounded-xl p-6">
                 <h3 className="text-lg font-bold text-gray-900 mb-6">Security Settings</h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between py-4 border-b border-gray-200">
@@ -3257,7 +3269,7 @@ function SettingsView() {
                         onChange={(e) => setTwoFactorEnabled(e.target.checked)}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[#FFFFFFCC] backdrop-blur-md after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                     </label>
                   </div>
 
@@ -3267,7 +3279,7 @@ function SettingsView() {
                       type="number"
                       value={sessionTimeout}
                       onChange={(e) => setSessionTimeout(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
+                      className="w-full px-4 py-2.5 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
                     />
                   </div>
                 </div>
@@ -3285,7 +3297,7 @@ function SettingsView() {
 
           {activeTab === 'notifications' && (
             <div className="max-w-2xl space-y-6">
-              <div className="bg-gray-50 rounded-xl p-6">
+              <div className="bg-[#F8FAFC] rounded-xl p-6">
                 <h3 className="text-lg font-bold text-gray-900 mb-6">Notification Preferences</h3>
                 <p className="text-sm text-gray-500 mb-6">Control how you receive alerts and system updates</p>
                 
@@ -3349,11 +3361,11 @@ function SettingsView() {
       </div>
 
       {/* Integrations */}
-      <div className="bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
         <h3 className="text-lg font-bold text-gray-900 mb-6">Integrations</h3>
         
         <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
-          <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+          <div className="flex items-center gap-3 p-4 bg-[#F8FAFC] rounded-xl">
             <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">F</span>
             </div>
@@ -3365,14 +3377,14 @@ function SettingsView() {
             </div>
           </div>
 
-          <div className="space-y-4 p-4 bg-gray-50 rounded-xl">
+          <div className="space-y-4 p-4 bg-[#F8FAFC] rounded-xl">
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">MASTER API KEY</label>
               <input
                 type="text"
                 value={integrationApiKey}
                 onChange={(e) => setIntegrationApiKey(e.target.value)}
-                className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
+                className="w-full px-4 py-2.5 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
                 placeholder="Enter or replace API key"
               />
             </div>
@@ -3386,7 +3398,7 @@ function SettingsView() {
               </button>
               <button
                 onClick={() => setIntegrationApiKey('')}
-                className="px-4 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-50"
+                className="px-4 py-3 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-[#F8FAFC]"
               >
                 Clear
               </button>
@@ -3408,3 +3420,4 @@ function SettingsView() {
     </div>
   );
 }
+

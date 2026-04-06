@@ -139,7 +139,7 @@ export default function Dashboard() {
             <div className="relative">
               <button 
                 onClick={() => setShowPeriodMenu(!showPeriodMenu)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors shadow-sm"
+                className="flex items-center gap-2 px-4 py-2.5 bg-white rounded-xl text-sm font-medium text-black  transition-colors "
               >
                 <Calendar className="w-4 h-4" />
                 {period}
@@ -150,7 +150,7 @@ export default function Dashboard() {
                     <button 
                       key={p} 
                       onClick={() => { setPeriod(p); setShowPeriodMenu(false); }}
-                      className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${period === p ? 'text-indigo-600 font-semibold bg-indigo-50/50' : 'text-gray-600'}`}
+                      className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-50 transition-colors ${period === p ? 'text-indigo-600 font-semibold bg-[#F2F4F6]/50' : 'text-gray-600'}`}
                     >
                       {p}
                     </button>
@@ -158,7 +158,7 @@ export default function Dashboard() {
                 </div>
               )}
             </div>
-            <button onClick={handleExport} className="flex items-center gap-2 px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl text-sm font-semibold transition-colors shadow-sm">
+            <button onClick={handleExport} className="flex items-center gap-2 px-5 py-2.5 bg-[#050C9C]  text-white rounded-xl text-sm font-semibold transition-colors shadow-sm">
               <Download className="w-4 h-4" />
               {t('dashboard.exportReport')}
             </button>
@@ -167,30 +167,30 @@ export default function Dashboard() {
 
         {/* Campaign + Goal Row */}
         <div className="grid grid-cols-3 gap-6">
-          <div className="col-span-2 bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
-            <span className="inline-block px-3 py-1 bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-wider rounded-md mb-3">{t('dashboard.primaryCampaign')}</span>
+          <div className="col-span-2 bg-white rounded-2xl border border-gray-100 p-6 ">
+            <span className="inline-block px-3 py-2 bg-[#E3DFFF] text-[#050C9C] text-[10px] font-bold uppercase tracking-wider rounded-full mb-3">{t('dashboard.primaryCampaign')}</span>
             <h2 className="text-2xl font-bold text-gray-900 mb-1">{t('dashboard.shareAndEarn')}</h2>
             <p className="text-gray-500 text-sm mb-5">{t('dashboard.commissionDescription', { rate: profile?.commission_rate || 15 })}</p>
             <div className="flex items-center gap-3">
-              <div className="flex-1 px-4 py-3 bg-indigo-50 border border-indigo-100 rounded-xl">
-                <span className="text-sm font-medium text-indigo-700 font-mono">
+              <div className="flex-1 px-4 py-3 bg-[#F2F4F6] border border-indigo-100 rounded-xl">
+                <span className="text-sm font-medium text-[#050C9C] font-mono">
                   {profile?.main_referral_url || `https://falakcart.com/register?ref=${profile?.referral_code || '...'}`}
                 </span>
               </div>
               <button
                 onClick={copyLink}
-                className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-200 rounded-full shadow-md text-sm font-semibold text-[#050C9C] hover:bg-gray-50 transition-colors"
               >
                 {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                 {copied ? t('common.copied') : t('common.copy')}
               </button>
-              <Link href="/settings" className="p-3 bg-white border border-gray-200 rounded-xl text-gray-500 hover:bg-gray-50 transition-colors flex items-center justify-center">
+                <Link href="/settings" className="p-3 bg-[#3ABEF91A] border border-gray-200 rounded-full text-gray-500 hover:bg-gray-50 transition-colors flex items-center justify-center">
                 <Settings className="w-4 h-4" />
               </Link>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+          <div className="bg-[#F2F4F6] rounded-2xl border border-gray-100 p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-semibold text-gray-500">{t('dashboard.goalProgress')}</h3>
               <span className="text-3xl font-bold text-indigo-600">{goalProgress}%</span>
@@ -237,13 +237,13 @@ export default function Dashboard() {
             value={`$${(stats?.earnings || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
             change="+24%"
             positive
-            highlighted
+      
           />
         </div>
 
         {/* Chart + Activity Row */}
         <div className="grid grid-cols-3 gap-6">
-          <div className="col-span-2 bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+          <div className="col-span-2 bg-white rounded-2xl border border-gray-100 p-6 ">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-lg font-bold text-gray-900">Earnings Performance</h3>
@@ -279,16 +279,16 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm">
+          <div className="bg-white rounded-2xl border border-gray-100 p-6 ">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-gray-900">Recent Activity</h3>
-              <Link href="/earnings" className="text-sm font-semibold text-indigo-600 hover:text-indigo-700">View All</Link>
+              <Link href="/earnings" className="text-sm font-semibold text-indigo-600 hover:text-[#050C9C]">View All</Link>
             </div>
             <div className="space-y-5">
               {activity.length > 0 ? activity.map((item, i) => (
                 <div key={i} className="flex items-start gap-3">
                   <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                    item.type === 'commission' ? 'bg-emerald-50 text-emerald-600' : 'bg-indigo-50 text-indigo-600'
+                    item.type === 'commission' ? 'bg-emerald-50 text-emerald-600' : 'bg-[#F2F4F6] text-indigo-600'
                   }`}>
                     {item.type === 'commission' ? <DollarSign className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
                   </div>
@@ -317,13 +317,13 @@ function StatCard({ icon, label, value, change, positive, highlighted }: {
   highlighted?: boolean;
 }) {
   return (
-    <div className={`rounded-2xl border p-5 shadow-sm transition-all ${
+    <div className={`rounded-2xl border p-5  transition-all ${
       highlighted
-        ? 'bg-indigo-600 border-indigo-500 text-white'
+        ? 'bg-indigo-600 border-[#F2F4F6]0 text-white'
         : 'bg-white border-gray-100'
     }`}>
       <div className="flex items-center justify-between mb-3">
-        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${highlighted ? 'bg-white/20' : 'bg-indigo-50'}`}>
+        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${highlighted ? 'bg-white/20' : 'bg-[#F2F4F6]'}`}>
           {icon}
         </div>
         <span className={`text-xs font-bold flex items-center gap-1 ${

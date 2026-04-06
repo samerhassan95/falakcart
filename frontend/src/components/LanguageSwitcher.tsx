@@ -6,11 +6,13 @@ import { Globe } from 'lucide-react';
 export default function LanguageSwitcher() {
   const [currentLocale, setCurrentLocale] = useState<'ar' | 'en'>('ar');
   const [isOpen, setIsOpen] = useState(false);
+  const [isRTL, setIsRTL] = useState(true);
   
   useEffect(() => {
     const cookie = document.cookie.split('; ').find(row => row.startsWith('NEXT_LOCALE='));
     const locale = cookie ? cookie.split('=')[1] as 'ar' | 'en' : 'ar';
     setCurrentLocale(locale);
+    setIsRTL(locale === 'ar');
   }, []);
 
   const changeLanguage = (locale: 'ar' | 'en') => {
@@ -36,10 +38,10 @@ export default function LanguageSwitcher() {
             className="fixed inset-0 z-40" 
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute left-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+          <div className={`absolute ${isRTL ? 'left-0' : 'right-0'} mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50`}>
             <button
               onClick={() => changeLanguage('ar')}
-              className={`block w-full text-right px-4 py-2 text-sm hover:bg-gray-50 transition-colors rounded-t-lg ${
+              className={`block w-full text-${isRTL ? 'right' : 'left'} px-4 py-2 text-sm hover:bg-gray-50 transition-colors rounded-t-lg ${
                 currentLocale === 'ar' ? 'bg-indigo-50 text-indigo-600 font-semibold' : 'text-gray-700'
               }`}
             >
@@ -47,7 +49,7 @@ export default function LanguageSwitcher() {
             </button>
             <button
               onClick={() => changeLanguage('en')}
-              className={`block w-full text-right px-4 py-2 text-sm hover:bg-gray-50 transition-colors rounded-b-lg ${
+              className={`block w-full text-${isRTL ? 'right' : 'left'} px-4 py-2 text-sm hover:bg-gray-50 transition-colors rounded-b-lg ${
                 currentLocale === 'en' ? 'bg-indigo-50 text-indigo-600 font-semibold' : 'text-gray-700'
               }`}
             >
