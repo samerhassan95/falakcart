@@ -56,6 +56,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | FalakCart Integration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for FalakCart main website integration
+    |
+    */
+
+    'falakcart_main_url' => env('FALAKCART_MAIN_URL', 'https://falakcart.com'),
+    'webhook_secret' => env('WEBHOOK_SECRET', 'your-webhook-secret'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

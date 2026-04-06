@@ -17,14 +17,23 @@ class TrackingController extends Controller
             return response()->json(['error' => 'referral_code_missing'], 400);
         }
 
+        // First, try to find by main referral code
         $affiliate = Affiliate::where('referral_code', $referralCode)->first();
+        
+        // If not found, try to find by custom link slug
+        if (!$affiliate) {
+            $affiliateLink = \App\Models\AffiliateLink::where('slug', $referralCode)->first();
+            if ($affiliateLink) {
+                $affiliate = $affiliateLink->affiliate;
+            }
+        }
 
         if ($affiliate) {
             Click::create([
                 'affiliate_id'  => $affiliate->id,
                 'ip_address'    => $request->ip(),
                 'user_agent'    => $request->userAgent(),
-                'referral_code' => $referralCode,
+                'referral_code' => $referralCode, // This will be either main code or custom slug
             ]);
 
             return response()->json(['message' => 'click_recorded', 'referral_code' => $referralCode]);
@@ -35,11 +44,25 @@ class TrackingController extends Controller
 
     public function recordSale(Request $request)
     {
+        // Validate webhook signature for security
+        $signature = $request->header('X-Webhook-Signature');
+        if (!$this->validateWebhookSignature($request->getContent(), $signature)) {
+            return response()->json(['error' => 'invalid_signature'], 401);
+        }
+
         $referralCode = $request->input('referral_code');
         $amount       = (float) $request->input('amount');
         $referenceId  = $request->input('order_id');
 
         $affiliate = Affiliate::where('referral_code', $referralCode)->first();
+
+        // If not found by main code, try custom link slug
+        if (!$affiliate) {
+            $affiliateLink = \App\Models\AffiliateLink::where('slug', $referralCode)->first();
+            if ($affiliateLink) {
+                $affiliate = $affiliateLink->affiliate;
+            }
+        }
 
         if (!$affiliate) {
             return response()->json(['error' => 'affiliate_not_found'], 404);
@@ -80,6 +103,10 @@ class TrackingController extends Controller
             'commission_amount' => $commissionAmount,
             'status'            => 'completed',
             'reference_id'      => $referenceId,
+            'customer_email'    => $request->input('customer_email'),
+            'customer_name'     => $request->input('customer_name'),
+            'plan_name'         => $request->input('plan_name', 'FalakCart Subscription'),
+            'subscription_id'   => $request->input('subscription_id'),
         ]);
 
         $affiliate->total_earnings   += $commissionAmount;
@@ -87,5 +114,17 @@ class TrackingController extends Controller
         $affiliate->save();
 
         return response()->json(['message' => 'sale_recorded', 'sale' => $sale]);
+    }
+
+    private function validateWebhookSignature($payload, $signature)
+    {
+        // Skip validation in test environment or if no signature provided
+        if (app()->environment('local') || empty($signature)) {
+            return true;
+        }
+        
+        $secret = config('app.webhook_secret', 'your-webhook-secret');
+        $expectedSignature = 'sha256=' . hash_hmac('sha256', $payload, $secret);
+        return hash_equals($expectedSignature, $signature);
     }
 }

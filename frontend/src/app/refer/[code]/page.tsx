@@ -19,7 +19,9 @@ export default function ReferralRedirect() {
 
   const recordClick = async () => {
     try {
-      await api.get(`/track/click?ref=${params.code}`);
+      console.log('Recording click for code:', params.code);
+      const response = await api.get(`/track/click?ref=${params.code}`);
+      console.log('Click recorded successfully:', response.data);
       
       // Save referral code in local storage or cookie for later sale recording
       localStorage.setItem('referral_code', params.code as string);
@@ -31,6 +33,7 @@ export default function ReferralRedirect() {
       }, 1500);
     } catch (err) {
       console.error('Click tracking error', err);
+      console.error('Error details:', err.response?.data || err.message);
       setError('Invalid referral link');
     }
   };

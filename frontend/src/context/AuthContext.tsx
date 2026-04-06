@@ -75,8 +75,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     try {
       await api.post('/logout');
-    } catch (err) {
-      console.error('Logout error', err);
+    } catch {
+      // Silently fail if logout request is rejected (e.g., token already invalid)
     } finally {
       localStorage.removeItem('token');
       setUser(null);

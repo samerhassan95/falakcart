@@ -15,14 +15,35 @@ class Affiliate extends Model
         'commission_strategy',
         'commission_tiers',
         'total_earnings',
-        'current_balance',
+        'available_balance',
+        'pending_balance',
+        'paid_balance',
+        'bank_name',
+        'account_number',
+        'account_holder_name',
+        'iban',
+        'minimum_payout',
+        'bio',
+        'avatar',
+        'email_notifications',
+        'sms_notifications',
+        'marketing_emails',
+        'weekly_reports',
+        'two_factor_enabled',
     ];
 
     protected $casts = [
-        'commission_rate'  => 'float',
-        'commission_tiers' => 'array',
-        'total_earnings'   => 'float',
-        'current_balance'  => 'float',
+        'commission_rate'   => 'float',
+        'commission_tiers'  => 'array',
+        'total_earnings'    => 'float',
+        'available_balance' => 'float',
+        'pending_balance'   => 'float',
+        'paid_balance'      => 'float',
+        'email_notifications' => 'boolean',
+        'sms_notifications' => 'boolean',
+        'marketing_emails'  => 'boolean',
+        'weekly_reports'    => 'boolean',
+        'two_factor_enabled' => 'boolean',
     ];
 
     public function user()
@@ -38,6 +59,16 @@ class Affiliate extends Model
     public function sales()
     {
         return $this->hasMany(Sale::class);
+    }
+
+    public function links()
+    {
+        return $this->hasMany(AffiliateLink::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
     }
 
     public static function generateUniqueCode()

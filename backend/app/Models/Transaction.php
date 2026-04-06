@@ -4,18 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Sale extends Model
+class Transaction extends Model
 {
     protected $fillable = [
         'affiliate_id',
+        'type',
         'amount',
-        'commission_amount',
         'status',
+        'source',
         'reference_id',
-        'customer_email',
-        'customer_name',
-        'plan_name',
-        'subscription_id',
+    ];
+
+    protected $casts = [
+        'amount' => 'float',
     ];
 
     public function affiliate()

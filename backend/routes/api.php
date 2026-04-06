@@ -15,11 +15,29 @@ Route::middleware(['auth:api'])->group(function () {
 
     // ── Affiliate Routes ──────────────────────────────────────────────────
     Route::prefix('affiliate')->group(function () {
-        Route::get('profile',   [AffiliateController::class, 'getProfile']);
-        Route::get('stats',     [AffiliateController::class, 'getStats']);
-        Route::get('referrals', [AffiliateController::class, 'getReferrals']);
-        Route::get('clicks',    [AffiliateController::class, 'getClicks']);
-        Route::get('sales',     [AffiliateController::class, 'getSales']);
+        Route::get('profile',          [AffiliateController::class, 'getProfile']);
+        Route::put('profile',          [AffiliateController::class, 'updateProfile']);
+        Route::get('payout-settings',  [AffiliateController::class, 'getPayoutSettings']);
+        Route::put('payout-settings',  [AffiliateController::class, 'updatePayoutSettings']);
+        Route::get('notification-settings', [AffiliateController::class, 'getNotificationSettings']);
+        Route::put('notification-settings', [AffiliateController::class, 'updateNotificationSettings']);
+        Route::get('security-settings', [AffiliateController::class, 'getSecuritySettings']);
+        Route::put('change-password',   [AffiliateController::class, 'changePassword']);
+        Route::post('toggle-2fa',       [AffiliateController::class, 'toggle2FA']);
+        Route::get('stats',            [AffiliateController::class, 'getStats']);
+        Route::get('referrals',        [AffiliateController::class, 'getReferrals']);
+        Route::get('clicks',           [AffiliateController::class, 'getClicks']);
+        Route::get('sales',            [AffiliateController::class, 'getSales']);
+        Route::get('earnings',         [AffiliateController::class, 'getEarnings']);
+        Route::post('payout',          [AffiliateController::class, 'requestPayout']);
+        Route::get('transactions',     [AffiliateController::class, 'getTransactions']);
+        Route::get('analytics',        [AffiliateController::class, 'getAnalytics']);
+        Route::get('recent-activity',  [AffiliateController::class, 'getRecentActivity']);
+        Route::get('notifications',    [AffiliateController::class, 'getNotifications']);
+        Route::post('notifications/read', [AffiliateController::class, 'markNotificationsRead']);
+        Route::get('links',            [AffiliateController::class, 'getLinks']);
+        Route::post('links',           [AffiliateController::class, 'createLink']);
+        Route::delete('links/{id}',    [AffiliateController::class, 'deleteLink']);
     });
 
     // ── Admin Routes ──────────────────────────────────────────────────────

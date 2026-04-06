@@ -4,18 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Sale extends Model
+class AffiliateLink extends Model
 {
     protected $fillable = [
         'affiliate_id',
-        'amount',
-        'commission_amount',
-        'status',
-        'reference_id',
-        'customer_email',
-        'customer_name',
-        'plan_name',
-        'subscription_id',
+        'name',
+        'slug',
+        'source',
+        'is_active',
     ];
 
     public function affiliate()

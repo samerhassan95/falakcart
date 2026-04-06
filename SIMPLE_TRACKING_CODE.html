@@ -1,0 +1,164 @@
+<!-- أضف هذا الكود في <head> أو قبل </body> في موقع فلك كارت -->
+
+<script>
+(function() {
+    'use strict';
+    
+    // إعدادات النظام - غير الرابط للخادم الحقيقي
+    const AFFILIATE_API_URL = 'http://localhost:8000/api'; // غير ده لما تنشر النظام
+    
+    console.log('🚀 FalakCart Affiliate Tracking started');
+    
+    // استخراج كود الإحالة من الرابط
+    function getReferralCode() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('ref');
+    }
+    
+    // حفظ كود الإحالة في الكوكيز
+    function saveReferralCode(code) {
+        const expires = new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)).toUTCString(); // 30 يوم
+        document.cookie = `referral_code=${code}; expires=${expires}; path=/; domain=.falakcart.com`;
+        localStorage.setItem('referral_code', code);
+        console.log('✅ Referral code saved:', code);
+    }
+    
+    // تسجيل الكليك
+    async function recordClick(code) {
+        try {
+            console.log('📊 Recording click for:', code);
+            
+            const response = await fetch(`${AFFILIATE_API_URL}/track/click?ref=${code}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('✅ Click recorded successfully:', data);
+                return true;
+            } else {
+                console.error('❌ Failed to record click:', response.status);
+                return false;
+            }
+        } catch (error) {
+            console.error('❌ Click tracking error:', error);
+            return false;
+        }
+    }
+    
+    // إزالة معامل ref من الرابط (اختياري)
+    function cleanUrl() {
+        const url = new URL(window.location);
+        if (url.searchParams.has('ref')) {
+            url.searchParams.delete('ref');
+            window.history.replaceState({}, document.title, url.toString());
+        }
+    }
+    
+    // تشغيل التتبع
+    function initializeTracking() {
+        const referralCode = getReferralCode();
+        
+        if (referralCode) {
+            console.log('🔗 Referral link detected:', referralCode);
+            
+            // حفظ كود الإحالة
+            saveReferralCode(referralCode);
+            
+            // تسجيل الكليك
+            recordClick(referralCode);
+            
+            // تنظيف الرابط (اختياري)
+            cleanUrl();
+        } else {
+            // التحقق من وجود كود إحالة محفوظ
+            const savedCode = localStorage.getItem('referral_code');
+            if (savedCode) {
+                console.log('ℹ️ Existing referral code found:', savedCode);
+            }
+        }
+    }
+    
+    // تشغيل عند تحميل الصفحة
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeTracking);
+    } else {
+        initializeTracking();
+    }
+    
+    // دالة تسجيل البيع (للاستخدام عند إتمام الشراء)
+    window.FalakCartAffiliate = {
+        recordSale: async function(orderData) {
+            const referralCode = localStorage.getItem('referral_code');
+            
+            if (!referralCode) {
+                console.log('ℹ️ No referral code found for sale');
+                return false;
+            }
+            
+            try {
+                console.log('💰 Recording sale for:', referralCode);
+                
+                const payload = {
+                    referral_code: referralCode,
+                    amount: orderData.total || 299.99,
+                    order_id: orderData.id || 'ORDER-' + Date.now(),
+                    customer_email: orderData.email || 'customer@example.com'
+                };
+                
+                const response = await fetch(`${AFFILIATE_API_URL}/track/sale`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Sale recorded successfully:', data);
+                    
+                    // مسح كود الإحالة بعد تسجيل البيع
+                    localStorage.removeItem('referral_code');
+                    document.cookie = 'referral_code=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.falakcart.com';
+                    
+                    return true;
+                } else {
+                    console.error('❌ Failed to record sale:', response.status);
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Sale tracking error:', error);
+                return false;
+            }
+        }
+    };
+    
+    console.log('✅ FalakCart Affiliate Tracking initialized');
+})();
+</script>
+
+<!-- للاختبار: أضف هذا الزر في أي مكان في الصفحة -->
+<button onclick="testSale()" style="background: #4F46E5; color: white; padding: 10px 20px; border: none; border-radius: 5px; margin: 10px;">
+    🧪 Test Sale (للاختبار فقط)
+</button>
+
+<script>
+function testSale() {
+    if (window.FalakCartAffiliate) {
+        window.FalakCartAffiliate.recordSale({
+            id: 'TEST-ORDER-' + Date.now(),
+            total: 299.99,
+            email: 'test@example.com'
+        });
+        alert('تم تسجيل البيع التجريبي! تحقق من لوحة الأفلييت');
+    } else {
+        alert('نظام التتبع غير مفعل');
+    }
+}
+</script>
