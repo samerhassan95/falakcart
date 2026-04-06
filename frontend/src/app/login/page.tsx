@@ -14,8 +14,9 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       await login({ email, password });
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed');
+    } catch (err: unknown) {
+      const errorResponse = err as { response?: { data?: { error?: string } } };
+      setError(errorResponse.response?.data?.error || 'Login failed');
     }
   };
 

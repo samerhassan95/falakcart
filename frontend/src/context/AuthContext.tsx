@@ -43,7 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
            router.push('/login');
         }
       }
-    } catch (_err) {
+    } catch {
       localStorage.removeItem('token');
       if (!window.location.pathname.match(/\/(login|register|refer|welcome)/)) {
            router.push('/login');
