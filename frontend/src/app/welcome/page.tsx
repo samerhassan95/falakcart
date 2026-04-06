@@ -1,6 +1,5 @@
 'use client';
 
-import { useAuth } from '@/context/AuthContext';
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import { Sparkles, ShoppingBag } from 'lucide-react';
@@ -22,8 +21,8 @@ export default function WelcomePage() {
         order_id: `SALE-${Math.floor(Math.random() * 10000)}`,
       });
       alert('Sale simulated successfully! The affiliate will see this in their dashboard.');
-    } catch (error) {
-       console.error('Sale simulation error', error);
+    } catch (err) {
+       console.error('Sale simulation error', err);
     }
   };
 
@@ -41,7 +40,7 @@ export default function WelcomePage() {
           Welcome to FalakCart
         </h1>
         <p className="text-zinc-400 text-lg leading-relaxed">
-          You've arrived via a special referral link! Explore our premium selection of products and services designed for maximum impact.
+          You&apos;ve arrived via a special referral link! Explore our premium selection of products and services designed for maximum impact.
         </p>
       </div>
 

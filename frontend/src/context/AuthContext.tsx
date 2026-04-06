@@ -14,8 +14,8 @@ interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (credentials: any) => Promise<void>;
-  register: (userData: any) => Promise<void>;
+  login: (credentials: Record<string, string>) => Promise<void>;
+  register: (userData: Record<string, string>) => Promise<void>;
   logout: () => void;
 }
 
@@ -26,6 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     checkUser();
   }, []);
@@ -42,7 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
            router.push('/login');
         }
       }
-    } catch (error) {
+    } catch (err) {
       localStorage.removeItem('token');
       if (!window.location.pathname.match(/\/(login|register|refer|welcome)/)) {
            router.push('/login');
@@ -52,7 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const login = async (credentials: any) => {
+  const login = async (credentials: Record<string, string>) => {
     const { data } = await api.post('/login', credentials);
     localStorage.setItem('token', data.token);
     setUser(data.user);
@@ -64,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const register = async (userData: any) => {
+  const register = async (userData: Record<string, string>) => {
     const { data } = await api.post('/register', { ...userData, password_confirmation: userData.password });
     localStorage.setItem('token', data.token);
     setUser(data.user);
@@ -74,8 +75,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     try {
       await api.post('/logout');
-    } catch (error) {
-      console.error('Logout error', error);
+    } catch (err) {
+      console.error('Logout error', err);
     } finally {
       localStorage.removeItem('token');
       setUser(null);
