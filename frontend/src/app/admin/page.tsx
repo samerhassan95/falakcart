@@ -4,14 +4,13 @@ import { useAuth } from '@/context/AuthContext';
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import { 
-  Users, DollarSign, ShoppingBag, BarChart3, ShieldCheck, 
-  LogOut, Filter, Download, Plus, Trash2, Edit3, 
-  Search, Grid, List as ListIcon, MoreVertical,
-  Activity, TrendingUp, UserPlus, Shield
+  Users, DollarSign, BarChart3, ShieldCheck, 
+  LogOut, Download, Plus, Trash2, Edit3, 
+  Search, Activity, TrendingUp, UserPlus, Shield
 } from 'lucide-react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, 
-  Tooltip, ResponsiveContainer, BarChart, Bar 
+  Tooltip, ResponsiveContainer
 } from 'recharts';
 
 interface Summary {
@@ -55,7 +54,7 @@ export default function AdminDashboard() {
   const [summary, setSummary] = useState<Summary | null>(null);
   const [affiliates, setAffiliates] = useState<Affiliate[]>([]);
   const [users, setUsers] = useState<UserRecord[]>([]);
-  const [clickStats, setClickStats] = useState<any[]>([]);
+  const [clickStats, setClickStats] = useState<{ date: string; count: number }[]>([]);
   const [activeTab, setActiveTab] = useState<'affiliates' | 'users' | 'analytics'>('affiliates');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSyncing, setIsSyncing] = useState(true);
@@ -87,8 +86,8 @@ export default function AdminDashboard() {
       setAffiliates(affiliatesRes.data);
       setUsers(usersRes.data);
       setClickStats(clicksRes.data);
-    } catch (error) {
-      console.error('Error fetching admin data', error);
+    } catch (err) {
+      console.error('Error fetching admin data', err);
     } finally {
       setIsSyncing(false);
     }
@@ -98,8 +97,8 @@ export default function AdminDashboard() {
     try {
       await api.put(`/admin/affiliates/${id}/status`, { status });
       fetchData();
-    } catch (error) {
-       console.error('Error updating status', error);
+    } catch (err) {
+       console.error('Error updating status', err);
     }
   };
 
@@ -123,8 +122,8 @@ export default function AdminDashboard() {
       });
       setIsEditModalOpen(false);
       fetchData();
-    } catch (error) {
-      console.error('Error updating commission', error);
+    } catch (err) {
+      console.error('Error updating commission', err);
       alert('Failed to update commission settings');
     }
   };
@@ -148,8 +147,8 @@ export default function AdminDashboard() {
       try {
         await api.delete(`/admin/affiliates/${id}`);
         fetchData();
-      } catch (error) {
-        console.error('Error deleting affiliate', error);
+      } catch (err) {
+        console.error('Error deleting affiliate', err);
       }
     }
   };
@@ -159,8 +158,8 @@ export default function AdminDashboard() {
       try {
         await api.put(`/admin/users/${id}/role`, { role: 'admin' });
         fetchData();
-      } catch (error) {
-        console.error('Error promoting user', error);
+      } catch (err) {
+        console.error('Error promoting user', err);
       }
     }
   };
@@ -174,8 +173,8 @@ export default function AdminDashboard() {
       a.href = url;
       a.download = `affiliates-report-${new Date().toISOString().split('T')[0]}.csv`;
       a.click();
-    } catch (error) {
-      console.error('Export error', error);
+    } catch (err) {
+      console.error('Export error', err);
     }
   };
 
@@ -187,8 +186,9 @@ export default function AdminDashboard() {
        try {
          await api.post('/admin/users', { name, email, password, role: 'admin' });
          fetchData();
-       } catch (error) {
+       } catch (err) {
          alert('Error creating admin user. Check console.');
+         console.error(err);
        }
     }
   };
@@ -258,28 +258,24 @@ export default function AdminDashboard() {
           value={summary?.total_affiliates ?? 0} 
           subValue={`${summary?.active_affiliates} Active`}
           icon={<Users className="w-8 h-8 text-blue-500" />} 
-          chartColor="#3b82f6"
         />
         <GlobalStatCard 
           title="Total Clicks" 
           value={summary?.total_clicks ?? 0} 
           subValue="Across Network"
           icon={<Activity className="w-8 h-8 text-amber-500" />} 
-          chartColor="#f59e0b"
         />
         <GlobalStatCard 
           title="Net Revenue" 
           value={`$${Number(summary?.total_revenue ?? 0).toFixed(2)}`} 
           subValue={`${summary?.total_sales} Conver.`}
           icon={<TrendingUp className="w-8 h-8 text-emerald-500" />} 
-          chartColor="#10b981"
         />
         <GlobalStatCard 
           title="Paid Out" 
           value={`$${Number(summary?.total_commissions ?? 0).toFixed(2)}`} 
           subValue="Total Liabilities"
           icon={<DollarSign className="w-8 h-8 text-purple-500" />} 
-          chartColor="#a855f7"
         />
       </div>
 
@@ -536,7 +532,7 @@ export default function AdminDashboard() {
                        <label className="text-[10px] font-black text-zinc-600 uppercase tracking-widest pl-1">Progression Strategy</label>
                        <select 
                          value={editedStrategy} 
-                         onChange={(e: any) => setEditedStrategy(e.target.value)}
+                         onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setEditedStrategy(e.target.value as 'flat' | 'tier_referrals' | 'tier_volume')}
                          className="w-full bg-black border border-zinc-800 rounded-2xl p-4 text-xs font-black uppercase tracking-widest focus:ring-1 focus:ring-blue-500 outline-none transition-all cursor-pointer appearance-none"
                        >
                           <option value="flat">Flat Rate</option>
@@ -618,7 +614,7 @@ export default function AdminDashboard() {
   );
 }
 
-function GlobalStatCard({ title, value, subValue, icon, chartColor }: any) {
+function GlobalStatCard({ title, value, subValue, icon }: { title: string, value: string | number, subValue: string, icon: React.ReactNode }) {
   return (
     <div className="bg-zinc-900/40 backdrop-blur-md rounded-[2.5rem] border border-zinc-800 p-10 hover:border-zinc-700/50 transition-all shadow-2xl relative group">
       <div className="absolute top-6 right-8 opacity-20 group-hover:scale-125 transition-transform duration-700">{icon}</div>
@@ -635,7 +631,7 @@ function GlobalStatCard({ title, value, subValue, icon, chartColor }: any) {
   );
 }
 
-function TabButton({ active, onClick, label, icon }: any) {
+function TabButton({ active, onClick, label, icon }: { active: boolean, onClick: () => void, label: string, icon: React.ReactNode }) {
   return (
     <button 
       onClick={onClick}
@@ -651,7 +647,7 @@ function TabButton({ active, onClick, label, icon }: any) {
   );
 }
 
-function InsightRow({ label, value, color }: any) {
+function InsightRow({ label, value, color }: { label: string, value: string, color: string }) {
   return (
     <div className="flex justify-between items-center group/row">
        <span className="text-xs font-bold text-zinc-500 uppercase tracking-widest group-hover/row:text-zinc-300 transition-colors">{label}</span>
