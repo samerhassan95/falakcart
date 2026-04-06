@@ -34,10 +34,10 @@ class AffiliateController extends Controller
     public function getProfile()
     {
         $affiliate = $this->getAffiliate()->load('user');
-        
+
         // إضافة الرابط الرئيسي للإحالة
         $affiliate->main_referral_url = config('app.falakcart_main_url', 'https://falakcart.com') . '/register?ref=' . $affiliate->referral_code;
-        
+
         return response()->json($affiliate);
     }
 
@@ -67,7 +67,7 @@ class AffiliateController extends Controller
     public function getPayoutSettings()
     {
         $affiliate = $this->getAffiliate();
-        
+
         return response()->json([
             'bank_name' => $affiliate->bank_name,
             'account_number' => $affiliate->account_number,
@@ -104,7 +104,7 @@ class AffiliateController extends Controller
     public function getNotificationSettings()
     {
         $affiliate = $this->getAffiliate();
-        
+
         return response()->json([
             'email_notifications' => $affiliate->email_notifications ?? true,
             'sms_notifications' => $affiliate->sms_notifications ?? false,
@@ -138,7 +138,7 @@ class AffiliateController extends Controller
     public function getSecuritySettings()
     {
         $affiliate = $this->getAffiliate();
-        
+
         return response()->json([
             'two_factor_enabled' => $affiliate->two_factor_enabled ?? false,
         ]);
@@ -152,7 +152,7 @@ class AffiliateController extends Controller
         ]);
 
         $user = Auth::user();
-        
+
         if (!Hash::check($request->current_password, $user->password)) {
             return response()->json([
                 'message' => 'Current password is incorrect'
@@ -171,7 +171,7 @@ class AffiliateController extends Controller
     {
         $affiliate = $this->getAffiliate();
         $newStatus = !($affiliate->two_factor_enabled ?? false);
-        
+
         $affiliate->update([
             'two_factor_enabled' => $newStatus
         ]);
@@ -212,7 +212,7 @@ class AffiliateController extends Controller
         $days = (int) $request->query('days', 30);
 
         $query = Sale::where('affiliate_id', $affiliate->id);
-        
+
         if ($days > 0) {
             $query->where('created_at', '>=', now()->subDays($days));
         }
@@ -305,7 +305,11 @@ class AffiliateController extends Controller
             'name' => 'required|string|max:100',
         ]);
 
-        $slug = Str::slug($affiliate->referral_code . '-' . $request->name);
+        $baseSlug = Str::slug($affiliate->referral_code . '-' . $request->name);
+        $slug = $baseSlug;
+        while (AffiliateLink::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . Str::lower(Str::random(4));
+        }
 
         $link = AffiliateLink::create([
             'affiliate_id' => $affiliate->id,
@@ -315,7 +319,14 @@ class AffiliateController extends Controller
             'is_active'    => true,
         ]);
 
-        return response()->json($link, 201);
+        return response()->json([
+            'id' => $link->id,
+            'name' => $link->name,
+            'slug' => $link->slug,
+            'referral_url' => config('app.falakcart_main_url', 'https://falakcart.com') . '/register?ref=' . $link->slug,
+            'is_active' => $link->is_active,
+            'created_at' => $link->created_at->format('M d, Y'),
+        ], 201);
     }
 
     public function deleteLink($id)
@@ -511,7 +522,7 @@ class AffiliateController extends Controller
             ->orderByDesc('created_at')
             ->take(10)
             ->get();
-            
+
         return response()->json($notifications);
     }
 

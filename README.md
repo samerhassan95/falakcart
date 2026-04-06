@@ -1,327 +1,212 @@
 # 🚀 FalakCart Affiliate System
 
-نظام Affiliate متكامل لموقع FalakCart مع لوحة تحكم للأفلييت والإدارة.
-
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Laravel](https://img.shields.io/badge/Laravel-11.x-red.svg)
-![Next.js](https://img.shields.io/badge/Next.js-15.x-black.svg)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)
+نظام متكامل لإدارة برنامج الإحالة (Affiliate) لموقع FalakCart مع لوحة تحكم للأفلييت والإدارة.
 
 ---
 
 ## 📋 المحتويات
 
 - [نظرة عامة](#نظرة-عامة)
-- [المميزات](#المميزات)
+- [الميزات](#الميزات)
 - [التقنيات المستخدمة](#التقنيات-المستخدمة)
 - [التثبيت](#التثبيت)
-- [الإعداد](#الإعداد)
-- [الاستخدام](#الاستخدام)
 - [التكامل مع FalakCart](#التكامل-مع-falakcart)
-- [API Documentation](#api-documentation)
-- [المساهمة](#المساهمة)
-- [الترخيص](#الترخيص)
+- [الوثائق](#الوثائق)
+- [الدعم](#الدعم)
 
 ---
 
 ## 🎯 نظرة عامة
 
-نظام Affiliate شامل يسمح للمسوقين بالترويج لمنتجات FalakCart والحصول على عمولات. يتضمن:
-
-- **لوحة تحكم للأفلييت**: تتبع الأداء، الروابط، الأرباح
-- **لوحة تحكم للإدارة**: إدارة الأفلييت، العمولات، التقارير
-- **نظام تتبع متقدم**: تتبع الضغطات والمبيعات تلقائياً
-- **نظام عمولات مرن**: عمولات ثابتة أو نسبية مع مستويات
+نظام Affiliate كامل يسمح لك بـ:
+- إنشاء برنامج إحالة لموقع FalakCart
+- تتبع الضغطات والمبيعات تلقائياً
+- حساب العمولات بشكل ديناميكي
+- إدارة الأفلييت والمستخدمين
+- عرض تقارير وإحصائيات مفصلة
 
 ---
 
-## ✨ المميزات
+## ✨ الميزات
 
-### للأفلييت:
+### للأفلييت (Affiliates)
 - ✅ لوحة تحكم شاملة مع إحصائيات في الوقت الفعلي
-- ✅ إنشاء روابط مخصصة غير محدودة
-- ✅ تتبع الضغطات والتحويلات
-- ✅ عرض الأرباح والمدفوعات
-- ✅ تقارير تحليلية مفصلة
+- ✅ إنشاء روابط إحالة مخصصة
+- ✅ تتبع الضغطات والمبيعات
+- ✅ عرض العمولات والأرباح
+- ✅ طلب سحب الأرباح
+- ✅ تقارير تفصيلية وتحليلات
 - ✅ إدارة الملف الشخصي والإعدادات
-- ✅ نظام إشعارات
 
-### للإدارة:
-- ✅ إدارة جميع الأفلييت
-- ✅ تعديل العمولات والمستويات
-- ✅ تفعيل/تعطيل الحسابات
-- ✅ تقارير شاملة وتحليلات
-- ✅ تصدير البيانات CSV
-- ✅ إدارة المستخدمين
-- ✅ مراقبة الأداء
+### للإدارة (Admin)
+- ✅ لوحة تحكم إدارية متقدمة
+- ✅ إدارة جميع الأفلييت والمستخدمين
+- ✅ تعديل معدلات العمولة (ثابتة أو متدرجة)
+- ✅ تفعيل/تعطيل حسابات الأفلييت
+- ✅ عرض إحصائيات شاملة للنظام
+- ✅ تصدير البيانات (CSV)
+- ✅ إنشاء مستخدمين جدد
 
-### التقنية:
-- ✅ تتبع تلقائي للضغطات والمبيعات
-- ✅ Webhook للتكامل مع أنظمة الدفع
-- ✅ API RESTful كامل
-- ✅ JWT Authentication
-- ✅ CORS Support
-- ✅ Rate Limiting
-- ✅ Logging شامل
+### التتبع التلقائي
+- ✅ تتبع الضغطات عبر JavaScript
+- ✅ تسجيل المبيعات تلقائياً
+- ✅ حساب العمولات ديناميكياً
+- ✅ دعم Webhooks للتكامل
+- ✅ صلاحية 30 يوم للإحالات
 
 ---
 
-## 🛠 التقنيات المستخدمة
+## 🛠️ التقنيات المستخدمة
 
-### Backend:
-- **Laravel 11.x** - PHP Framework
-- **SQLite** - Database
-- **JWT** - Authentication
-- **Laravel Sanctum** - API Authentication
+### Backend
+- **Laravel 11** - PHP Framework
+- **MySQL** - قاعدة البيانات
+- **JWT** - المصادقة
+- **RESTful API** - واجهة برمجية
 
-### Frontend:
-- **Next.js 15.x** - React Framework
-- **TypeScript** - Type Safety
-- **Tailwind CSS** - Styling
-- **Recharts** - Data Visualization
+### Frontend
+- **Next.js 15** - React Framework
+- **TypeScript** - لغة البرمجة
+- **Tailwind CSS** - التصميم
+- **Recharts** - الرسوم البيانية
 - **Axios** - HTTP Client
-- **Lucide Icons** - Icons
 
 ---
 
 ## 📦 التثبيت
 
-### المتطلبات:
-- PHP >= 8.2
+### المتطلبات
+- PHP 8.2+
 - Composer
-- Node.js >= 18.x
-- npm أو yarn
+- Node.js 18+
+- MySQL 8.0+
 
-### 1. Clone المشروع
-
-```bash
-git clone https://github.com/your-username/falakcart-affiliate.git
-cd falakcart-affiliate
-```
-
-### 2. تثبيت Backend
+### 1. Backend Setup
 
 ```bash
+# الانتقال لمجلد Backend
 cd backend
+
+# تثبيت Dependencies
 composer install
+
+# نسخ ملف البيئة
 cp .env.example .env
+
+# توليد مفتاح التطبيق
 php artisan key:generate
-php artisan migrate --seed
+
+# توليد JWT Secret
+php artisan jwt:secret
+
+# إعداد قاعدة البيانات في .env
+DB_DATABASE=your_database
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+
+# تشغيل Migrations
+php artisan migrate
+
+# إنشاء Admin User
+php artisan db:seed --class=AdminSeeder
+
+# تشغيل السيرفر
 php artisan serve
 ```
 
-الـ Backend سيعمل على: `http://127.0.0.1:8000`
-
-### 3. تثبيت Frontend
+### 2. Frontend Setup
 
 ```bash
+# الانتقال لمجلد Frontend
 cd frontend
+
+# تثبيت Dependencies
 npm install
-cp .env.local.example .env.local
+
+# نسخ ملف البيئة
+cp .env.example .env.local
+
+# تحديث API URL
+NEXT_PUBLIC_API_URL=http://localhost:8000/api
+
+# تشغيل السيرفر
 npm run dev
 ```
 
-الـ Frontend سيعمل على: `http://localhost:3000`
+### 3. الوصول للنظام
 
----
+- **Frontend:** http://localhost:3000
+- **Backend API:** http://localhost:8000/api
 
-## ⚙️ الإعداد
-
-### Backend Configuration
-
-**ملف `.env`:**
-
-```env
-APP_NAME="FalakCart Affiliate"
-APP_URL=http://127.0.0.1:8000
-
-DB_CONNECTION=sqlite
-
-# FalakCart Integration
-FALAKCART_MAIN_URL=https://falakcart.com
-WEBHOOK_SECRET=your-secure-webhook-secret
-
-# JWT
-JWT_SECRET=your-jwt-secret-key
-JWT_TTL=60
-```
-
-### Frontend Configuration
-
-**ملف `.env.local`:**
-
-```env
-NEXT_PUBLIC_API_URL=http://127.0.0.1:8000/api
-```
-
-### الحسابات الافتراضية
-
-بعد تشغيل `php artisan migrate --seed`:
-
-**Admin:**
-- Email: `admin@falakcart.com`
-- Password: `password`
-
-**Affiliate:**
-- Email: `samer@gmail.com`
-- Password: `password`
-
----
-
-## 🚀 الاستخدام
-
-### تسجيل الدخول
-
-1. افتح `http://localhost:3000/login`
-2. استخدم أحد الحسابات الافتراضية
-3. ستُوجه إلى Dashboard المناسب
-
-### إنشاء Affiliate جديد
-
-```bash
-# من خلال Admin Dashboard
-1. سجل دخول كـ Admin
-2. اذهب إلى Users Tab
-3. اضغط "Add Admin" أو استخدم API
-
-# أو من خلال API
-POST /api/admin/users
-{
-  "name": "New Affiliate",
-  "email": "affiliate@example.com",
-  "password": "password",
-  "role": "affiliate"
-}
-```
-
-### إنشاء رابط Affiliate
-
-```bash
-# من خلال Dashboard
-1. سجل دخول كـ Affiliate
-2. اذهب إلى "My Links"
-3. اضغط "Create New Link"
-
-# أو من خلال API
-POST /api/affiliate/links
-{
-  "name": "Summer Campaign",
-  "slug": "summer2024"
-}
-```
+**بيانات الدخول الافتراضية:**
+- Admin: `admin@falakcart.com` / `password`
+- Affiliate: `samer@gmail.com` / `password`
 
 ---
 
 ## 🔗 التكامل مع FalakCart
 
-للتكامل الكامل مع موقع FalakCart الرئيسي، راجع:
-
-- **[دليل التكامل الكامل](COMPLETE_INTEGRATION_GUIDE.md)** - شرح مفصل لكل الخطوات
-- **[دليل البدء السريع](QUICK_START_INTEGRATION.md)** - 5 خطوات للبدء
-- **[Tracking Script](FALAKCART_TRACKING_SCRIPT.js)** - السكريبت الجاهز
-
 ### الخطوات الأساسية:
 
-1. أضف tracking script لصفحة التسجيل
-2. أضف sale tracking لصفحة نجاح الدفع
-3. اعمل webhook للتحديثات التلقائية
-4. اختبر النظام
+1. **إضافة Tracking Script** في صفحة التسجيل
+2. **إضافة Sale Tracking** عند نجاح الاشتراك
+3. **إعداد Webhook** للتحديثات التلقائية
+
+**للتفاصيل الكاملة، راجع:**
+- 📘 [دليل التكامل الكامل](COMPLETE_INTEGRATION_GUIDE.md)
+- 🚀 [دليل البدء السريع](QUICK_START_INTEGRATION.md)
 
 ---
 
-## 📚 API Documentation
+## 📚 الوثائق
 
-### Authentication
-
-```bash
-POST /api/auth/login
-POST /api/auth/register
-POST /api/auth/logout
-GET  /api/user
-```
-
-### Affiliate Endpoints
-
-```bash
-GET  /api/affiliate/profile
-GET  /api/affiliate/stats
-GET  /api/affiliate/links
-POST /api/affiliate/links
-GET  /api/affiliate/referrals
-GET  /api/affiliate/earnings
-```
-
-### Admin Endpoints
-
-```bash
-GET  /api/admin/summary
-GET  /api/admin/affiliates
-POST /api/admin/affiliates
-PUT  /api/admin/affiliates/{id}/status
-PUT  /api/admin/affiliates/{id}/commission
-GET  /api/admin/users
-GET  /api/admin/clicks
-GET  /api/admin/export
-```
-
-### Tracking Endpoints
-
-```bash
-POST /api/track/click
-POST /api/track/sale
-```
-
-للتفاصيل الكاملة، راجع [API Documentation](docs/API.md)
-
----
-
-## 📊 قاعدة البيانات
-
-### الجداول الرئيسية:
-
-- `users` - المستخدمين (Admin & Affiliates)
-- `affiliates` - بيانات الأفلييت
-- `affiliate_links` - الروابط المخصصة
-- `clicks` - تتبع الضغطات
-- `sales` - المبيعات والعمولات
-- `transactions` - المعاملات المالية
-- `notifications` - الإشعارات
+| الملف | الوصف |
+|-------|-------|
+| [COMPLETE_INTEGRATION_GUIDE.md](COMPLETE_INTEGRATION_GUIDE.md) | دليل التكامل الشامل والمفصل |
+| [QUICK_START_INTEGRATION.md](QUICK_START_INTEGRATION.md) | دليل البدء السريع (5 خطوات) |
+| [API_DOCUMENTATION.md](API_DOCUMENTATION.md) | توثيق كامل لجميع API Endpoints |
+| [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md) | قائمة التحقق قبل النشر |
+| [TROUBLESHOOTING_GUIDE.md](TROUBLESHOOTING_GUIDE.md) | دليل استكشاف الأخطاء |
+| [FALAKCART_TRACKING_SCRIPT.js](FALAKCART_TRACKING_SCRIPT.js) | سكريبت التتبع الجاهز |
 
 ---
 
 ## 🧪 الاختبار
 
-### اختبار Backend
-
-```bash
-cd backend
-php artisan test
-```
-
-### اختبار Frontend
-
-```bash
-cd frontend
-npm run test
-```
-
 ### اختبار التكامل
+```bash
+# 1. افتح لينك إحالة
+https://falakcart.com/register?ref=TEST123
+
+# 2. تحقق من تسجيل Click
+SELECT * FROM clicks WHERE referral_code = 'TEST123';
+
+# 3. أكمل عملية اشتراك
+
+# 4. تحقق من تسجيل Sale
+SELECT * FROM sales WHERE affiliate_id IN (
+    SELECT id FROM affiliates WHERE referral_code = 'TEST123'
+);
+```
+
+---
+
+## 🚀 النشر على Production
+
+راجع [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md) للحصول على قائمة كاملة.
+
+### خطوات سريعة:
 
 ```bash
-# اختبار تتبع الضغطات
-curl -X POST http://127.0.0.1:8000/api/track/click \
-  -H "Content-Type: application/json" \
-  -d '{"referral_code": "TEST123"}'
+# Backend
+composer install --optimize-autoloader --no-dev
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 
-# اختبار تتبع المبيعات
-curl -X POST http://127.0.0.1:8000/api/track/sale \
-  -H "Content-Type: application/json" \
-  -d '{
-    "referral_code": "TEST123",
-    "customer_name": "Test User",
-    "customer_email": "test@example.com",
-    "amount": 99.00
-  }'
+# Frontend
+npm run build
+npm run start
 ```
 
 ---
@@ -329,82 +214,71 @@ curl -X POST http://127.0.0.1:8000/api/track/sale \
 ## 🔒 الأمان
 
 - ✅ JWT Authentication
-- ✅ Password Hashing (bcrypt)
 - ✅ CORS Protection
 - ✅ Rate Limiting
-- ✅ SQL Injection Protection
+- ✅ SQL Injection Prevention
 - ✅ XSS Protection
 - ✅ CSRF Protection
 - ✅ Webhook Signature Verification
 
 ---
 
-## 📈 الأداء
+## 📊 الإحصائيات
 
-- ✅ Database Indexing
-- ✅ Query Optimization
-- ✅ Caching (Redis ready)
-- ✅ Lazy Loading
-- ✅ Code Splitting
-- ✅ Image Optimization
-
----
-
-## 🤝 المساهمة
-
-نرحب بالمساهمات! للمساهمة:
-
-1. Fork المشروع
-2. أنشئ branch جديد (`git checkout -b feature/AmazingFeature`)
-3. Commit التغييرات (`git commit -m 'Add some AmazingFeature'`)
-4. Push للـ branch (`git push origin feature/AmazingFeature`)
-5. افتح Pull Request
+النظام يتتبع:
+- عدد الضغطات (Clicks)
+- عدد الإحالات (Referrals)
+- عدد الاشتراكات (Subscriptions)
+- إجمالي الأرباح (Earnings)
+- معدل التحويل (Conversion Rate)
+- الأرصدة (Balances)
 
 ---
 
-## 📝 الترخيص
+## 🐛 الإبلاغ عن الأخطاء
 
-هذا المشروع مرخص تحت [MIT License](LICENSE)
-
----
-
-## 👥 الفريق
-
-- **Developer**: Your Name
-- **Designer**: Designer Name
-- **Project Manager**: PM Name
+إذا وجدت خطأ:
+1. تحقق من [TROUBLESHOOTING_GUIDE.md](TROUBLESHOOTING_GUIDE.md)
+2. ابحث في Issues الموجودة
+3. أنشئ Issue جديد مع:
+   - وصف المشكلة
+   - خطوات إعادة الإنتاج
+   - رسائل الخطأ
+   - معلومات البيئة
 
 ---
 
 ## 📞 الدعم
 
-للدعم والاستفسارات:
-
-- 📧 Email: support@falakcart.com
-- 🌐 Website: https://falakcart.com
-- 💬 Discord: [Join our server](https://discord.gg/falakcart)
+- **Documentation:** راجع ملفات الوثائق أعلاه
+- **Email:** support@your-domain.com
 
 ---
 
-## 🙏 شكر خاص
+## 📄 الترخيص
 
-- Laravel Community
-- Next.js Team
-- جميع المساهمين في المشروع
+هذا المشروع مرخص تحت MIT License.
 
 ---
 
-## 📸 Screenshots
+## 👥 الفريق
 
-### Affiliate Dashboard
-![Affiliate Dashboard](docs/screenshots/affiliate-dashboard.png)
-
-### Admin Dashboard
-![Admin Dashboard](docs/screenshots/admin-dashboard.png)
-
-### Analytics
-![Analytics](docs/screenshots/analytics.png)
+تم تطوير هذا النظام بواسطة فريق FalakCart.
 
 ---
 
-**Made with ❤️ by FalakCart Team**
+## 📈 خارطة الطريق
+
+### الإصدارات القادمة:
+- [ ] دعم عملات متعددة
+- [ ] تطبيق موبايل للأفلييت
+- [ ] تكامل مع منصات التواصل الاجتماعي
+- [ ] نظام إشعارات متقدم
+- [ ] تقارير مخصصة
+- [ ] API للتكامل مع أنظمة خارجية
+
+---
+
+**🎉 مبروك! نظامك جاهز للعمل!**
+
+للبدء، راجع [QUICK_START_INTEGRATION.md](QUICK_START_INTEGRATION.md)

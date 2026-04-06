@@ -63,6 +63,23 @@ Route::middleware(['auth:api'])->group(function () {
         // Analytics
         Route::get('clicks', [AdminController::class, 'getClickAnalytics']);
         Route::get('sales',  [AdminController::class, 'getAllSales']);
+        Route::get('analytics/devices', [AdminController::class, 'getDeviceAnalytics']);
+        Route::get('analytics/geo', [AdminController::class, 'getGeoAnalytics']);
+        Route::get('analytics/traffic-sources', [AdminController::class, 'getTrafficSourceAnalytics']);
+        Route::get('analytics/commission-trend', [AdminController::class, 'getCommissionTrend']);
+
+        // Commissions
+        Route::get('commissions/summary',           [AdminController::class, 'getCommissionsSummary']);
+        Route::get('commissions/pending',           [AdminController::class, 'getPendingCommissions']);
+        Route::get('commissions',                   [AdminController::class, 'getAllCommissions']);
+        Route::put('commissions/{id}/approve',      [AdminController::class, 'approveCommission']);
+        Route::put('commissions/{id}/reject',       [AdminController::class, 'rejectCommission']);
+
+        // Payouts
+        Route::get('payouts/summary',               [AdminController::class, 'getPayoutsSummary']);
+        Route::get('payouts/pending',               [AdminController::class, 'getPendingPayouts']);
+        Route::get('payouts/history',               [AdminController::class, 'getPayoutHistory']);
+        Route::post('payouts/{affiliateId}/approve', [AdminController::class, 'approvePayout']);
 
         // Export
         Route::get('export', [AdminController::class, 'exportCSV']);
