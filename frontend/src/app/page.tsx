@@ -6,10 +6,10 @@ import api from '@/lib/api';
 import { 
   Link2, Users, CreditCard, TrendingUp, Copy, Check, 
   LogOut, BarChart3, ShoppingCart, Calendar, ArrowRight,
-  TrendingDown, Percent
+  Percent
 } from 'lucide-react';
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, 
+  XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, AreaChart, Area 
 } from 'recharts';
 
@@ -54,7 +54,6 @@ export default function Dashboard() {
       fetchData();
     } else if (user && user.role === 'admin') {
        // Ideally we'd have a separate component or redirect
-       // For now, let's just make sure affiliates don't see admin pages
     }
   }, [user]);
 
@@ -120,7 +119,7 @@ export default function Dashboard() {
               Partner Hub
              </h1>
           </div>
-          <p className="text-zinc-400 font-medium">Hello, {user.name}. Here's your performance snapshot.</p>
+          <p className="text-zinc-400 font-medium">Hello, {user.name}. Here&apos;s your performance snapshot.</p>
         </div>
         
         <div className="flex items-center gap-4">

@@ -26,9 +26,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     checkUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkUser = async () => {
@@ -43,7 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
            router.push('/login');
         }
       }
-    } catch (err) {
+    } catch (_err) {
       localStorage.removeItem('token');
       if (!window.location.pathname.match(/\/(login|register|refer|welcome)/)) {
            router.push('/login');

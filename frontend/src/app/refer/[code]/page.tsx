@@ -14,6 +14,7 @@ export default function ReferralRedirect() {
     if (params.code) {
       recordClick();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.code]);
 
   const recordClick = async () => {
