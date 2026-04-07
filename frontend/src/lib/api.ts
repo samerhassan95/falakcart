@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api';
+const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8080/api';
 
 console.log('API Base URL:', baseURL); // Debug log
 
@@ -14,7 +14,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  console.log('Making API request to:', config.baseURL + config.url); // Debug log
+  console.log('Making API request to:', (config.baseURL || '') + (config.url || '')); // Debug log
   
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
   

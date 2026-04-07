@@ -212,5 +212,14 @@
   "Add an extra layer of security to your account": "Add an extra layer of security to your account",
   "Save Changes": "Save Changes",
   "Saving...": "Saving...",
-  "Saved!": "Saved!"
+  "Saved!": "Saved!",
+  "dashboard.primaryCampaign": "PRIMARY CAMPAIGN",
+  "dashboard.shareAndEarn": "Share your link and earn",
+  "dashboard.commissionDescription": "Earn {rate}% commission for every active subscription made through your unique referral link.",
+  "dashboard.goalProgress": "Goal Progress",
+  "dashboard.monthlyTarget": "Monthly Target: ${target}",
+  "dashboard.greatJob": "Great job!",
+  "dashboard.awayFromGoal": "You're only ${amount} away from hitting your monthly reward bonus.",
+  "common.copied": "Copied!",
+  "common.copy": "Copy"
 }

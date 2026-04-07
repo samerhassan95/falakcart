@@ -1,7 +1,6 @@
 'use client';
 
 import { useAuth } from '@/context/AuthContext';
-import AppLayout from '@/components/AppLayout';
 import { User, Mail, Bell, Shield, Wallet, Save, Loader2, Check, Upload, Eye, EyeOff, CreditCard, Building, AlertCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import api from '@/lib/api';
@@ -12,7 +11,7 @@ export default function SettingsPage() {
   const [bio, setBio] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [activeTab, setActiveTab] = useState('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'payout' | 'notifications' | 'referrals' | 'security'>('profile');
   const [avatar, setAvatar] = useState<string | null>(null);
   
   // Payout settings
@@ -27,6 +26,11 @@ export default function SettingsPage() {
   const [smsNotifications, setSmsNotifications] = useState(false);
   const [marketingEmails, setMarketingEmails] = useState(true);
   const [weeklyReports, setWeeklyReports] = useState(true);
+  
+  // Referral preferences
+  const [defaultLinkDestination, setDefaultLinkDestination] = useState('homepage');
+  const [payoutProcessed, setPayoutProcessed] = useState(true);
+  const [referralActivity, setReferralActivity] = useState(false);
   
   // Security settings
   const [currentPassword, setCurrentPassword] = useState('');
@@ -126,6 +130,12 @@ export default function SettingsPage() {
           marketing_emails: marketingEmails,
           weekly_reports: weeklyReports
         });
+      } else if (activeTab === 'referrals') {
+        await api.put('/affiliate/referral-settings', {
+          default_link_destination: defaultLinkDestination,
+          payout_processed: payoutProcessed,
+          referral_activity: referralActivity
+        });
       } else if (activeTab === 'security') {
         if (newPassword) {
           await api.put('/affiliate/change-password', {
@@ -160,41 +170,44 @@ export default function SettingsPage() {
   };
 
   if (loading) return (
-    <AppLayout>
-      <div className="flex items-center justify-center h-[60vh]">
-        <div className="w-10 h-10 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin" />
-      </div>
-    </AppLayout>
+    <div className="flex items-center justify-center h-[60vh]">
+      <div className="w-10 h-10 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+    </div>
   );
 
   return (
-    <AppLayout>
-      <div className="space-y-8 max-w-4xl">
-        {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Account Settings</h1>
-          <p className="text-gray-500 mt-1">Manage your profile, preferences, and payment settings.</p>
-        </div>
+    <div className="space-y-8">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl font-bold text-[#191C1E] tracking-tight">Account Settings</h1>
+        <p className="text-[#505F76] mt-1">Manage your profile, preferences, and payment settings.</p>
+      </div>
 
-        <div className="grid grid-cols-3 gap-8">
-          {/* Navigation Sidebar */}
-          <div className="col-span-1 space-y-1">
+      <div className="grid grid-cols-4 gap-8">
+        {/* Navigation Sidebar */}
+        <div className="col-span-1 space-y-1">
             <button 
               onClick={() => setActiveTab('profile')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
                 activeTab === 'profile' 
-                  ? 'bg-indigo-50 text-indigo-700' 
-                  : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                  ? 'bg-indigo-50 text-[#050C9C]' 
+                  : 'text-[#505F76] hover:bg-gray-50 hover:text-[#191C1E]'
               }`}
             >
-              <User className="w-5 h-5" /> My Profile
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M6.87187 8.1525C6.79687 8.145 6.70687 8.145 6.62437 8.1525C4.83937 8.0925 3.42188 6.63 3.42188 4.83C3.42187 2.9925 4.90688 1.5 6.75188 1.5C8.58938 1.5 10.0819 2.9925 10.0819 4.83C10.0744 6.63 8.65688 8.0925 6.87187 8.1525Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path opacity="0.4" d="M12.3084 3C13.7634 3 14.9334 4.1775 14.9334 5.625C14.9334 7.0425 13.8084 8.1975 12.4059 8.25C12.3459 8.2425 12.2784 8.2425 12.2109 8.25" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M3.11906 10.92C1.30406 12.135 1.30406 14.115 3.11906 15.3225C5.18156 16.7025 8.56406 16.7025 10.6266 15.3225C12.4416 14.1075 12.4416 12.1275 10.6266 10.92C8.57156 9.5475 5.18906 9.5475 3.11906 10.92Z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+<path opacity="0.4" d="M13.7578 15C14.2978 14.8875 14.8078 14.67 15.2278 14.3475C16.3978 13.47 16.3978 12.0225 15.2278 11.145C14.8153 10.83 14.3128 10.62 13.7803 10.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+ My Profile
             </button>
             <button 
               onClick={() => setActiveTab('payout')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                 activeTab === 'payout' 
-                  ? 'bg-indigo-50 text-indigo-700' 
-                  : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                  ? 'bg-indigo-50 text-[#050C9C]' 
+                  : 'text-[#505F76] hover:bg-gray-50 hover:text-[#191C1E]'
               }`}
             >
               <Wallet className="w-5 h-5" /> Payout Methods
@@ -203,18 +216,28 @@ export default function SettingsPage() {
               onClick={() => setActiveTab('notifications')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                 activeTab === 'notifications' 
-                  ? 'bg-indigo-50 text-indigo-700' 
-                  : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                  ? 'bg-indigo-50 text-[#050C9C]' 
+                  : 'text-[#505F76] hover:bg-gray-50 hover:text-[#191C1E]'
               }`}
             >
               <Bell className="w-5 h-5" /> Notifications
             </button>
             <button 
+              onClick={() => setActiveTab('referrals')}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                activeTab === 'referrals' 
+                  ? 'bg-indigo-50 text-[#050C9C]' 
+                  : 'text-[#505F76] hover:bg-gray-50 hover:text-[#191C1E]'
+              }`}
+            >
+              <User className="w-5 h-5" /> Referral Preferences
+            </button>
+            <button 
               onClick={() => setActiveTab('security')}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                 activeTab === 'security' 
-                  ? 'bg-indigo-50 text-indigo-700' 
-                  : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                  ? 'bg-indigo-50 text-[#050C9C]' 
+                  : 'text-[#505F76] hover:bg-gray-50 hover:text-[#191C1E]'
               }`}
             >
               <Shield className="w-5 h-5" /> Security
@@ -222,26 +245,33 @@ export default function SettingsPage() {
           </div>
 
           {/* Main Content Area */}
-          <div className="col-span-2 space-y-6">
-            <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-sm">
+          <div className="col-span-3 space-y-6">
               
               {/* Profile Tab */}
               {activeTab === 'profile' && (
                 <>
-                  <h2 className="text-lg font-bold text-gray-900 mb-6">Profile Information</h2>
+                            <div className="bg-white rounded-2xl border border-gray-100 p-8 ">
+
+                  <h2 className="text-[20px] font-bold text-[#191C1E] mb-2">Profile Settings</h2>
+                  <p className="text-[#505F76] text-[14px]  mb-4">Update your personal information and profile picture</p>
                   
-                  <div className="space-y-5">
-                    <div>
-                      <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Avatar</label>
-                      <div className="flex items-center gap-4">
-                        <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white text-xl font-bold shadow-md overflow-hidden">
+                  <div className="flex gap-12">
+                    {/* Avatar Section */}
+                    <div className="flex flex-col items-center">
+                      <div className="relative">
+                        <div className="w-32 h-32 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg overflow-hidden">
                           {avatar ? (
                             <img src={avatar} alt="Avatar" className="w-full h-full object-cover" />
                           ) : (
                             user?.name?.charAt(0) || 'U'
                           )}
                         </div>
-                        <div>
+                        <div 
+                          className="absolute -bottom-1 -right-1 w-8 h-8 bg-[#050C9C] rounded-full flex items-center justify-center cursor-pointer"
+                          style={{ 
+                            boxShadow: '0px 4px 6px -4px #0000001A, 0px 10px 15px -3px #0000001A'
+                          }}
+                        >
                           <input
                             type="file"
                             accept="image/*"
@@ -249,54 +279,56 @@ export default function SettingsPage() {
                             className="hidden"
                             id="avatar-upload"
                           />
-                          <label
-                            htmlFor="avatar-upload"
-                            className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors cursor-pointer"
-                          >
-                            <Upload className="w-4 h-4" />
-                            Change Avatar
+                          <label htmlFor="avatar-upload" className="cursor-pointer">
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1.05 8.4H1.79812L6.93 3.26812L6.18187 2.52L1.05 7.65188V8.4ZM0 9.45V7.21875L6.93 0.301875C7.035 0.205625 7.15094 0.13125 7.27781 0.07875C7.40469 0.02625 7.53812 0 7.67812 0C7.81812 0 7.95375 0.02625 8.085 0.07875C8.21625 0.13125 8.33 0.21 8.42625 0.315L9.14812 1.05C9.25312 1.14625 9.32969 1.26 9.37781 1.39125C9.42594 1.5225 9.45 1.65375 9.45 1.785C9.45 1.925 9.42594 2.05844 9.37781 2.18531C9.32969 2.31219 9.25312 2.42813 9.14812 2.53312L2.23125 9.45H0ZM8.4 1.785L7.665 1.05L8.4 1.785ZM6.54937 2.90062L6.18187 2.52L6.93 3.26812L6.54937 2.90062Z" fill="white"/>
+</svg>
+
                           </label>
                         </div>
                       </div>
+                      <button className="mt-4 text-[#94A3B8] text-[10px] font-medium hover:text-[#4F46E5] transition-colors">
+                        CHANGE PHOTO
+                      </button>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-5">
-                      <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Full Name</label>
-                        <div className="relative">
-                          <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    {/* Form Fields */}
+                    <div className="flex-1 space-y-6">
+                      <div className="grid grid-cols-2 gap-6">
+                        <div>
+                          <label className="block text-[#505F76] text-[12px] font-medium mb-3 uppercase tracking-wider">Full Name</label>
                           <input 
                             type="text" 
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 transition-all font-medium"
+                            className="w-full px-6 py-4 border-1 border-[#6B7280] rounded-[16px] text-[#191C1E] text-[14px] focus:outline-none focus:border-[#4F46E5] transition-colors"
+                            placeholder="Noha Al-Falak"
                           />
                         </div>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Email Address</label>
-                        <div className="relative">
-                          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <div>
+                          <label className="block text-[#505F76] text-[12px] font-medium mb-3 uppercase tracking-wider">Email Address</label>
                           <input 
                             type="email" 
                             defaultValue={user?.email}
                             readOnly
-                            className="w-full pl-10 pr-4 py-2.5 bg-gray-100 border border-gray-200 rounded-xl text-sm text-gray-500 focus:outline-none cursor-not-allowed font-medium"
+                            className="w-full px-6 py-4 border-1 border-[#6B7280] rounded-[16px] text-[#191C1E] text-[14px] focus:outline-none focus:border-[#4F46E5] transition-colors"
+                            placeholder="noha@falakcart.com"
                           />
                         </div>
                       </div>
-                    </div>
 
-                    <div>
-                       <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Bio / Description (Optional)</label>
-                       <textarea 
-                         rows={3}
-                         value={bio}
-                         onChange={(e) => setBio(e.target.value)}
-                         placeholder="Tell your audience a little bit about yourself..."
-                         className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 transition-all"
-                       />
+                      <div>
+                        <label className="block text-[#505F76] text-[12px] font-medium mb-3 uppercase tracking-wider">Phone Number</label>
+                        <input 
+                          type="tel" 
+                          value={bio}
+                          onChange={(e) => setBio(e.target.value)}
+                          className="w-full px-6 py-4 border-1 border-[#6B7280] rounded-[16px] text-[#191C1E] text-[14px] focus:outline-none focus:border-[#4F46E5] transition-colors"
+                          placeholder="+971 XX XXX XXXX"
+                        />
+                      </div>
                     </div>
+                  </div>
                   </div>
                 </>
               )}
@@ -304,85 +336,111 @@ export default function SettingsPage() {
               {/* Payout Methods Tab */}
               {activeTab === 'payout' && (
                 <>
-                  <h2 className="text-lg font-bold text-gray-900 mb-6">Payout Methods</h2>
-                  
-                  <div className="space-y-5">
-                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                      <div className="flex items-start gap-3">
-                        <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <div className="relative p-8 rounded-2xl overflow-hidden bg-white border border-gray-100"
+                    style={{
+                      boxShadow: '0px 12px 32px 0px #2A14B40F',
+                      border: '1px solid #3ABEF91A'
+                    }}>
+                    
+                    {/* Decorative Background Shape */}
+                    <div 
+                      className="absolute -top-32 -right-32 rounded-full pointer-events-none"
+                      style={{
+                        width: '200px',
+                        height: '206px',
+                        background: 'rgba(58, 190, 249, 0.08)',
+                        filter: 'blur(80px)',
+                        borderRadius: '9999px',
+                        backdropFilter: 'blur(64px)',
+                        top: '-32px',
+                        right: '-32px'
+                      }}
+                    />
+                    
+                    <div className="relative z-10">
+                      {/* Header inside card */}
+                      <div className="flex items-center gap-4 mb-8">
+                        <div 
+                          className="w-14 h-14 rounded-full flex items-center justify-center"
+                          style={{ backgroundColor: '#050C9C' }}
+                        >
+                          <svg width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 18C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H16C16.55 0 17.0208 0.195833 17.4125 0.5875C17.8042 0.979167 18 1.45 18 2H10C8.81667 2 7.85417 2.37083 7.1125 3.1125C6.37083 3.85417 6 4.81667 6 6V12C6 13.1833 6.37083 14.1458 7.1125 14.8875C7.85417 15.6292 8.81667 16 10 16H18C18 16.55 17.8042 17.0208 17.4125 17.4125C17.0208 17.8042 16.55 18 16 18H2ZM10 14C9.45 14 8.97917 13.8042 8.5875 13.4125C8.19583 13.0208 8 12.55 8 12V6C8 5.45 8.19583 4.97917 8.5875 4.5875C8.97917 4.19583 9.45 4 10 4H17C17.55 4 18.0208 4.19583 18.4125 4.5875C18.8042 4.97917 19 5.45 19 6V12C19 12.55 18.8042 13.0208 18.4125 13.4125C18.0208 13.8042 17.55 14 17 14H10ZM13 10.5C13.4333 10.5 13.7917 10.3583 14.075 10.075C14.3583 9.79167 14.5 9.43333 14.5 9C14.5 8.56667 14.3583 8.20833 14.075 7.925C13.7917 7.64167 13.4333 7.5 13 7.5C12.5667 7.5 12.2083 7.64167 11.925 7.925C11.6417 8.20833 11.5 8.56667 11.5 9C11.5 9.43333 11.6417 9.79167 11.925 10.075C12.2083 10.3583 12.5667 10.5 13 10.5Z" fill="white"/>
+                          </svg>
+                        </div>
                         <div>
-                          <h3 className="text-sm font-semibold text-blue-900">Bank Transfer Information</h3>
-                          <p className="text-xs text-blue-700 mt-1">Add your bank details to receive payouts. Minimum payout amount is $50.</p>
+                          <h2 className="text-[24px] font-bold text-[#191C1E]">Payout Settings</h2>
+                          <p className="text-[#505F76] text-[14px]">Manage your earnings withdrawal preferences</p>
+                        </div>
+                        <div className="ml-auto">
+                          <span className="px-2 py-1 bg-[#D0E1FB] text-[#050C9C] text-[10px] font-semibold rounded-full">
+                            HIGH PRIORITY
+                          </span>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="grid grid-cols-2 gap-5">
-                      <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Bank Name</label>
-                        <div className="relative">
-                          <Building className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      {/* Payment Summary Grid */}
+                      <div className="grid grid-cols-4 gap-8 mb-6">
+                        <div>
+                          <label className="block text-[#505F76] text-[12px] font-medium mb-3 uppercase tracking-wider">Payment Method</label>
+                          <div className="relative">
+                            <select 
+                              className="w-full px-4 py-3 bg-[#F2F4F6] rounded-[16px] text-[#191C1E] text-sm focus:outline-none focus:border-[#4F46E5] transition-colors appearance-none"
+                              defaultValue="bank-transfer"
+                            >
+                              <option value="bank-transfer">Bank Transfer</option>
+                            </select>
+                            <svg className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#505F76]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <label className="block text-[#505F76] text-sm font-medium mb-3 uppercase tracking-wider">Payment Details</label>
                           <input 
                             type="text" 
-                            value={bankName}
-                            onChange={(e) => setBankName(e.target.value)}
-                            placeholder="e.g. Chase Bank"
-                            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 transition-all font-medium"
+                            placeholder="AE76 •••• •••• •••• 4590"
+                            className="w-full px-4 py-3 bg-[#F2F4F6] rounded-[16px] text-[#191C1E] text-sm focus:outline-none focus:border-[#4F46E5] transition-colors"
                           />
                         </div>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Account Holder Name</label>
-                        <div className="relative">
-                          <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        
+                        <div>
+                          <label className="block text-[#505F76] text-sm font-medium mb-3 uppercase tracking-wider">Threshold</label>
                           <input 
                             type="text" 
-                            value={accountHolderName}
-                            onChange={(e) => setAccountHolderName(e.target.value)}
-                            placeholder="Full name on account"
-                            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 transition-all font-medium"
+                            placeholder="$ 50.00"
+                            className="w-full px-4 py-3 bg-[#F2F4F6] rounded-[16px] text-[#191C1E] text-sm focus:outline-none focus:border-[#4F46E5] transition-colors"
                           />
                         </div>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-5">
-                      <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Account Number</label>
-                        <div className="relative">
-                          <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                          <input 
-                            type="text" 
-                            value={accountNumber}
-                            onChange={(e) => setAccountNumber(e.target.value)}
-                            placeholder="Account number"
-                            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 transition-all font-medium"
-                          />
+                        
+                        <div>
+                          <label className="block text-[#505F76] text-[12px] font-medium mb-3 uppercase tracking-wider">Currency</label>
+                          <div className="relative">
+                            <select 
+                              className="w-full px-4 py-3 bg-[#F2F4F6] rounded-[16px] text-[#191C1E] text-sm focus:outline-none focus:border-[#4F46E5] transition-colors appearance-none"
+                              defaultValue="usd"
+                            >
+                              <option value="usd">USD - US Dollar</option>
+                            </select>
+                            <svg className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#505F76]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </div>
                         </div>
                       </div>
-                      <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">IBAN (Optional)</label>
-                        <input 
-                          type="text" 
-                          value={iban}
-                          onChange={(e) => setIban(e.target.value)}
-                          placeholder="International Bank Account Number"
-                          className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 transition-all font-medium"
-                        />
+                      
+                      {/* Security Notice */}
+                      <div className="bg-[#EFF6FF] border border-[#BFDBFE] rounded-xl p-4 flex items-center gap-3 mb-8">
+                        <div className="w-5 h-5 bg-[#3B82F6] rounded-full flex items-center justify-center flex-shrink-0">
+                          <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                        <p className="text-[#1E40AF] text-sm">
+                          Your payment details are stored securely using bank-grade encryption.
+                        </p>
                       </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Minimum Payout Amount ($)</label>
-                      <input 
-                        type="number" 
-                        value={minimumPayout}
-                        onChange={(e) => setMinimumPayout(Number(e.target.value))}
-                        min="50"
-                        max="1000"
-                        className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 transition-all font-medium"
-                      />
-                      <p className="text-xs text-gray-500 mt-1">Minimum: $50, Maximum: $1000</p>
                     </div>
                   </div>
                 </>
@@ -391,24 +449,22 @@ export default function SettingsPage() {
               {/* Notifications Tab */}
               {activeTab === 'notifications' && (
                 <>
-                  <h2 className="text-lg font-bold text-gray-900 mb-6">Notification Preferences</h2>
-                  
-                  <div className="space-y-6">
-                    <div>
-                      <h3 className="text-sm font-semibold text-gray-900 mb-3">Email Notifications</h3>
-                      <div className="space-y-3">
+                  <div className="bg-white rounded-2xl border border-gray-100 p-8">
+                    <h2 className="text-2xl font-bold text-[#191C1E] mb-8">Notification Settings</h2>
+                      
+                      <div className="space-y-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-sm font-medium text-gray-900">Commission Notifications</p>
-                            <p className="text-xs text-gray-500">Get notified when you earn new commissions</p>
+                            <p className="text-[14px] font-semibold text-[#191C1E] mb-1">New commissions</p>
+                            <p className="text-[12px] text-[#505F76]">Get notified when you earn a commission</p>
                           </div>
                           <button
                             onClick={() => setEmailNotifications(!emailNotifications)}
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                              emailNotifications ? 'bg-indigo-600' : 'bg-gray-200'
+                            className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${
+                              emailNotifications ? 'bg-[#050C9C]' : 'bg-gray-200'
                             }`}
                           >
-                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                            <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
                               emailNotifications ? 'translate-x-6' : 'translate-x-1'
                             }`} />
                           </button>
@@ -416,54 +472,99 @@ export default function SettingsPage() {
                         
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-sm font-medium text-gray-900">Weekly Reports</p>
-                            <p className="text-xs text-gray-500">Receive weekly performance summaries</p>
+                            <p className="text-[14px] font-semibold text-[#191C1E] mb-1">Payout processed</p>
+                            <p className="text-[12px] text-[#505F76]">Receive alerts for completed payments</p>
                           </div>
                           <button
-                            onClick={() => setWeeklyReports(!weeklyReports)}
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                              weeklyReports ? 'bg-indigo-600' : 'bg-gray-200'
+                            onClick={() => setPayoutProcessed(!payoutProcessed)}
+                            className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${
+                              payoutProcessed ? 'bg-[#050C9C]' : 'bg-gray-200'
                             }`}
                           >
-                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                              weeklyReports ? 'translate-x-6' : 'translate-x-1'
+                            <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
+                              payoutProcessed ? 'translate-x-6' : 'translate-x-1'
                             }`} />
                           </button>
                         </div>
 
                         <div className="flex items-center justify-between">
                           <div>
-                            <p className="text-sm font-medium text-gray-900">Marketing Emails</p>
-                            <p className="text-xs text-gray-500">Tips, updates, and promotional content</p>
+                            <p className="text-[14px] font-semibold text-[#191C1E] mb-1">Referral activity</p>
+                            <p className="text-[12px] text-[#505F76]">Daily summary of new affiliate signups</p>
                           </div>
                           <button
-                            onClick={() => setMarketingEmails(!marketingEmails)}
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                              marketingEmails ? 'bg-indigo-600' : 'bg-gray-200'
+                            onClick={() => setReferralActivity(!referralActivity)}
+                            className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${
+                              referralActivity ? 'bg-[#050C9C]' : 'bg-gray-200'
                             }`}
                           >
-                            <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                              marketingEmails ? 'translate-x-6' : 'translate-x-1'
+                            <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${
+                              referralActivity ? 'translate-x-6' : 'translate-x-1'
                             }`} />
                           </button>
                         </div>
                       </div>
                     </div>
+                </>
+              )}
 
-                    <div>
-                      <h3 className="text-sm font-semibold text-gray-900 mb-3">SMS Notifications</h3>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">SMS Alerts</p>
-                          <p className="text-xs text-gray-500">Get SMS for important updates (coming soon)</p>
+              {/* Referral Preferences Tab */}
+              {activeTab === 'referrals' && (
+                <>
+                  <div className="bg-white rounded-2xl border border-gray-100 p-8">
+                    <h2 className="text-[20px] font-bold text-[#191C1E] mb-4">Referral Preferences</h2>
+                    
+                    <div className="space-y-6">
+                      <div>
+                        <p className="text-[12px] font-medium text-[#505F76] uppercase tracking-wider mb-4">DEFAULT LINK DESTINATION</p>
+                        
+                        <div className="space-y-3">
+                          <div 
+                            className={`p-4 rounded-xl cursor-pointer transition-all ${
+                              defaultLinkDestination === 'homepage' 
+                                ? ' bg-[#F2F4F6]' 
+                                : ' bg-white '
+                            }`}
+                            onClick={() => setDefaultLinkDestination('homepage')}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                                defaultLinkDestination === 'homepage' ? 'border-[#050C9C]' : 'border-gray-300'
+                              }`}>
+                                {defaultLinkDestination === 'homepage' && (
+                                  <div className="w-2.5 h-2.5 rounded-full bg-[#050C9C]" />
+                                )}
+                              </div>
+                              <div>
+                                <p className="text-[14px] font-semibold text-[#191C1E]">Homepage</p>
+                                <p className="text-[10px] text-[#505F76]">Redirect traffic to the main landing page</p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div 
+                            className={`p-4 rounded-xl  cursor-pointer transition-all ${
+                              defaultLinkDestination === 'pricing' 
+                                ? 'bg-[#F2F4F6]' 
+                                : 'bg-white '
+                            }`}
+                            onClick={() => setDefaultLinkDestination('pricing')}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                                defaultLinkDestination === 'pricing' ? 'border-[#050C9C]' : 'border-gray-300'
+                              }`}>
+                                {defaultLinkDestination === 'pricing' && (
+                                  <div className="w-2.5 h-2.5 rounded-full bg-[#050C9C]" />
+                                )}
+                              </div>
+                              <div>
+                                <p className="text-[14px] font-semibold text-[#191C1E]">Pricing Page</p>
+                                <p className="text-[10px] text-[#505F76]">Direct redirect to conversion-focused pricing</p>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        <button
-                          onClick={() => setSmsNotifications(!smsNotifications)}
-                          disabled
-                          className="relative inline-flex h-6 w-11 items-center rounded-full bg-gray-200 opacity-50 cursor-not-allowed"
-                        >
-                          <span className="inline-block h-4 w-4 transform rounded-full bg-white translate-x-1" />
-                        </button>
                       </div>
                     </div>
                   </div>
@@ -473,25 +574,26 @@ export default function SettingsPage() {
               {/* Security Tab */}
               {activeTab === 'security' && (
                 <>
-                  <h2 className="text-lg font-bold text-gray-900 mb-6">Security Settings</h2>
+                            <div className="bg-white rounded-2xl border border-gray-100 p-8 ">
+
+                  <h2 className="text-lg font-bold text-[#191C1E] mb-6">Security Settings</h2>
                   
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-sm font-semibold text-gray-900 mb-3">Change Password</h3>
+                      <h3 className="text-sm font-semibold text-[#191C1E] mb-3">Change Password</h3>
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Current Password</label>
+                          <label className="block text-[#505F76] text-[12px] font-medium mb-1 uppercase tracking-wider">Current Password</label>
                           <div className="relative">
                             <input 
                               type={showPasswords ? "text" : "password"}
                               value={currentPassword}
                               onChange={(e) => setCurrentPassword(e.target.value)}
-                              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 transition-all font-medium pr-10"
-                            />
+                              className="w-full px-4 py-3 bg-[#F2F4F6] rounded-[16px] text-[#191C1E] text-sm focus:outline-none focus:border-[#4F46E5] transition-colors appearance-none"                            />
                             <button
                               type="button"
                               onClick={() => setShowPasswords(!showPasswords)}
-                              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#505F76] hover:text-gray-600"
                             >
                               {showPasswords ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                             </button>
@@ -500,33 +602,31 @@ export default function SettingsPage() {
 
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">New Password</label>
+                            <label className="block text-[#505F76] text-[12px] font-medium mb-1 uppercase tracking-wider">New Password</label>
                             <input 
                               type={showPasswords ? "text" : "password"}
                               value={newPassword}
                               onChange={(e) => setNewPassword(e.target.value)}
-                              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 transition-all font-medium"
-                            />
+                              className="w-full px-4 py-3 bg-[#F2F4F6] rounded-[16px] text-[#191C1E] text-sm focus:outline-none focus:border-[#4F46E5] transition-colors appearance-none"                            />
                           </div>
                           <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Confirm New Password</label>
+                            <label className="block text-[#505F76] text-[12px] font-medium mb-1 uppercase tracking-wider">Confirm New Password</label>
                             <input 
                               type={showPasswords ? "text" : "password"}
                               value={confirmPassword}
                               onChange={(e) => setConfirmPassword(e.target.value)}
-                              className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 transition-all font-medium"
-                            />
+                              className="w-full px-4 py-3 bg-[#F2F4F6] rounded-[16px] text-[#191C1E] text-sm focus:outline-none focus:border-[#4F46E5] transition-colors appearance-none"                            />
                           </div>
                         </div>
                       </div>
                     </div>
 
                     <div className="border-t border-gray-100 pt-6">
-                      <h3 className="text-sm font-semibold text-gray-900 mb-3">Two-Factor Authentication</h3>
+                      <h3 className="text-sm font-semibold text-[#191C1E] mb-3">Two-Factor Authentication</h3>
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-medium text-gray-900">Enable 2FA</p>
-                          <p className="text-xs text-gray-500">Add an extra layer of security to your account</p>
+                          <p className="text-sm font-medium text-[#191C1E]">Enable 2FA</p>
+                          <p className="text-xs text-[#505F76]">Add an extra layer of security to your account</p>
                         </div>
                         <button
                           onClick={handleToggle2FA}
@@ -541,6 +641,7 @@ export default function SettingsPage() {
                       </div>
                     </div>
                   </div>
+                  </div>
                 </>
               )}
 
@@ -548,16 +649,31 @@ export default function SettingsPage() {
                 <button 
                   onClick={handleSave}
                   disabled={isSaving || (activeTab === 'profile' && !name.trim()) || (activeTab === 'security' && newPassword && newPassword !== confirmPassword)}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl text-sm font-semibold transition-colors shadow-md shadow-indigo-200"
+                  className="px-8 py-4 disabled:opacity-50 text-white rounded-full font-semibold transition-colors"
+                  style={{ 
+                    background: 'linear-gradient(106.83deg, #2A14B4 0%, #4338CA 100%)',
+                    fontSize: '14px',
+                    boxShadow: '0px 4px 6px -4px #6366F133, 0px 10px 15px -3px #6366F133' 
+                  }}
                 >
-                  {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : saved ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
-                  {isSaving ? 'Saving...' : saved ? 'Saved!' : 'Save Changes'}
+                  {isSaving ? (
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Saving...
+                    </div>
+                  ) : saved ? (
+                    <div className="flex items-center gap-2">
+                      <Check className="w-5 h-5" />
+                      Saved!
+                    </div>
+                  ) : (
+                    'Save Changes'
+                  )}
                 </button>
               </div>
-            </div>
+   
           </div>
         </div>
       </div>
-    </AppLayout>
   );
 }

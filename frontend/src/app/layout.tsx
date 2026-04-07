@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Cairo } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/context/AuthContext";
+import LayoutWrapper from "@/components/LayoutWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,32 +24,51 @@ export const metadata: Metadata = {
   description: "نظام إدارة الشركاء والعمولات - Affiliate Management System",
 };
 
-import { AuthProvider } from "@/context/AuthContext";
-import { cookies } from 'next/headers';
-
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const locale = cookieStore.get('NEXT_LOCALE')?.value || 'ar';
-  const dir = locale === 'ar' ? 'rtl' : 'ltr';
-  const fontFamily = locale === 'ar' ? 'var(--font-cairo)' : 'var(--font-geist-sans)';
-
   return (
     <html
-      lang={locale}
-      dir={dir}
+      lang="ar"
+      dir="rtl"
       className={`${geistSans.variable} ${geistMono.variable} ${cairo.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const locale = localStorage.getItem('NEXT_LOCALE') || 'ar';
+                  const dir = locale === 'ar' ? 'rtl' : 'ltr';
+                  document.documentElement.setAttribute('dir', dir);
+                  document.documentElement.setAttribute('lang', locale);
+                  document.documentElement.style.visibility = 'visible';
+                } catch (e) {
+                  document.documentElement.style.visibility = 'visible';
+                }
+              })();
+            `,
+          }}
+        />
+        <style dangerouslySetInnerHTML={{
+          __html: `
+            html {
+              visibility: hidden;
+            }
+          `
+        }} />
+      </head>
       <body 
         className="min-h-full flex flex-col" 
-        style={{ fontFamily }}
         suppressHydrationWarning
       >
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <LayoutWrapper>{children}</LayoutWrapper>
+        </AuthProvider>
       </body>
     </html>
   );

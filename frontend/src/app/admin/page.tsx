@@ -434,8 +434,8 @@ export default function AdminDashboard() {
       <div className="flex items-center justify-center min-h-screen bg-[#F8FAFC]">
         <div className="text-center">
           <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
-          <p className="text-gray-500">Admin privileges required.</p>
+          <h2 className="text-2xl font-bold text-[#191C1E] mb-2">Access Denied</h2>
+          <p className="text-[#505F76]">Admin privileges required.</p>
         </div>
       </div>
     );
@@ -454,7 +454,7 @@ export default function AdminDashboard() {
                   <path d="M20 0L40 10V30L20 40L0 30V10L20 0Z" fill="#4F46E5"/>
                   <path d="M20 10L30 15V25L20 30L10 25V15L20 10Z" fill="white"/>
                 </svg>
-                <span className="text-xl font-bold text-gray-900">Falak</span>
+                <span className="text-xl font-bold text-[#191C1E]">Falak</span>
               </div>
             </div>
 
@@ -463,7 +463,7 @@ export default function AdminDashboard() {
               <div className="relative">
                 <button 
                   onClick={() => setShowNotifications(!showNotifications)}
-                  className="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="relative p-2 text-[#505F76] hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   <Bell className="w-5 h-5" />
                   {notifications.length > 0 && (
@@ -474,7 +474,7 @@ export default function AdminDashboard() {
                 {showNotifications && (
                   <div className="absolute right-0 top-12 w-80 bg-[#FFFFFFCC] backdrop-blur-md rounded-xl shadow-lg border border-gray-200 z-50">
                     <div className="p-4 border-b border-gray-100">
-                      <h3 className="font-semibold text-gray-900">Notifications</h3>
+                      <h3 className="font-semibold text-[#191C1E]">Notifications</h3>
                     </div>
                     <div className="p-4 space-y-3 max-h-96 overflow-y-auto">
                       {notifications.length > 0 ? (
@@ -488,14 +488,14 @@ export default function AdminDashboard() {
                               )}
                             </div>
                             <div className="flex-1">
-                              <p className="text-sm font-medium text-gray-900">{notif.title}</p>
-                              <p className="text-xs text-gray-500">{notif.message}</p>
-                              <p className="text-xs text-gray-400 mt-1">{notif.time}</p>
+                              <p className="text-sm font-medium text-[#191C1E]">{notif.title}</p>
+                              <p className="text-xs text-[#505F76]">{notif.message}</p>
+                              <p className="text-xs text-[#505F76] mt-1">{notif.time}</p>
                             </div>
                           </div>
                         ))
                       ) : (
-                        <div className="text-center py-8 text-gray-400">
+                        <div className="text-center py-8 text-[#505F76]">
                           <Bell className="w-12 h-12 mx-auto mb-2 opacity-50" />
                           <p className="text-sm">No new notifications</p>
                         </div>
@@ -507,7 +507,7 @@ export default function AdminDashboard() {
                           setShowNotifications(false);
                           setActiveView('affiliates');
                         }}
-                        className="w-full text-sm font-medium text-indigo-600 hover:text-indigo-700"
+                        className="w-full text-sm font-medium text-[#050C9C] hover:text-[#050C9C]"
                       >
                         View all notifications
                       </button>
@@ -519,7 +519,7 @@ export default function AdminDashboard() {
               <div className="relative">
                 <button 
                   onClick={() => setShowPlatformMenu(!showPlatformMenu)}
-                  className="px-4 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-[#050C9C] bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors"
                 >
                   Platform Overview
                 </button>
@@ -528,7 +528,7 @@ export default function AdminDashboard() {
                   <div className="absolute right-0 top-12 w-72 bg-[#FFFFFFCC] backdrop-blur-md rounded-xl shadow-lg border border-gray-200 z-50">
                     {platformStats && (
                       <div className="p-4 border-b border-gray-100">
-                        <h3 className="font-semibold text-gray-900 mb-3">System Status</h3>
+                        <h3 className="font-semibold text-[#191C1E] mb-3">System Status</h3>
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">
                             <span className="text-sm text-gray-600">Status</span>
@@ -539,15 +539,15 @@ export default function AdminDashboard() {
                           </div>
                           <div className="flex items-center justify-between">
                             <span className="text-sm text-gray-600">API Health</span>
-                            <span className="text-sm font-semibold text-gray-900">{platformStats.apiHealth}</span>
+                            <span className="text-sm font-semibold text-[#191C1E]">{platformStats.apiHealth}</span>
                           </div>
                           <div className="flex items-center justify-between">
                             <span className="text-sm text-gray-600">Active Users</span>
-                            <span className="text-sm font-semibold text-gray-900">{platformStats.activeUsers}</span>
+                            <span className="text-sm font-semibold text-[#191C1E]">{platformStats.activeUsers}</span>
                           </div>
                           <div className="flex items-center justify-between">
                             <span className="text-sm text-gray-600">Total Revenue</span>
-                            <span className="text-sm font-semibold text-gray-900">${platformStats.totalRevenue?.toLocaleString() || '0'}</span>
+                            <span className="text-sm font-semibold text-[#191C1E]">${platformStats.totalRevenue?.toLocaleString() || '0'}</span>
                           </div>
                         </div>
                       </div>
@@ -589,8 +589,8 @@ export default function AdminDashboard() {
                   <span className="text-white font-semibold text-sm">{user?.name?.charAt(0) || 'A'}</span>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-semibold text-gray-900">{user?.name}</p>
-                  <p className="text-xs text-gray-500">Administrator</p>
+                  <p className="text-sm font-semibold text-[#191C1E]">{user?.name}</p>
+                  <p className="text-xs text-[#505F76]">Administrator</p>
                 </div>
               </div>
             </div>
@@ -609,8 +609,8 @@ export default function AdminDashboard() {
                 <span className="text-white font-semibold">{user?.name?.charAt(0) || 'A'}</span>
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-900">{user?.name}</p>
-                <p className="text-xs text-gray-500">Affiliate Partner</p>
+                <p className="text-sm font-semibold text-[#191C1E]">{user?.name}</p>
+                <p className="text-xs text-[#505F76]">Affiliate Partner</p>
               </div>
             </div>
 
@@ -655,12 +655,12 @@ export default function AdminDashboard() {
             </nav>
 
             {/* Generate Link Button */}
-            <button onClick={openGenerateLinkModal} className="w-full mt-8 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2">
+            <button onClick={openGenerateLinkModal} className="w-full mt-8 px-4 py-3 bg-indigo-600 hover:bg-[#050C9C] text-white rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2">
               <Plus className="w-4 h-4" />
               Generate Link
             </button>
             {generatedLink && (
-              <p className="mt-3 text-xs text-gray-500 break-all">Copied link: <a href={generatedLink} target="_blank" rel="noreferrer" className="text-indigo-600 underline">{generatedLink}</a></p>
+              <p className="mt-3 text-xs text-[#505F76] break-all">Copied link: <a href={generatedLink} target="_blank" rel="noreferrer" className="text-[#050C9C] underline">{generatedLink}</a></p>
             )}
 
             {showLinkModal && (
@@ -668,10 +668,10 @@ export default function AdminDashboard() {
                 <div className="w-full max-w-lg rounded-3xl bg-[#FFFFFFCC] backdrop-blur-md p-6 shadow-2xl">
                   <div className="flex items-center justify-between mb-4">
                     <div>
-                      <h2 className="text-xl font-bold text-gray-900">Create Affiliate Link</h2>
-                      <p className="text-sm text-gray-500">Enter a name for the new generated link.</p>
+                      <h2 className="text-xl font-bold text-[#191C1E]">Create Affiliate Link</h2>
+                      <p className="text-sm text-[#505F76]">Enter a name for the new generated link.</p>
                     </div>
-                    <button onClick={closeGenerateLinkModal} className="text-gray-400 hover:text-gray-700">
+                    <button onClick={closeGenerateLinkModal} className="text-[#505F76] hover:text-gray-700">
                       ✕
                     </button>
                   </div>
@@ -695,7 +695,7 @@ export default function AdminDashboard() {
                     <button
                       onClick={createLink}
                       disabled={isCreatingLink}
-                      className="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold disabled:opacity-50"
+                      className="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-[#050C9C] text-white text-sm font-semibold disabled:opacity-50"
                     >
                       {isCreatingLink ? 'Creating...' : 'Create Link'}
                     </button>
@@ -710,7 +710,7 @@ export default function AdminDashboard() {
                 localStorage.removeItem('token');
                 window.location.href = '/login';
               }}
-              className="w-full mt-4 px-4 py-2 text-gray-600 hover:text-gray-900 text-sm font-medium flex items-center gap-2"
+              className="w-full mt-4 px-4 py-2 text-gray-600 hover:text-[#191C1E] text-sm font-medium flex items-center gap-2"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -741,8 +741,8 @@ function NavItem({ icon, label, active, onClick }: NavItemProps) {
       onClick={onClick}
       className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
         active 
-          ? 'bg-indigo-50 text-indigo-600' 
-          : 'text-gray-600 hover:bg-[#F8FAFC] hover:text-gray-900'
+          ? 'bg-indigo-50 text-[#050C9C]' 
+          : 'text-gray-600 hover:bg-[#F8FAFC] hover:text-[#191C1E]'
       }`}
     >
       {icon}
@@ -792,7 +792,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#505F76]" />
           <input 
             type="text"
             placeholder="Search affiliates, transactions, or reports..."
@@ -800,10 +800,10 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
           />
         </div>
         <div className="flex items-center gap-3">
-          <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
+          <button className="p-2 text-[#505F76] hover:text-gray-600 hover:bg-gray-100 rounded-lg">
             <Bell className="w-5 h-5" />
           </button>
-          <button className="px-4 py-2 text-sm font-medium text-indigo-600 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg hover:bg-[#F8FAFC]">
+          <button className="px-4 py-2 text-sm font-medium text-[#050C9C] bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg hover:bg-[#F8FAFC]">
             Platform Overview
           </button>
         </div>
@@ -818,7 +818,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
               <TrendingUp className="w-5 h-5 text-blue-600" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-900 text-sm mb-1">Conversion Insight</h3>
+              <h3 className="font-semibold text-[#191C1E] text-sm mb-1">Conversion Insight</h3>
               <p className="text-sm text-gray-600">
                 Total revenue has reached ${totalRevenue.toLocaleString()}. Top performer {topPerformers[0]?.user.name} is leading with ${formatCurrency(topPerformers[0]?.total_earnings)}.
               </p>
@@ -833,7 +833,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
               <AlertTriangle className="w-5 h-5 text-red-600" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-900 text-sm mb-1">Anomaly Detected</h3>
+              <h3 className="font-semibold text-[#191C1E] text-sm mb-1">Anomaly Detected</h3>
               <p className="text-sm text-gray-600">
                 Low conversion rate detected ({((totalConversions / totalClicks) * 100).toFixed(2)}%). {totalClicks} clicks but only {totalConversions} conversions. Review your affiliate links.
               </p>
@@ -848,7 +848,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
               <Clock className="w-5 h-5 text-amber-600" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-900 text-sm mb-1">Pending Actions</h3>
+              <h3 className="font-semibold text-[#191C1E] text-sm mb-1">Pending Actions</h3>
               <p className="text-sm text-gray-600">
                 You have {affiliates.filter((a: Affiliate) => a.status === 'pending').length} affiliate{affiliates.filter((a: Affiliate) => a.status === 'pending').length > 1 ? 's' : ''} waiting for approval. 
                 <button 
@@ -869,7 +869,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
               <CheckCircle className="w-5 h-5 text-green-600" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-gray-900 text-sm mb-1">Excellent Performance</h3>
+              <h3 className="font-semibold text-[#191C1E] text-sm mb-1">Excellent Performance</h3>
               <p className="text-sm text-gray-600">
                 Your platform has generated ${totalRevenue.toLocaleString()} in revenue with {totalAffiliates} active affiliates. Keep up the great work!
               </p>
@@ -918,14 +918,14 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
         <div className="col-span-2 bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-lg font-bold text-gray-900">Revenue Performance</h3>
-              <p className="text-sm text-gray-500">Visualizing income vs conversion rates</p>
+              <h3 className="text-lg font-bold text-[#191C1E]">Revenue Performance</h3>
+              <p className="text-sm text-[#505F76]">Visualizing income vs conversion rates</p>
             </div>
             <div className="flex items-center gap-2">
               <button 
                 onClick={() => setChartPeriod('daily')}
                 className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                  chartPeriod === 'daily' ? 'text-indigo-600 bg-indigo-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  chartPeriod === 'daily' ? 'text-[#050C9C] bg-indigo-50' : 'text-gray-600 hover:text-[#191C1E] hover:bg-gray-100'
                 }`}
               >
                 Daily
@@ -933,7 +933,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
               <button 
                 onClick={() => setChartPeriod('weekly')}
                 className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                  chartPeriod === 'weekly' ? 'text-indigo-600 bg-indigo-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  chartPeriod === 'weekly' ? 'text-[#050C9C] bg-indigo-50' : 'text-gray-600 hover:text-[#191C1E] hover:bg-gray-100'
                 }`}
               >
                 Weekly
@@ -941,7 +941,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
               <button 
                 onClick={() => setChartPeriod('monthly')}
                 className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                  chartPeriod === 'monthly' ? 'text-indigo-600 bg-indigo-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  chartPeriod === 'monthly' ? 'text-[#050C9C] bg-indigo-50' : 'text-gray-600 hover:text-[#191C1E] hover:bg-gray-100'
                 }`}
               >
                 Monthly
@@ -973,7 +973,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
           {/* Pending Actions Widget */}
           <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 overflow-hidden">
             <div className="bg-red-50 border-b border-red-100 px-4 py-3 flex items-center justify-between">
-              <h3 className="font-bold text-gray-900 text-sm">Pending Actions</h3>
+              <h3 className="font-bold text-[#191C1E] text-sm">Pending Actions</h3>
               <span className="px-2 py-0.5 bg-red-600 text-white text-xs font-bold rounded">
                 {affiliates.filter((a: Affiliate) => a.status === 'pending').length} URGENT
               </span>
@@ -983,10 +983,10 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
               {affiliates.filter((a: Affiliate) => a.status === 'pending').slice(0, 2).map((aff: Affiliate) => (
                 <div key={aff.id} className="flex items-start gap-3 p-3 bg-[#F8FAFC] rounded-lg">
                   <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <UserPlus className="w-4 h-4 text-indigo-600" />
+                    <UserPlus className="w-4 h-4 text-[#050C9C]" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900 text-sm">New Application</p>
+                    <p className="font-semibold text-[#191C1E] text-sm">New Application</p>
                     <p className="text-xs text-gray-600 truncate">{aff.user.name}</p>
                   </div>
                   <div className="flex gap-1">
@@ -1013,7 +1013,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
                     <DollarSign className="w-4 h-4 text-green-600" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900 text-sm">Payout Request</p>
+                    <p className="font-semibold text-[#191C1E] text-sm">Payout Request</p>
                     <p className="text-xs text-gray-600">${formatCurrency(aff.pending_balance)} to {aff.bank_name || 'PayPal'}</p>
                   </div>
                   <div className="flex gap-1">
@@ -1029,7 +1029,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
 
               {affiliates.filter((a: Affiliate) => a.status === 'pending').length === 0 && 
                affiliates.filter((a: Affiliate) => (a.pending_balance || 0) > 50).length === 0 && (
-                <div className="text-center py-8 text-gray-400">
+                <div className="text-center py-8 text-[#505F76]">
                   <CheckCircle className="w-12 h-12 mx-auto mb-2 opacity-50" />
                   <p className="text-sm">No pending actions</p>
                 </div>
@@ -1040,8 +1040,8 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
           {/* Recent Activity Widget */}
           <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200">
             <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
-              <h3 className="font-bold text-gray-900 text-sm">Recent Activity</h3>
-              <button className="text-gray-400 hover:text-gray-600">
+              <h3 className="font-bold text-[#191C1E] text-sm">Recent Activity</h3>
+              <button className="text-[#505F76] hover:text-gray-600">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                 </svg>
@@ -1092,11 +1092,11 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
                       {activity.icon}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-gray-900 text-sm">
+                      <p className="font-semibold text-[#191C1E] text-sm">
                         {activity.title} <span className="font-normal text-gray-600">{activity.subtitle}</span>
                       </p>
                       <p className="text-xs text-gray-600">{activity.detail}</p>
-                      <p className="text-xs text-gray-400 mt-1">{activity.time}</p>
+                      <p className="text-xs text-[#505F76] mt-1">{activity.time}</p>
                     </div>
                   </div>
                 );
@@ -1109,17 +1109,17 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
       {/* Top Performing Affiliates Table */}
       <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold text-gray-900">Top Performing Affiliates</h3>
+          <h3 className="text-lg font-bold text-[#191C1E]">Top Performing Affiliates</h3>
           <button 
             onClick={() => setActiveView('affiliates')}
-            className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
+            className="text-sm font-medium text-[#050C9C] hover:text-[#050C9C]"
           >
             View All
           </button>
         </div>
         
         {/* Table Header */}
-        <div className="grid grid-cols-6 gap-4 pb-3 border-b border-gray-100 text-xs font-semibold text-gray-500 uppercase">
+        <div className="grid grid-cols-6 gap-4 pb-3 border-b border-gray-100 text-xs font-semibold text-[#505F76] uppercase">
           <div>AFFILIATE</div>
           <div className="text-center">CLICKS</div>
           <div className="text-center">CONVERSIONS</div>
@@ -1149,29 +1149,29 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
                     {aff.user.name.charAt(0)}
                   </div>
                   <div className="min-w-0">
-                    <p className="font-semibold text-gray-900 text-sm truncate">{aff.user.name}</p>
-                    <p className="text-xs text-gray-500 truncate">{aff.user.email.split('@')[0]}</p>
+                    <p className="font-semibold text-[#191C1E] text-sm truncate">{aff.user.name}</p>
+                    <p className="text-xs text-[#505F76] truncate">{aff.user.email.split('@')[0]}</p>
                   </div>
                 </div>
                 
                 {/* Clicks */}
                 <div className="text-center">
-                  <p className="font-semibold text-gray-900">{clicks.toLocaleString()}</p>
+                  <p className="font-semibold text-[#191C1E]">{clicks.toLocaleString()}</p>
                 </div>
                 
                 {/* Conversions */}
                 <div className="text-center">
-                  <p className="font-semibold text-gray-900">{conversions}</p>
+                  <p className="font-semibold text-[#191C1E]">{conversions}</p>
                 </div>
                 
                 {/* Revenue */}
                 <div className="text-center">
-                  <p className="font-semibold text-gray-900">${revenue.toLocaleString()}</p>
+                  <p className="font-semibold text-[#191C1E]">${revenue.toLocaleString()}</p>
                 </div>
                 
                 {/* Commission */}
                 <div className="text-center">
-                  <p className="font-semibold text-indigo-600">${formatCurrency(commission)}</p>
+                  <p className="font-semibold text-[#050C9C]">${formatCurrency(commission)}</p>
                 </div>
                 
                 {/* CVR */}
@@ -1189,7 +1189,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
           })}
           
           {topPerformers.length === 0 && (
-            <div className="text-center py-8 text-gray-400">
+            <div className="text-center py-8 text-[#505F76]">
               <Users className="w-12 h-12 mx-auto mb-2 opacity-50" />
               <p className="text-sm">No affiliates yet</p>
             </div>
@@ -1200,8 +1200,8 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
       {/* Recent Activity */}
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-bold text-gray-900">Recent Activity</h3>
-            <button className="p-1 text-gray-400 hover:text-gray-600">
+            <h3 className="text-lg font-bold text-[#191C1E]">Recent Activity</h3>
+            <button className="p-1 text-[#505F76] hover:text-gray-600">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
               </svg>
@@ -1248,15 +1248,15 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
       <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">SYSTEM INVITE CODE</p>
-            <p className="text-2xl font-mono font-bold text-gray-900">STRATUM-ADMIN-2024-XQ92</p>
+            <p className="text-sm font-semibold text-[#505F76] uppercase tracking-wider mb-1">SYSTEM INVITE CODE</p>
+            <p className="text-2xl font-mono font-bold text-[#191C1E]">STRATUM-ADMIN-2024-XQ92</p>
           </div>
           <button 
             onClick={() => {
               navigator.clipboard.writeText('STRATUM-ADMIN-2024-XQ92');
               alert('Invite code copied to clipboard!');
             }}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold text-sm"
+            className="px-4 py-2 bg-indigo-600 hover:bg-[#050C9C] text-white rounded-lg font-semibold text-sm"
           >
             COPY
           </button>
@@ -1269,9 +1269,9 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
 function StatCard({ label, value, change, trend }: StatCardProps) {
   return (
     <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
-      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">{label}</p>
+      <p className="text-xs font-semibold text-[#505F76] uppercase tracking-wider mb-2">{label}</p>
       <div className="flex items-end justify-between">
-        <p className="text-2xl font-bold text-gray-900">{value}</p>
+        <p className="text-2xl font-bold text-[#191C1E]">{value}</p>
         <span className={`text-xs font-semibold ${trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
           {change}
         </span>
@@ -1292,9 +1292,9 @@ function ActivityItem({ icon, title, subtitle, detail, time, iconBg }: ActivityI
         {icon}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="font-semibold text-gray-900 text-sm">{title} <span className="font-normal text-gray-600">{subtitle}</span></p>
+        <p className="font-semibold text-[#191C1E] text-sm">{title} <span className="font-normal text-gray-600">{subtitle}</span></p>
         {detail && <p className="text-sm text-gray-600">{detail}</p>}
-        <p className="text-xs text-gray-400 mt-1">{time}</p>
+        <p className="text-xs text-[#505F76] mt-1">{time}</p>
       </div>
     </div>
   );
@@ -1368,8 +1368,8 @@ function AnalyticsView({ summary, clickStats, affiliates, exportCSV }: Analytics
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Reports</h1>
-          <p className="text-sm text-gray-500">Analyze platform performance and affiliate insights</p>
+          <h1 className="text-2xl font-bold text-[#191C1E]">Reports</h1>
+          <p className="text-sm text-[#505F76]">Analyze platform performance and affiliate insights</p>
         </div>
         <div className="flex items-center gap-3">
           <select className="px-4 py-2 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg text-sm font-medium">
@@ -1379,7 +1379,7 @@ function AnalyticsView({ summary, clickStats, affiliates, exportCSV }: Analytics
           </select>
           <button 
             onClick={exportCSV}
-            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold text-sm flex items-center gap-2"
+            className="px-4 py-2 bg-indigo-600 hover:bg-[#050C9C] text-white rounded-lg font-semibold text-sm flex items-center gap-2"
           >
             <Download className="w-4 h-4" />
             Export CSV
@@ -1401,8 +1401,8 @@ function AnalyticsView({ summary, clickStats, affiliates, exportCSV }: Analytics
         <div className="col-span-2 bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-lg font-bold text-gray-900">Revenue Performance</h3>
-              <p className="text-sm text-gray-500">Historical trend & 6-wk forecasts</p>
+              <h3 className="text-lg font-bold text-[#191C1E]">Revenue Performance</h3>
+              <p className="text-sm text-[#505F76]">Historical trend & 6-wk forecasts</p>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 bg-indigo-600 rounded-full"></div>
@@ -1426,8 +1426,8 @@ function AnalyticsView({ summary, clickStats, affiliates, exportCSV }: Analytics
         {/* Smart Insights */}
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-6">
-            <TrendingUp className="w-5 h-5 text-indigo-600" />
-            <h3 className="text-lg font-bold text-gray-900">Smart Insights</h3>
+            <TrendingUp className="w-5 h-5 text-[#050C9C]" />
+            <h3 className="text-lg font-bold text-[#191C1E]">Smart Insights</h3>
           </div>
           
           <div className="space-y-4">
@@ -1454,11 +1454,11 @@ function AnalyticsView({ summary, clickStats, affiliates, exportCSV }: Analytics
       <div className="grid grid-cols-2 gap-6">
         {/* Affiliate Performance Table */}
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-6">Affiliate Performance</h3>
-          <p className="text-sm text-gray-500 mb-4">Top performing partners ranked by revenue</p>
+          <h3 className="text-lg font-bold text-[#191C1E] mb-6">Affiliate Performance</h3>
+          <p className="text-sm text-[#505F76] mb-4">Top performing partners ranked by revenue</p>
           
           <div className="space-y-3">
-            <div className="grid grid-cols-5 gap-4 text-xs font-semibold text-gray-500 uppercase pb-2 border-b border-gray-100">
+            <div className="grid grid-cols-5 gap-4 text-xs font-semibold text-[#505F76] uppercase pb-2 border-b border-gray-100">
               <div>AFFILIATE</div>
               <div className="text-center">CLICKS</div>
               <div className="text-center">CONVERSIONS</div>
@@ -1487,8 +1487,8 @@ function AnalyticsView({ summary, clickStats, affiliates, exportCSV }: Analytics
 
         {/* Geographic Insights */}
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-6">Geographic Insights</h3>
-          <p className="text-sm text-gray-500 mb-6">Revenue distribution by region</p>
+          <h3 className="text-lg font-bold text-[#191C1E] mb-6">Geographic Insights</h3>
+          <p className="text-sm text-[#505F76] mb-6">Revenue distribution by region</p>
           
           {/* Map Placeholder */}
           <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl h-48 mb-6 flex items-center justify-center relative overflow-hidden">
@@ -1507,7 +1507,7 @@ function AnalyticsView({ summary, clickStats, affiliates, exportCSV }: Analytics
                     <div className={`w-2 h-2 ${bgClass} rounded-full`}></div>
                     <span className="text-sm font-medium text-gray-700">{item.region}</span>
                   </div>
-                  <span className="text-sm font-bold text-gray-900">{item.count.toLocaleString()} clicks</span>
+                  <span className="text-sm font-bold text-[#191C1E]">{item.count.toLocaleString()} clicks</span>
                 </div>
               );
             })}
@@ -1518,8 +1518,8 @@ function AnalyticsView({ summary, clickStats, affiliates, exportCSV }: Analytics
       {/* Traffic Sources & Device Distribution */}
       <div className="grid grid-cols-2 gap-6">
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-6">Traffic Sources</h3>
-          <p className="text-sm text-gray-500 mb-6">Click volume by referral channel</p>
+          <h3 className="text-lg font-bold text-[#191C1E] mb-6">Traffic Sources</h3>
+          <p className="text-sm text-[#505F76] mb-6">Click volume by referral channel</p>
           
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
@@ -1533,8 +1533,8 @@ function AnalyticsView({ summary, clickStats, affiliates, exportCSV }: Analytics
         </div>
 
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-6">Device Distribution</h3>
-          <p className="text-sm text-gray-500 mb-6">User traffic by device type</p>
+          <h3 className="text-lg font-bold text-[#191C1E] mb-6">Device Distribution</h3>
+          <p className="text-sm text-[#505F76] mb-6">User traffic by device type</p>
           
           <div className="space-y-4">
             {chartDeviceData.map((device, idx) => (
@@ -1543,7 +1543,7 @@ function AnalyticsView({ summary, clickStats, affiliates, exportCSV }: Analytics
                   <div className="w-2 h-2 rounded-full" style={{ backgroundColor: device.color }}></div>
                   <span className="text-sm font-medium text-gray-700">{device.name}</span>
                 </div>
-                <span className="text-sm font-bold text-gray-900">{device.count.toLocaleString()}</span>
+                <span className="text-sm font-bold text-[#191C1E]">{device.count.toLocaleString()}</span>
               </div>
             ))}
           </div>
@@ -1556,9 +1556,9 @@ function AnalyticsView({ summary, clickStats, affiliates, exportCSV }: Analytics
 function MetricCard({ label, value, change }: MetricCardProps) {
   return (
     <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
-      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">{label}</p>
+      <p className="text-xs font-semibold text-[#505F76] uppercase tracking-wider mb-2">{label}</p>
       <div className="flex items-end justify-between">
-        <p className="text-2xl font-bold text-gray-900">{value}</p>
+        <p className="text-2xl font-bold text-[#191C1E]">{value}</p>
         <span className="text-xs font-semibold text-green-600">{change}</span>
       </div>
     </div>
@@ -1572,8 +1572,8 @@ function InsightItem({ icon, text, subtext }: InsightItemProps) {
         {icon}
       </div>
       <div>
-        <p className="text-sm font-semibold text-gray-900">{text}</p>
-        <p className="text-xs text-gray-500 mt-1">{subtext}</p>
+        <p className="text-sm font-semibold text-[#191C1E]">{text}</p>
+        <p className="text-xs text-[#505F76] mt-1">{subtext}</p>
       </div>
     </div>
   );
@@ -1586,11 +1586,11 @@ function AffiliateRow({ name, clicks, conversions, revenue, cvr }: AffiliateRowP
         <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center">
           <span className="text-white font-semibold text-xs">{name.charAt(0)}</span>
         </div>
-        <span className="text-sm font-medium text-gray-900">{name}</span>
+        <span className="text-sm font-medium text-[#191C1E]">{name}</span>
       </div>
       <div className="text-center text-sm text-gray-600">{clicks}</div>
       <div className="text-center text-sm text-gray-600">{conversions}</div>
-      <div className="text-center text-sm font-semibold text-gray-900">{revenue}</div>
+      <div className="text-center text-sm font-semibold text-[#191C1E]">{revenue}</div>
       <div className="text-center text-sm font-semibold text-emerald-600">{cvr}</div>
     </div>
   );
@@ -1635,7 +1635,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#505F76]" />
           <input 
             type="text"
             placeholder="Search by name or email..."
@@ -1646,7 +1646,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
         </div>
         <button
           onClick={fetchData}
-          className="ml-4 px-4 py-2 text-sm font-semibold text-indigo-600 bg-indigo-50 rounded-lg hover:bg-indigo-100"
+          className="ml-4 px-4 py-2 text-sm font-semibold text-[#050C9C] bg-indigo-50 rounded-lg hover:bg-indigo-100"
         >
           Refresh
         </button>
@@ -1657,12 +1657,12 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-              <Users className="w-5 h-5 text-indigo-600" />
+              <Users className="w-5 h-5 text-[#050C9C]" />
             </div>
             <span className="text-xs font-semibold text-green-600">+12%</span>
           </div>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">TOTAL AFFILIATES</p>
-          <p className="text-2xl font-bold text-gray-900">{stats.total.toLocaleString()}</p>
+          <p className="text-xs font-semibold text-[#505F76] uppercase tracking-wider mb-1">TOTAL AFFILIATES</p>
+          <p className="text-2xl font-bold text-[#191C1E]">{stats.total.toLocaleString()}</p>
         </div>
 
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
@@ -1672,8 +1672,8 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
             </div>
             <span className="text-xs font-semibold text-green-600">+8.4%</span>
           </div>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">ACTIVE NOW</p>
-          <p className="text-2xl font-bold text-gray-900">{stats.active}</p>
+          <p className="text-xs font-semibold text-[#505F76] uppercase tracking-wider mb-1">ACTIVE NOW</p>
+          <p className="text-2xl font-bold text-[#191C1E]">{stats.active}</p>
         </div>
 
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
@@ -1682,8 +1682,8 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
               <Clock className="w-5 h-5 text-amber-600" />
             </div>
           </div>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">PENDING APPROVAL</p>
-          <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
+          <p className="text-xs font-semibold text-[#505F76] uppercase tracking-wider mb-1">PENDING APPROVAL</p>
+          <p className="text-2xl font-bold text-[#191C1E]">{stats.pending}</p>
         </div>
 
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
@@ -1692,8 +1692,8 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
               <XCircle className="w-5 h-5 text-red-600" />
             </div>
           </div>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">BLOCKED ACCOUNTS</p>
-          <p className="text-2xl font-bold text-gray-900">{stats.blocked}</p>
+          <p className="text-xs font-semibold text-[#505F76] uppercase tracking-wider mb-1">BLOCKED ACCOUNTS</p>
+          <p className="text-2xl font-bold text-[#191C1E]">{stats.blocked}</p>
         </div>
       </div>
 
@@ -1737,7 +1737,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
           </div>
 
           <div className="flex items-center gap-2">
-            <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
+            <button className="p-2 text-[#505F76] hover:text-gray-600 hover:bg-gray-100 rounded-lg">
               <Filter className="w-5 h-5" />
             </button>
             <select
@@ -1757,10 +1757,10 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-100">
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">AFFILIATE</th>
-                <th className="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">CONVERSIONS</th>
-                <th className="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">REVENUE</th>
-                <th className="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">STATUS</th>
+                <th className="px-6 py-4 text-left text-xs font-semibold text-[#505F76] uppercase tracking-wider">AFFILIATE</th>
+                <th className="px-6 py-4 text-center text-xs font-semibold text-[#505F76] uppercase tracking-wider">CONVERSIONS</th>
+                <th className="px-6 py-4 text-center text-xs font-semibold text-[#505F76] uppercase tracking-wider">REVENUE</th>
+                <th className="px-6 py-4 text-center text-xs font-semibold text-[#505F76] uppercase tracking-wider">STATUS</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -1772,19 +1772,19 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
                         <span className="text-white font-semibold text-sm">{aff.user.name.charAt(0)}</span>
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-900 text-sm">{aff.user.name}</p>
-                        <p className="text-xs text-gray-500">{aff.user.email}</p>
+                        <p className="font-semibold text-[#191C1E] text-sm">{aff.user.name}</p>
+                        <p className="text-xs text-[#505F76]">{aff.user.email}</p>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-center">
                     <div>
-                      <p className="font-bold text-gray-900">{aff.sales_count || 0}</p>
+                      <p className="font-bold text-[#191C1E]">{aff.sales_count || 0}</p>
                       <p className="text-xs text-green-600">+{aff.clicks_count || 0}%</p>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-center">
-                    <p className="font-bold text-gray-900">${formatCurrency(aff.total_earnings)}</p>
+                    <p className="font-bold text-[#191C1E]">${formatCurrency(aff.total_earnings)}</p>
                   </td>
                   <td className="px-6 py-4 text-center">
                     <div className="space-y-2">
@@ -1825,7 +1825,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
 
         {/* Pagination */}
         <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
-          <p className="text-sm text-gray-500">Showing {paginatedAffiliates.length} of {filteredAffiliates.length} affiliates</p>
+          <p className="text-sm text-[#505F76]">Showing {paginatedAffiliates.length} of {filteredAffiliates.length} affiliates</p>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setPage((prev) => Math.max(1, prev - 1))}
@@ -1846,8 +1846,8 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
         {/* Top Performers */}
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-bold text-gray-900">Top Performers</h3>
-            <button className="text-sm font-medium text-indigo-600 hover:text-indigo-700">This Month</button>
+            <h3 className="text-lg font-bold text-[#191C1E]">Top Performers</h3>
+            <button className="text-sm font-medium text-[#050C9C] hover:text-[#050C9C]">This Month</button>
           </div>
           
           <div className="space-y-4">
@@ -1862,11 +1862,11 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
                   <span className="text-white font-semibold text-sm">{aff.user.name.charAt(0)}</span>
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-gray-900 text-sm">{aff.user.name}</p>
-                  <p className="text-xs text-gray-500">{aff.user.email.split('@')[0]}</p>
+                  <p className="font-semibold text-[#191C1E] text-sm">{aff.user.name}</p>
+                  <p className="text-xs text-[#505F76]">{aff.user.email.split('@')[0]}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-gray-900">${formatCurrency(aff.total_earnings)}</p>
+                  <p className="font-bold text-[#191C1E]">${formatCurrency(aff.total_earnings)}</p>
                   <div className="w-20 h-1 bg-gray-100 rounded-full mt-1">
                     <div className="h-full bg-indigo-600 rounded-full" style={{ width: '70%' }}></div>
                   </div>
@@ -1875,7 +1875,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
             ))}
           </div>
           
-          <button className="w-full mt-4 py-2 text-sm font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
+          <button className="w-full mt-4 py-2 text-sm font-medium text-[#050C9C] hover:bg-indigo-50 rounded-lg transition-colors">
             View All Rankings
           </button>
         </div>
@@ -1884,7 +1884,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
-              <h3 className="text-lg font-bold text-gray-900">Pending Approvals</h3>
+              <h3 className="text-lg font-bold text-[#191C1E]">Pending Approvals</h3>
               <span className="px-2 py-0.5 bg-indigo-600 text-white text-xs font-bold rounded-full">18</span>
             </div>
           </div>
@@ -1893,14 +1893,14 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
             <div className="flex items-center justify-between p-4 bg-[#F8FAFC] rounded-xl">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
-                  <Shield className="w-5 h-5 text-indigo-600" />
+                  <Shield className="w-5 h-5 text-[#050C9C]" />
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900 text-sm">Digital Nomad Agency</p>
-                  <p className="text-xs text-gray-500">Joined 2h ago</p>
+                  <p className="font-semibold text-[#191C1E] text-sm">Digital Nomad Agency</p>
+                  <p className="text-xs text-[#505F76]">Joined 2h ago</p>
                 </div>
               </div>
-              <button className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold text-sm">
+              <button className="px-4 py-2 bg-indigo-600 hover:bg-[#050C9C] text-white rounded-lg font-semibold text-sm">
                 APPROVE
               </button>
             </div>
@@ -1908,14 +1908,14 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
             <div className="flex items-center justify-between p-4 bg-[#F8FAFC] rounded-xl">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
-                  <Shield className="w-5 h-5 text-indigo-600" />
+                  <Shield className="w-5 h-5 text-[#050C9C]" />
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900 text-sm">Alex Thompson</p>
-                  <p className="text-xs text-gray-500">Joined 5h ago</p>
+                  <p className="font-semibold text-[#191C1E] text-sm">Alex Thompson</p>
+                  <p className="text-xs text-[#505F76]">Joined 5h ago</p>
                 </div>
               </div>
-              <button className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold text-sm">
+              <button className="px-4 py-2 bg-indigo-600 hover:bg-[#050C9C] text-white rounded-lg font-semibold text-sm">
                 APPROVE
               </button>
             </div>
@@ -1930,7 +1930,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
             <h3 className="text-2xl font-bold mb-2">Review Network Health Performance</h3>
             <p className="text-gray-300">Our algorithm identifies low-quality traffic patterns automatically.</p>
           </div>
-          <button className="px-6 py-3 bg-[#FFFFFFCC] backdrop-blur-md text-gray-900 rounded-xl font-bold hover:bg-gray-100 transition-colors">
+          <button className="px-6 py-3 bg-[#FFFFFFCC] backdrop-blur-md text-[#191C1E] rounded-xl font-bold hover:bg-gray-100 transition-colors">
             RUN AUDIT
           </button>
         </div>
@@ -2049,8 +2049,8 @@ function CommissionsView() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Commissions Management</h1>
-          <p className="text-sm text-gray-500">Search orders, affiliates or payout IDs...</p>
+          <h1 className="text-2xl font-bold text-[#191C1E]">Commissions Management</h1>
+          <p className="text-sm text-[#505F76]">Search orders, affiliates or payout IDs...</p>
         </div>
       </div>
 
@@ -2059,12 +2059,12 @@ function CommissionsView() {
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
           <div className="flex items-center gap-2 mb-3">
             <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-              <DollarSign className="w-5 h-5 text-indigo-600" />
+              <DollarSign className="w-5 h-5 text-[#050C9C]" />
             </div>
             <span className="text-xs font-semibold text-green-600">+12.5%</span>
           </div>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">TOTAL COMMISSIONS</p>
-          <p className="text-2xl font-bold text-gray-900">${(commissionsSummary?.total_commissions || 0).toLocaleString()}</p>
+          <p className="text-xs font-semibold text-[#505F76] uppercase tracking-wider mb-1">TOTAL COMMISSIONS</p>
+          <p className="text-2xl font-bold text-[#191C1E]">${(commissionsSummary?.total_commissions || 0).toLocaleString()}</p>
         </div>
 
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
@@ -2074,8 +2074,8 @@ function CommissionsView() {
             </div>
             <span className="text-xs font-semibold text-amber-600">+4.2%</span>
           </div>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">PENDING</p>
-          <p className="text-2xl font-bold text-gray-900">${(commissionsSummary?.pending || 0).toLocaleString()}</p>
+          <p className="text-xs font-semibold text-[#505F76] uppercase tracking-wider mb-1">PENDING</p>
+          <p className="text-2xl font-bold text-[#191C1E]">${(commissionsSummary?.pending || 0).toLocaleString()}</p>
         </div>
 
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
@@ -2085,8 +2085,8 @@ function CommissionsView() {
             </div>
             <span className="text-xs font-semibold text-green-600">+8.1%</span>
           </div>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">APPROVED</p>
-          <p className="text-2xl font-bold text-gray-900">${(commissionsSummary?.approved || 0).toLocaleString()}</p>
+          <p className="text-xs font-semibold text-[#505F76] uppercase tracking-wider mb-1">APPROVED</p>
+          <p className="text-2xl font-bold text-[#191C1E]">${(commissionsSummary?.approved || 0).toLocaleString()}</p>
         </div>
 
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
@@ -2094,10 +2094,10 @@ function CommissionsView() {
             <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-emerald-600" />
             </div>
-            <span className="text-xs font-semibold text-gray-500">0.0%</span>
+            <span className="text-xs font-semibold text-[#505F76]">0.0%</span>
           </div>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">PAID</p>
-          <p className="text-2xl font-bold text-gray-900">${(commissionsSummary?.paid || 0).toLocaleString()}</p>
+          <p className="text-xs font-semibold text-[#505F76] uppercase tracking-wider mb-1">PAID</p>
+          <p className="text-2xl font-bold text-[#191C1E]">${(commissionsSummary?.paid || 0).toLocaleString()}</p>
         </div>
       </div>
 
@@ -2106,25 +2106,25 @@ function CommissionsView() {
         <div className="col-span-2 bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h3 className="text-lg font-bold text-gray-900">Commission Performance</h3>
-              <p className="text-sm text-gray-500">Historical trend of net earnings</p>
+              <h3 className="text-lg font-bold text-[#191C1E]">Commission Performance</h3>
+              <p className="text-sm text-[#505F76]">Historical trend of net earnings</p>
             </div>
             <div className="flex items-center gap-2">
               <button 
                 onClick={() => setPeriod('daily')}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg ${period === 'daily' ? 'bg-indigo-50 text-indigo-600' : 'text-gray-600 hover:bg-gray-100'}`}
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg ${period === 'daily' ? 'bg-indigo-50 text-[#050C9C]' : 'text-gray-600 hover:bg-gray-100'}`}
               >
                 Daily
               </button>
               <button 
                 onClick={() => setPeriod('weekly')}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg ${period === 'weekly' ? 'bg-indigo-50 text-indigo-600' : 'text-gray-600 hover:bg-gray-100'}`}
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg ${period === 'weekly' ? 'bg-indigo-50 text-[#050C9C]' : 'text-gray-600 hover:bg-gray-100'}`}
               >
                 Weekly
               </button>
               <button 
                 onClick={() => setPeriod('monthly')}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg ${period === 'monthly' ? 'bg-indigo-50 text-indigo-600' : 'text-gray-600 hover:bg-gray-100'}`}
+                className={`px-3 py-1.5 text-xs font-medium rounded-lg ${period === 'monthly' ? 'bg-indigo-50 text-[#050C9C]' : 'text-gray-600 hover:bg-gray-100'}`}
               >
                 Monthly
               </button>
@@ -2163,14 +2163,14 @@ function CommissionsView() {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
             <Clock className="w-5 h-5 text-amber-600" />
-            <h3 className="text-lg font-bold text-gray-900">Pending Approvals</h3>
+            <h3 className="text-lg font-bold text-[#191C1E]">Pending Approvals</h3>
             <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs font-bold rounded-full">{pendingCommissions.length} NEW</span>
           </div>
-          <button onClick={reviewAllPending} className="text-sm font-medium text-indigo-600 hover:text-indigo-700">Review All</button>
+          <button onClick={reviewAllPending} className="text-sm font-medium text-[#050C9C] hover:text-[#050C9C]">Review All</button>
         </div>
 
         <div className="space-y-3">
-          <div className="grid grid-cols-6 gap-4 text-xs font-semibold text-gray-500 uppercase pb-2 border-b border-gray-100">
+          <div className="grid grid-cols-6 gap-4 text-xs font-semibold text-[#505F76] uppercase pb-2 border-b border-gray-100">
             <div>AFFILIATE</div>
             <div>SOURCE</div>
             <div>AMOUNT</div>
@@ -2193,7 +2193,7 @@ function CommissionsView() {
           ))}
           
           {pendingCommissions.length === 0 && (
-            <div className="text-center py-8 text-gray-400">
+            <div className="text-center py-8 text-[#505F76]">
               <CheckCircle className="w-12 h-12 mx-auto mb-2" />
               <p className="text-sm">No pending commissions</p>
             </div>
@@ -2204,7 +2204,7 @@ function CommissionsView() {
       {/* All Commissions Table */}
       <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold text-gray-900">All Commissions</h3>
+          <h3 className="text-lg font-bold text-[#191C1E]">All Commissions</h3>
           <div className="flex items-center gap-3">
             <select 
               value={statusFilter}
@@ -2228,14 +2228,14 @@ function CommissionsView() {
               <option value="7">Last 7 Days</option>
               <option value="90">Last 90 Days</option>
             </select>
-            <button onClick={exportCommissionsCSV} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold text-sm">
+            <button onClick={exportCommissionsCSV} className="px-4 py-2 bg-indigo-600 hover:bg-[#050C9C] text-white rounded-lg font-semibold text-sm">
               Export CSV
             </button>
           </div>
         </div>
 
         <div className="space-y-3">
-          <div className="grid grid-cols-7 gap-4 text-xs font-semibold text-gray-500 uppercase pb-2 border-b border-gray-100">
+          <div className="grid grid-cols-7 gap-4 text-xs font-semibold text-[#505F76] uppercase pb-2 border-b border-gray-100">
             <div>DATE</div>
             <div>AFFILIATE</div>
             <div>REFERRAL ID</div>
@@ -2259,7 +2259,7 @@ function CommissionsView() {
           ))}
           
           {filteredCommissions.length === 0 && (
-            <div className="text-center py-8 text-gray-400">
+            <div className="text-center py-8 text-[#505F76]">
               <p className="text-sm">No commissions found</p>
             </div>
           )}
@@ -2270,7 +2270,7 @@ function CommissionsView() {
           <button
             onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
             disabled={currentPage <= 1}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg disabled:opacity-50"
+            className="p-2 text-[#505F76] hover:text-gray-600 hover:bg-gray-100 rounded-lg disabled:opacity-50"
           >
             <ChevronRight className="w-4 h-4 rotate-180" />
           </button>
@@ -2286,7 +2286,7 @@ function CommissionsView() {
           <button
             onClick={() => setCurrentPage((prev) => Math.min(pageCount, prev + 1))}
             disabled={currentPage >= pageCount}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg disabled:opacity-50"
+            className="p-2 text-[#505F76] hover:text-gray-600 hover:bg-gray-100 rounded-lg disabled:opacity-50"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -2299,9 +2299,9 @@ function CommissionsView() {
 function CommissionRow({ name, source, amount, date, status, onApprove, onReject }: CommissionRowProps) {
   return (
     <div className="grid grid-cols-6 gap-4 py-3 border-b border-gray-50 last:border-0">
-      <div className="text-sm font-medium text-gray-900">{name}</div>
+      <div className="text-sm font-medium text-[#191C1E]">{name}</div>
       <div className="text-sm text-gray-600">{source}</div>
-      <div className="text-sm font-semibold text-gray-900">{amount}</div>
+      <div className="text-sm font-semibold text-[#191C1E]">{amount}</div>
       <div className="text-sm text-gray-600">{date}</div>
       <div>
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
@@ -2328,10 +2328,10 @@ function AllCommissionRow({ date, affiliate, referralId, revenue, commission, st
   return (
     <div className="grid grid-cols-7 gap-4 py-3 border-b border-gray-50 last:border-0">
       <div className="text-sm text-gray-600">{date}</div>
-      <div className="text-sm font-medium text-gray-900">{affiliate}</div>
+      <div className="text-sm font-medium text-[#191C1E]">{affiliate}</div>
       <div className="text-sm text-gray-600">{referralId}</div>
-      <div className="text-sm font-semibold text-gray-900">{revenue}</div>
-      <div className="text-sm font-bold text-indigo-600">{commission}</div>
+      <div className="text-sm font-semibold text-[#191C1E]">{revenue}</div>
+      <div className="text-sm font-bold text-[#050C9C]">{commission}</div>
       <div>
         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
           status === 'APPROVED' ? 'bg-green-100 text-green-800' :
@@ -2442,8 +2442,8 @@ function PayoutsView() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Payouts</h1>
-          <p className="text-sm text-gray-500">Manage affiliate payments and payout requests</p>
+          <h1 className="text-2xl font-bold text-[#191C1E]">Payouts</h1>
+          <p className="text-sm text-[#505F76]">Manage affiliate payments and payout requests</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2 px-4 py-2 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg text-sm font-medium text-gray-700">
@@ -2483,8 +2483,8 @@ function PayoutsView() {
       {/* Stats Cards */}
       <div className="grid grid-cols-4 gap-4">
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">AVAILABLE BALANCE</p>
-          <p className="text-2xl font-bold text-gray-900">${(payoutsSummary?.available_balance || 0).toLocaleString()}</p>
+          <p className="text-xs font-semibold text-[#505F76] uppercase tracking-wider mb-2">AVAILABLE BALANCE</p>
+          <p className="text-2xl font-bold text-[#191C1E]">${(payoutsSummary?.available_balance || 0).toLocaleString()}</p>
           <div className="flex items-center gap-1 mt-2">
             <TrendingUp className="w-3 h-3 text-green-600" />
             <span className="text-xs font-semibold text-green-600">12% increase</span>
@@ -2492,17 +2492,17 @@ function PayoutsView() {
         </div>
 
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">TOTAL PAID (MTD)</p>
-          <p className="text-2xl font-bold text-gray-900">${(payoutsSummary?.total_paid || 0).toLocaleString()}</p>
+          <p className="text-xs font-semibold text-[#505F76] uppercase tracking-wider mb-2">TOTAL PAID (MTD)</p>
+          <p className="text-2xl font-bold text-[#191C1E]">${(payoutsSummary?.total_paid || 0).toLocaleString()}</p>
           <div className="flex items-center gap-1 mt-2">
-            <Clock className="w-3 h-3 text-gray-400" />
-            <span className="text-xs text-gray-500">Last payment 2h ago</span>
+            <Clock className="w-3 h-3 text-[#505F76]" />
+            <span className="text-xs text-[#505F76]">Last payment 2h ago</span>
           </div>
         </div>
 
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">PENDING PAYOUTS</p>
-          <p className="text-2xl font-bold text-gray-900">${(payoutsSummary?.pending_payouts || 0).toLocaleString()}</p>
+          <p className="text-xs font-semibold text-[#505F76] uppercase tracking-wider mb-2">PENDING PAYOUTS</p>
+          <p className="text-2xl font-bold text-[#191C1E]">${(payoutsSummary?.pending_payouts || 0).toLocaleString()}</p>
           <div className="flex items-center gap-1 mt-2">
             <Clock className="w-3 h-3 text-amber-600" />
             <span className="text-xs font-semibold text-amber-600">{pendingPayouts.length} Requests</span>
@@ -2510,7 +2510,7 @@ function PayoutsView() {
         </div>
 
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">FAILED PAYOUTS</p>
+          <p className="text-xs font-semibold text-[#505F76] uppercase tracking-wider mb-2">FAILED PAYOUTS</p>
           <p className="text-2xl font-bold text-red-600">${(payoutsSummary?.failed_payouts || 0).toLocaleString()}</p>
           <div className="flex items-center gap-1 mt-2">
             <XCircle className="w-3 h-3 text-red-600" />
@@ -2524,15 +2524,15 @@ function PayoutsView() {
         {/* Pending Requests */}
         <div className="col-span-2 bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-bold text-gray-900">Pending Payout Requests</h3>
-            <button onClick={bulkApprovePending} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold text-sm">
+            <h3 className="text-lg font-bold text-[#191C1E]">Pending Payout Requests</h3>
+            <button onClick={bulkApprovePending} className="px-4 py-2 bg-indigo-600 hover:bg-[#050C9C] text-white rounded-lg font-semibold text-sm">
               BULK APPROVE
             </button>
           </div>
-          <p className="text-sm text-gray-500 mb-6">Review and approve pending transactions</p>
+          <p className="text-sm text-[#505F76] mb-6">Review and approve pending transactions</p>
 
           <div className="space-y-3">
-            <div className="grid grid-cols-5 gap-4 text-xs font-semibold text-gray-500 uppercase pb-2 border-b border-gray-100">
+            <div className="grid grid-cols-5 gap-4 text-xs font-semibold text-[#505F76] uppercase pb-2 border-b border-gray-100">
               <div>AFFILIATE</div>
               <div>REQUESTED AMOUNT</div>
               <div>METHOD</div>
@@ -2554,7 +2554,7 @@ function PayoutsView() {
             ))}
             
             {pendingPayouts.length === 0 && (
-              <div className="text-center py-8 text-gray-400">
+              <div className="text-center py-8 text-[#505F76]">
                 <CheckCircle className="w-12 h-12 mx-auto mb-2" />
                 <p className="text-sm">No pending payout requests</p>
               </div>
@@ -2562,7 +2562,7 @@ function PayoutsView() {
           </div>
 
           {pendingPayouts.length > 3 && (
-            <button onClick={() => setCurrentHistoryPage(1)} className="w-full mt-6 py-2 text-sm font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors">
+            <button onClick={() => setCurrentHistoryPage(1)} className="w-full mt-6 py-2 text-sm font-medium text-[#050C9C] hover:bg-indigo-50 rounded-lg transition-colors">
               VIEW ALL {pendingPayouts.length} PENDING REQUESTS
             </button>
           )}
@@ -2570,7 +2570,7 @@ function PayoutsView() {
 
         {/* Payment Health */}
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-6">Payment Health</h3>
+          <h3 className="text-lg font-bold text-[#191C1E] mb-6">Payment Health</h3>
           
           <div className="space-y-6">
             <div>
@@ -2581,7 +2581,7 @@ function PayoutsView() {
               <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                 <div className="h-full bg-emerald-500" style={{ width: `${Math.min(100, Math.max(0, paymentHealth.successRate))}%` }}></div>
               </div>
-              <p className="text-xs text-gray-500 mt-1">Fast 30 days</p>
+              <p className="text-xs text-[#505F76] mt-1">Fast 30 days</p>
             </div>
 
             <div className="pt-4 border-t border-gray-100">
@@ -2592,21 +2592,21 @@ function PayoutsView() {
                     <div className="w-2 h-2 bg-indigo-600 rounded-full"></div>
                     <span className="text-sm text-gray-700">Bank Transfer</span>
                   </div>
-                  <span className="text-sm font-semibold text-gray-900">{paymentHealth.methods.bankTransfer}%</span>
+                  <span className="text-sm font-semibold text-[#191C1E]">{paymentHealth.methods.bankTransfer}%</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
                     <span className="text-sm text-gray-700">PayPal</span>
                   </div>
-                  <span className="text-sm font-semibold text-gray-900">{paymentHealth.methods.paypal}%</span>
+                  <span className="text-sm font-semibold text-[#191C1E]">{paymentHealth.methods.paypal}%</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-gray-600 rounded-full"></div>
                     <span className="text-sm text-gray-700">Crypto</span>
                   </div>
-                  <span className="text-sm font-semibold text-gray-900">{paymentHealth.methods.crypto}%</span>
+                  <span className="text-sm font-semibold text-[#191C1E]">{paymentHealth.methods.crypto}%</span>
                 </div>
               </div>
             </div>
@@ -2617,7 +2617,7 @@ function PayoutsView() {
       {/* All Payout History */}
       <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold text-gray-900">All Payout History</h3>
+          <h3 className="text-lg font-bold text-[#191C1E]">All Payout History</h3>
           <div className="flex items-center gap-3">
             <button
               onClick={() => { setHistoryFilter('all'); setCurrentHistoryPage(1); }}
@@ -2636,7 +2636,7 @@ function PayoutsView() {
         </div>
 
         <div className="space-y-3">
-          <div className="grid grid-cols-6 gap-4 text-xs font-semibold text-gray-500 uppercase pb-2 border-b border-gray-100">
+          <div className="grid grid-cols-6 gap-4 text-xs font-semibold text-[#505F76] uppercase pb-2 border-b border-gray-100">
             <div>TRANSACTION ID</div>
             <div>DATE</div>
             <div>AFFILIATE</div>
@@ -2658,7 +2658,7 @@ function PayoutsView() {
           ))}
           
           {filteredPayoutHistory.length === 0 && (
-            <div className="text-center py-8 text-gray-400">
+            <div className="text-center py-8 text-[#505F76]">
               <p className="text-sm">No payout history found</p>
             </div>
           )}
@@ -2669,7 +2669,7 @@ function PayoutsView() {
           <button
             onClick={() => setCurrentHistoryPage((prev) => Math.max(1, prev - 1))}
             disabled={currentHistoryPage <= 1}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg disabled:opacity-50"
+            className="p-2 text-[#505F76] hover:text-gray-600 hover:bg-gray-100 rounded-lg disabled:opacity-50"
           >
             <ChevronRight className="w-4 h-4 rotate-180" />
           </button>
@@ -2685,7 +2685,7 @@ function PayoutsView() {
           <button
             onClick={() => setCurrentHistoryPage((prev) => Math.min(Math.max(1, Math.ceil(filteredPayoutHistory.length / historyPageSize)), prev + 1))}
             disabled={currentHistoryPage >= Math.max(1, Math.ceil(filteredPayoutHistory.length / historyPageSize))}
-            className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg disabled:opacity-50"
+            className="p-2 text-[#505F76] hover:text-gray-600 hover:bg-gray-100 rounded-lg disabled:opacity-50"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -2699,13 +2699,13 @@ function PayoutRequestRow({ name, id, amount, date, method, status, onApprove }:
   return (
     <div className="grid grid-cols-5 gap-4 py-3 border-b border-gray-50 last:border-0">
       <div>
-        <p className="text-sm font-semibold text-gray-900">{name}</p>
-        <p className="text-xs text-gray-500">{id}</p>
-        <p className="text-xs text-gray-400">{date}</p>
+        <p className="text-sm font-semibold text-[#191C1E]">{name}</p>
+        <p className="text-xs text-[#505F76]">{id}</p>
+        <p className="text-xs text-[#505F76]">{date}</p>
       </div>
-      <div className="text-sm font-bold text-gray-900">{amount}</div>
+      <div className="text-sm font-bold text-[#191C1E]">{amount}</div>
       <div className="flex items-center gap-2">
-        <DollarSign className="w-4 h-4 text-gray-400" />
+        <DollarSign className="w-4 h-4 text-[#505F76]" />
         <span className="text-sm text-gray-700">{method}</span>
       </div>
       <div>
@@ -2736,9 +2736,9 @@ function PayoutHistoryRow({ txId, date, affiliate, amount, method, status }: Pay
         <div className="w-6 h-6 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center">
           <span className="text-white font-semibold text-xs">{affiliate.charAt(0)}</span>
         </div>
-        <span className="text-sm font-medium text-gray-900">{affiliate}</span>
+        <span className="text-sm font-medium text-[#191C1E]">{affiliate}</span>
       </div>
-      <div className="text-sm font-semibold text-gray-900">{amount}</div>
+      <div className="text-sm font-semibold text-[#191C1E]">{amount}</div>
       <div className="text-sm text-gray-600">{method}</div>
       <div>
         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
@@ -2954,7 +2954,7 @@ function SettingsView() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#505F76]" />
           <input 
             type="text"
             placeholder="Search parameters..."
@@ -2969,7 +2969,7 @@ function SettingsView() {
           <button 
             onClick={() => setActiveTab('general')}
             className={`pb-2 text-sm font-semibold transition-colors relative ${
-              activeTab === 'general' ? 'text-indigo-600' : 'text-gray-600 hover:text-gray-900'
+              activeTab === 'general' ? 'text-[#050C9C]' : 'text-gray-600 hover:text-[#191C1E]'
             }`}
           >
             General
@@ -2980,7 +2980,7 @@ function SettingsView() {
           <button 
             onClick={() => setActiveTab('affiliate')}
             className={`pb-2 text-sm font-semibold transition-colors relative ${
-              activeTab === 'affiliate' ? 'text-indigo-600' : 'text-gray-600 hover:text-gray-900'
+              activeTab === 'affiliate' ? 'text-[#050C9C]' : 'text-gray-600 hover:text-[#191C1E]'
             }`}
           >
             Affiliate
@@ -2988,7 +2988,7 @@ function SettingsView() {
           <button 
             onClick={() => setActiveTab('payout')}
             className={`pb-2 text-sm font-semibold transition-colors relative ${
-              activeTab === 'payout' ? 'text-indigo-600' : 'text-gray-600 hover:text-gray-900'
+              activeTab === 'payout' ? 'text-[#050C9C]' : 'text-gray-600 hover:text-[#191C1E]'
             }`}
           >
             Payout
@@ -2996,7 +2996,7 @@ function SettingsView() {
           <button 
             onClick={() => setActiveTab('security')}
             className={`pb-2 text-sm font-semibold transition-colors relative ${
-              activeTab === 'security' ? 'text-indigo-600' : 'text-gray-600 hover:text-gray-900'
+              activeTab === 'security' ? 'text-[#050C9C]' : 'text-gray-600 hover:text-[#191C1E]'
             }`}
           >
             Security
@@ -3004,7 +3004,7 @@ function SettingsView() {
           <button 
             onClick={() => setActiveTab('notifications')}
             className={`pb-2 text-sm font-semibold transition-colors relative ${
-              activeTab === 'notifications' ? 'text-indigo-600' : 'text-gray-600 hover:text-gray-900'
+              activeTab === 'notifications' ? 'text-[#050C9C]' : 'text-gray-600 hover:text-[#191C1E]'
             }`}
           >
             Notifications
@@ -3012,15 +3012,15 @@ function SettingsView() {
         </div>
 
         <div className="p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Settings</h2>
-          <p className="text-sm text-gray-500 mb-8">Configure your affiliate ecosystem and system preferences.</p>
+          <h2 className="text-2xl font-bold text-[#191C1E] mb-2">Settings</h2>
+          <p className="text-sm text-[#505F76] mb-8">Configure your affiliate ecosystem and system preferences.</p>
 
           {activeTab === 'general' && (
             <div className="grid grid-cols-2 gap-8">
               {/* General Settings */}
               <div className="space-y-6">
                 <div className="bg-[#F8FAFC] rounded-xl p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-6">General Settings</h3>
+                  <h3 className="text-lg font-bold text-[#191C1E] mb-6">General Settings</h3>
                   
                   <div className="space-y-4">
                     <div>
@@ -3080,7 +3080,7 @@ function SettingsView() {
                   <button 
                     onClick={saveGeneralSettings}
                     disabled={loading}
-                    className="w-full mt-6 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white rounded-xl font-semibold"
+                    className="w-full mt-6 px-4 py-3 bg-indigo-600 hover:bg-[#050C9C] disabled:bg-gray-400 text-white rounded-xl font-semibold"
                   >
                     {loading ? 'Saving...' : 'Save General Changes'}
                   </button>
@@ -3090,13 +3090,13 @@ function SettingsView() {
               {/* Payout Protocol & Security */}
               <div className="space-y-6">
                 <div className="bg-[#F8FAFC] rounded-xl p-6">
-                  <h3 className="text-lg font-bold text-gray-900 mb-6">Payout Protocol</h3>
+                  <h3 className="text-lg font-bold text-[#191C1E] mb-6">Payout Protocol</h3>
                   
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">MINIMUM PAYOUT</label>
                       <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-semibold">$</span>
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#505F76] font-semibold">$</span>
                         <input 
                           type="number"
                           value={minPayout}
@@ -3114,7 +3114,7 @@ function SettingsView() {
                             type="checkbox"
                             checked={payoutMethods.paypal}
                             onChange={(e) => setPayoutMethods(prev => ({ ...prev, paypal: e.target.checked }))}
-                            className="w-4 h-4 text-indigo-600 rounded"
+                            className="w-4 h-4 text-[#050C9C] rounded"
                           />
                           <span className="text-sm text-gray-700">PayPal</span>
                         </label>
@@ -3123,7 +3123,7 @@ function SettingsView() {
                             type="checkbox"
                             checked={payoutMethods.directBank}
                             onChange={(e) => setPayoutMethods(prev => ({ ...prev, directBank: e.target.checked }))}
-                            className="w-4 h-4 text-indigo-600 rounded"
+                            className="w-4 h-4 text-[#050C9C] rounded"
                           />
                           <span className="text-sm text-gray-700">Direct Bank</span>
                         </label>
@@ -3132,7 +3132,7 @@ function SettingsView() {
                             type="checkbox"
                             checked={payoutMethods.crypto}
                             onChange={(e) => setPayoutMethods(prev => ({ ...prev, crypto: e.target.checked }))}
-                            className="w-4 h-4 text-indigo-600 rounded"
+                            className="w-4 h-4 text-[#050C9C] rounded"
                           />
                           <span className="text-sm text-gray-700">Crypto (USDT)</span>
                         </label>
@@ -3156,7 +3156,7 @@ function SettingsView() {
                   <button
                     onClick={savePayoutSettings}
                     disabled={loading}
-                    className="w-full mt-6 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white rounded-lg font-semibold text-sm"
+                    className="w-full mt-6 px-4 py-2.5 bg-indigo-600 hover:bg-[#050C9C] disabled:bg-gray-400 text-white rounded-lg font-semibold text-sm"
                   >
                     {loading ? 'Saving...' : 'Save Payout Settings'}
                   </button>
@@ -3165,14 +3165,14 @@ function SettingsView() {
                 <div className="bg-gradient-to-br from-emerald-50 to-green-50 border border-emerald-200 rounded-xl p-6">
                   <div className="flex items-center gap-2 mb-4">
                     <CheckCircle className="w-5 h-5 text-emerald-600" />
-                    <h3 className="text-lg font-bold text-gray-900">Security</h3>
+                    <h3 className="text-lg font-bold text-[#191C1E]">Security</h3>
                     <span className="ml-auto px-2 py-0.5 bg-emerald-600 text-white text-xs font-bold rounded-full">ACTIVE</span>
                   </div>
                   
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-gray-700">Rotate Password</span>
-                      <button className="p-1 text-gray-400 hover:text-gray-600">
+                      <button className="p-1 text-[#505F76] hover:text-gray-600">
                         <ChevronRight className="w-4 h-4" />
                       </button>
                     </div>
@@ -3186,12 +3186,12 @@ function SettingsView() {
                   </div>
 
                   <div className="mt-4 pt-4 border-t border-emerald-100">
-                    <p className="text-xs font-semibold text-gray-500 uppercase mb-1">RECENT SESSIONS</p>
+                    <p className="text-xs font-semibold text-[#505F76] uppercase mb-1">RECENT SESSIONS</p>
                     <div className="flex items-center gap-2 text-sm text-gray-700">
                       <Monitor className="w-4 h-4" />
                       <span>macOS - San Francisco, US</span>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">Current Session</p>
+                    <p className="text-xs text-[#505F76] mt-1">Current Session</p>
                   </div>
                 </div>
               </div>
@@ -3201,7 +3201,7 @@ function SettingsView() {
           {activeTab === 'affiliate' && (
             <div className="max-w-2xl space-y-6">
               <div className="bg-[#F8FAFC] rounded-xl p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-6">Affiliate Performance</h3>
+                <h3 className="text-lg font-bold text-[#191C1E] mb-6">Affiliate Performance</h3>
                 
                 <div className="space-y-4">
                   <div>
@@ -3226,8 +3226,8 @@ function SettingsView() {
 
                   <div className="flex items-center justify-between py-4 border-t border-gray-200">
                     <div>
-                      <p className="text-sm font-semibold text-gray-900">Auto-Approve Affiliates</p>
-                      <p className="text-xs text-gray-500">New signups bypass manual review</p>
+                      <p className="text-sm font-semibold text-[#191C1E]">Auto-Approve Affiliates</p>
+                      <p className="text-xs text-[#505F76]">New signups bypass manual review</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input 
@@ -3244,7 +3244,7 @@ function SettingsView() {
                 <button 
                   onClick={saveAffiliateSettings}
                   disabled={loading}
-                  className="w-full mt-6 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white rounded-xl font-semibold"
+                  className="w-full mt-6 px-4 py-3 bg-indigo-600 hover:bg-[#050C9C] disabled:bg-gray-400 text-white rounded-xl font-semibold"
                 >
                   {loading ? 'Saving...' : 'Update Rules'}
                 </button>
@@ -3255,12 +3255,12 @@ function SettingsView() {
           {activeTab === 'security' && (
             <div className="max-w-2xl space-y-6">
               <div className="bg-[#F8FAFC] rounded-xl p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-6">Security Settings</h3>
+                <h3 className="text-lg font-bold text-[#191C1E] mb-6">Security Settings</h3>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between py-4 border-b border-gray-200">
                     <div>
-                      <p className="text-sm font-semibold text-gray-900">Two-Factor Authentication</p>
-                      <p className="text-xs text-gray-500">Require 2FA for admin access and privileged actions.</p>
+                      <p className="text-sm font-semibold text-[#191C1E]">Two-Factor Authentication</p>
+                      <p className="text-xs text-[#505F76]">Require 2FA for admin access and privileged actions.</p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
@@ -3287,7 +3287,7 @@ function SettingsView() {
                 <button
                   onClick={saveSecuritySettings}
                   disabled={loading}
-                  className="w-full mt-6 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white rounded-xl font-semibold"
+                  className="w-full mt-6 px-4 py-3 bg-indigo-600 hover:bg-[#050C9C] disabled:bg-gray-400 text-white rounded-xl font-semibold"
                 >
                   {loading ? 'Saving...' : 'Save Security Settings'}
                 </button>
@@ -3298,8 +3298,8 @@ function SettingsView() {
           {activeTab === 'notifications' && (
             <div className="max-w-2xl space-y-6">
               <div className="bg-[#F8FAFC] rounded-xl p-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-6">Notification Preferences</h3>
-                <p className="text-sm text-gray-500 mb-6">Control how you receive alerts and system updates</p>
+                <h3 className="text-lg font-bold text-[#191C1E] mb-6">Notification Preferences</h3>
+                <p className="text-sm text-[#505F76] mb-6">Control how you receive alerts and system updates</p>
                 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between py-3 border-b border-gray-200">
@@ -3308,9 +3308,9 @@ function SettingsView() {
                         type="checkbox"
                         checked={notificationPrefs.newAffiliates}
                         onChange={(e) => setNotificationPrefs(prev => ({ ...prev, newAffiliates: e.target.checked }))}
-                        className="w-4 h-4 text-indigo-600 rounded"
+                        className="w-4 h-4 text-[#050C9C] rounded"
                       />
-                      <span className="text-sm font-medium text-gray-900">New Affiliates</span>
+                      <span className="text-sm font-medium text-[#191C1E]">New Affiliates</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between py-3 border-b border-gray-200">
@@ -3319,9 +3319,9 @@ function SettingsView() {
                         type="checkbox"
                         checked={notificationPrefs.newPayouts}
                         onChange={(e) => setNotificationPrefs(prev => ({ ...prev, newPayouts: e.target.checked }))}
-                        className="w-4 h-4 text-indigo-600 rounded"
+                        className="w-4 h-4 text-[#050C9C] rounded"
                       />
-                      <span className="text-sm font-medium text-gray-900">New Payouts</span>
+                      <span className="text-sm font-medium text-[#191C1E]">New Payouts</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between py-3 border-b border-gray-200">
@@ -3330,9 +3330,9 @@ function SettingsView() {
                         type="checkbox"
                         checked={notificationPrefs.systemErrors}
                         onChange={(e) => setNotificationPrefs(prev => ({ ...prev, systemErrors: e.target.checked }))}
-                        className="w-4 h-4 text-indigo-600 rounded"
+                        className="w-4 h-4 text-[#050C9C] rounded"
                       />
-                      <span className="text-sm font-medium text-gray-900">System Errors</span>
+                      <span className="text-sm font-medium text-[#191C1E]">System Errors</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between py-3">
@@ -3341,16 +3341,16 @@ function SettingsView() {
                         type="checkbox"
                         checked={notificationPrefs.commissions}
                         onChange={(e) => setNotificationPrefs(prev => ({ ...prev, commissions: e.target.checked }))}
-                        className="w-4 h-4 text-indigo-600 rounded"
+                        className="w-4 h-4 text-[#050C9C] rounded"
                       />
-                      <span className="text-sm font-medium text-gray-900">Commissions</span>
+                      <span className="text-sm font-medium text-[#191C1E]">Commissions</span>
                     </div>
                   </div>
                 </div>
                 <button
                   onClick={saveNotificationSettings}
                   disabled={loading}
-                  className="w-full mt-6 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white rounded-xl font-semibold"
+                  className="w-full mt-6 px-4 py-3 bg-indigo-600 hover:bg-[#050C9C] disabled:bg-gray-400 text-white rounded-xl font-semibold"
                 >
                   {loading ? 'Saving...' : 'Save Notifications'}
                 </button>
@@ -3362,7 +3362,7 @@ function SettingsView() {
 
       {/* Integrations */}
       <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-6">Integrations</h3>
+        <h3 className="text-lg font-bold text-[#191C1E] mb-6">Integrations</h3>
         
         <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
           <div className="flex items-center gap-3 p-4 bg-[#F8FAFC] rounded-xl">
@@ -3370,7 +3370,7 @@ function SettingsView() {
               <span className="text-white font-bold text-sm">F</span>
             </div>
             <div>
-              <p className="font-semibold text-gray-900 text-sm">FalakCart</p>
+              <p className="font-semibold text-[#191C1E] text-sm">FalakCart</p>
               <span className="inline-flex items-center px-2 py-0.5 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
                 {integrationStatus}
               </span>
@@ -3392,7 +3392,7 @@ function SettingsView() {
               <button
                 onClick={saveIntegrationSettings}
                 disabled={loading}
-                className="flex-1 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white rounded-xl font-semibold"
+                className="flex-1 px-4 py-3 bg-indigo-600 hover:bg-[#050C9C] disabled:bg-gray-400 text-white rounded-xl font-semibold"
               >
                 {loading ? 'Saving...' : 'Save Integration'}
               </button>
@@ -3412,7 +3412,7 @@ function SettingsView() {
         <button
           onClick={saveAllSettings}
           disabled={loading}
-          className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white rounded-xl font-bold text-lg shadow-lg"
+          className="px-8 py-4 bg-indigo-600 hover:bg-[#050C9C] disabled:bg-gray-400 text-white rounded-xl font-bold text-lg shadow-lg"
         >
           {loading ? 'Saving All...' : 'Global Save: Apply All Settings'}
         </button>

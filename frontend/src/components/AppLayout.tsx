@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo, memo } from 'react';
 import api from '@/lib/api';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Plus } from 'lucide-react';
@@ -97,13 +97,34 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [isRTL, setIsRTL] = useState(true);
+  const [isReady, setIsReady] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Detect current direction
-    const dir = document.documentElement.dir;
-    setIsRTL(dir === 'rtl');
+    // Detect current direction and listen for changes
+    const updateDirection = () => {
+      const dir = document.documentElement.dir;
+      setIsRTL(dir === 'rtl');
+      setIsReady(true);
+    };
+    
+    updateDirection();
+    
+    // Listen for storage changes (when language is changed)
+    const handleStorageChange = () => {
+      updateDirection();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also check periodically in case of same-tab changes
+    const interval = setInterval(updateDirection, 100);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
   }, []);
 
   const fetchNotifications = async () => {
@@ -129,7 +150,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       fetchNotifications();
       fetchUserProfile();
     }
-  }, [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Listen for avatar updates from settings page
   useEffect(() => {
@@ -165,30 +187,32 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const renderAvatar = (size: 'small' | 'medium') => {
-    const sizeClasses = size === 'small' ? 'w-8 h-8 text-xs' : 'w-9 h-9 text-sm';
-    
-    if (userAvatar) {
+  const renderAvatar = useMemo(() => {
+    return (size: 'small' | 'medium') => {
+      const sizeClasses = size === 'small' ? 'w-8 h-8 text-xs' : 'w-9 h-9 text-sm';
+      
+      if (userAvatar) {
+        return (
+          <img 
+            src={userAvatar} 
+            alt="User Avatar" 
+            className={`${sizeClasses} rounded-full object-cover ring-2 ring-indigo-100`}
+          />
+        );
+      }
+      
       return (
-        <img 
-          src={userAvatar} 
-          alt="User Avatar" 
-          className={`${sizeClasses} rounded-full object-cover ring-2 ring-indigo-100`}
-        />
+        <div className={`${sizeClasses} bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold ${size === 'small' ? 'ring-2 ring-indigo-100' : ''}`}>
+          {user?.name?.charAt(0) || 'U'}
+        </div>
       );
-    }
-    
-    return (
-      <div className={`${sizeClasses} bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold ${size === 'small' ? 'ring-2 ring-indigo-100' : ''}`}>
-        {user?.name?.charAt(0) || 'U'}
-      </div>
-    );
-  };
+    };
+  }, [userAvatar, user?.name]);
 
   return (
-    <div className="flex min-h-screen bg-[#F8FAFC]">
+    <div className="flex min-h-screen ">
       {/* Sidebar */}
-      <aside className={`w-[280px]  flex flex-col fixed h-full z-30  ${isRTL ? 'right-0' : 'left-0'}`}>
+      <aside className={`w-[280px] bg-[#F8FAFC] flex flex-col fixed h-full z-30  ${isRTL ? 'right-0' : 'left-0'}`}>
         {/* Brand */}
         <div className="px-6 pt-6 pb-6">
           <img 
@@ -203,7 +227,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-3">
             {renderAvatar('medium')}
             <div className="overflow-hidden">
-              <p className="text-sm font-bold text-gray-900 truncate">{user?.name || 'User'}</p>
+              <p className="text-sm font-bold text-[#191C1E] truncate">{user?.name || 'User'}</p>
               <p className="text-xs font-medium text-[#64748B] tracking-wide">Affiliate Partner</p>
             </div>
           </div>
@@ -258,7 +282,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <header className="sticky top-0 z-20 bg-[#FFFFFFCC] backdrop-blur-md border-b border-gray-100 px-8 py-3 flex items-center justify-between">
           <div className="flex-1 max-w-md">
             <div className="relative">
-              <svg className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 w-4 h-4 text-[#505F76]`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input
@@ -271,7 +295,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-4">
             <LanguageSwitcher />
             <div className="relative" ref={notifRef}>
-              <button onClick={toggleNotifications} className="relative p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-50">
+              <button onClick={toggleNotifications} className="relative p-2 text-[#505F76] hover:text-gray-600 transition-colors rounded-full hover:bg-gray-50">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
@@ -283,18 +307,18 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               {showNotifications && (
                 <div className={`absolute ${isRTL ? 'left-0' : 'right-0'} mt-2 w-80 max-h-96 overflow-y-auto bg-white border border-gray-100 rounded-2xl shadow-xl py-2 z-50`}>
                   <div className="px-4 py-3 border-b border-gray-50 flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-gray-900">Notifications</h3>
+                    <h3 className="text-sm font-bold text-[#191C1E]">Notifications</h3>
                   </div>
                   {notifications.length === 0 ? (
-                    <div className="p-8 text-center text-gray-500 text-sm">
+                    <div className="p-8 text-center text-[#505F76] text-sm">
                       No new notifications right now.
                     </div>
                   ) : (
                     <div className="divide-y divide-gray-50">
                       {notifications.map((notif, i) => (
                         <div key={i} className={`p-4 hover:bg-gray-50 transition-colors ${!notif.read_at ? 'bg-indigo-50/30' : ''}`}>
-                          <p className="text-sm font-semibold text-gray-900 mb-1">{notif.title}</p>
-                          <p className="text-xs text-gray-500 leading-relaxed">{notif.message}</p>
+                          <p className="text-sm font-semibold text-[#191C1E] mb-1">{notif.title}</p>
+                          <p className="text-xs text-[#505F76] leading-relaxed">{notif.message}</p>
                         </div>
                       ))}
                     </div>
@@ -306,7 +330,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <div className="relative" ref={menuRef}>
               <button 
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className={`flex items-center gap-3 ${isRTL ? 'pr-4 border-r' : 'pl-4 border-l'} border-gray-200 hover:opacity-80 transition-opacity`}
+                className={`flex items-center gap-3 ps-4 border-s border-gray-200 hover:opacity-80 transition-opacity`}
               >
                 <span className="text-sm font-semibold text-gray-700">{user?.name || 'User'}</span>
                 {renderAvatar('small')}
@@ -315,13 +339,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               {showUserMenu && (
                 <div className={`absolute ${isRTL ? 'left-0' : 'right-0'} mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-xl py-2 z-50`}>
                   <div className="px-4 py-3 border-b border-gray-50 mb-1">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{user?.name}</p>
-                    <p className="text-[10px] text-gray-400 truncate">{user?.email}</p>
+                    <p className="text-sm font-semibold text-[#191C1E] truncate">{user?.name}</p>
+                    <p className="text-[10px] text-[#505F76] truncate">{user?.email}</p>
                   </div>
-                  <Link href="/settings" onClick={() => setShowUserMenu(false)} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-indigo-600">
+                  <Link href="/settings" onClick={() => setShowUserMenu(false)} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#050C9C]">
                     My Profile
                   </Link>
-                  <Link href="/settings" onClick={() => setShowUserMenu(false)} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-indigo-600">
+                  <Link href="/settings" onClick={() => setShowUserMenu(false)} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#050C9C]">
                     Account Settings
                   </Link>
                   <div className="border-t border-gray-50 mt-1 pt-1">
@@ -336,7 +360,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </header>
 
         {/* Page Content */}
-        <div className="p-8">
+        <div className="p-8 !bg-[#F7F9FBCC]">
           {children}
         </div>
       </main>

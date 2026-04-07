@@ -124,7 +124,7 @@ export default function ExamplePage() {
       </button>
       
       {/* معرفة اللغة الحالية */}
-      <p className="mt-4 text-sm text-gray-500">
+      <p className="mt-4 text-sm text-[#505F76]">
         {locale === 'ar' ? 'اللغة: العربية' : 'Language: English'}
       </p>
     </div>

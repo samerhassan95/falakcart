@@ -212,5 +212,14 @@
   "Add an extra layer of security to your account": "أضف طبقة إضافية من الأمان لحسابك",
   "Save Changes": "حفظ التغييرات",
   "Saving...": "جاري الحفظ...",
-  "Saved!": "تم الحفظ!"
+  "Saved!": "تم الحفظ!",
+  "dashboard.primaryCampaign": "الحملة الأساسية",
+  "dashboard.shareAndEarn": "شارك رابطك واكسب",
+  "dashboard.commissionDescription": "اكسب {rate}% عمولة على كل اشتراك نشط يتم من خلال رابط الإحالة الخاص بك.",
+  "dashboard.goalProgress": "تقدم الهدف",
+  "dashboard.monthlyTarget": "الهدف الشهري: ${target}",
+  "dashboard.greatJob": "عمل رائع!",
+  "dashboard.awayFromGoal": "أنت على بعد ${amount} فقط من تحقيق مكافأة الهدف الشهري.",
+  "common.copied": "تم النسخ!",
+  "common.copy": "نسخ"
 }

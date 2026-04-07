@@ -135,7 +135,7 @@ export default function ExamplePage() {
         {t('common.save')}
       </button>
       
-      <p className="mt-4 text-sm text-gray-500">
+      <p className="mt-4 text-sm text-[#505F76]">
         {locale === 'ar' ? 'اللغة الحالية: العربية' : 'Current Language: English'}
       </p>
     </div>

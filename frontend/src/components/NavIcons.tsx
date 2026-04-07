@@ -1,0 +1,78 @@
+import { memo } from 'react';
+
+export const LogoutIcon = memo(({ className }: { className?: string }) => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M2 18C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H9V2H2V16H9V18H2ZM13 14L11.625 12.55L14.175 10H6V8H14.175L11.625 5.45L13 4L18 9L13 14Z" fill="currentColor"/>
+  </svg>
+));
+LogoutIcon.displayName = 'LogoutIcon';
+
+export const DashboardIcon = memo(({ className, isActive }: { className?: string; isActive?: boolean }) => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M16.5 8.175V3.075C16.5 1.95 16.02 1.5 14.8275 1.5H11.7975C10.605 1.5 10.125 1.95 10.125 3.075V8.175C10.125 9.3 10.605 9.75 11.7975 9.75H14.8275C16.02 9.75 16.5 9.3 16.5 8.175Z" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path opacity="0.4" d="M16.5 14.925V13.575C16.5 12.45 16.02 12 14.8275 12H11.7975C10.605 12 10.125 12.45 10.125 13.575V14.925C10.125 16.05 10.605 16.5 11.7975 16.5H14.8275C16.02 16.5 16.5 16.05 16.5 14.925Z" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M7.875 9.825V14.925C7.875 16.05 7.395 16.5 6.2025 16.5H3.1725C1.98 16.5 1.5 16.05 1.5 14.925V9.825C1.5 8.7 1.98 8.25 3.1725 8.25H6.2025C7.395 8.25 7.875 8.7 7.875 9.825Z" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path opacity="0.4" d="M7.875 3.075V4.425C7.875 5.55 7.395 6 6.2025 6H3.1725C1.98 6 1.5 5.55 1.5 4.425V3.075C1.5 1.95 1.98 1.5 3.1725 1.5H6.2025C7.395 1.5 7.875 1.95 7.875 3.075Z" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+));
+DashboardIcon.displayName = 'DashboardIcon';
+
+export const LinkIcon = memo(({ className, isActive }: { className?: string; isActive?: boolean }) => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path opacity="0.4" d="M9.15211 8.85016L8.09459 9.90767C7.50959 10.4927 7.50959 11.4452 8.09459 12.0302C8.67959 12.6152 9.6321 12.6152 10.2171 12.0302L11.8821 10.3652C13.0521 9.19518 13.0521 7.29768 11.8821 6.12018C10.7121 4.95018 8.8146 4.95018 7.6371 6.12018L5.82211 7.93516C4.81711 8.94016 4.81711 10.5677 5.82211 11.5727" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M9 16.5C13.1421 16.5 16.5 13.1421 16.5 9C16.5 4.85786 13.1421 1.5 9 1.5C4.85786 1.5 1.5 4.85786 1.5 9C1.5 13.1421 4.85786 16.5 9 16.5Z" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+));
+LinkIcon.displayName = 'LinkIcon';
+
+export const AnalyticsIcon = memo(({ className, isActive }: { className?: string; isActive?: boolean }) => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path opacity="0.4" d="M5.16211 13.6126V12.0601" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round"/>
+    <path opacity="0.4" d="M9 13.6123V10.5073" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round"/>
+    <path opacity="0.4" d="M12.8379 13.6123V8.94727" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round"/>
+    <g opacity="0.4">
+      <path d="M12.8421 4.38721L12.4971 4.79221C10.5846 7.02721 8.01961 8.60971 5.16211 9.32221" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round"/>
+      <path d="M10.6465 4.38721H12.844V6.57721" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+    </g>
+    <path d="M6.75 16.5H11.25C15 16.5 16.5 15 16.5 11.25V6.75C16.5 3 15 1.5 11.25 1.5H6.75C3 1.5 1.5 3 1.5 6.75V11.25C1.5 15 3 16.5 6.75 16.5Z" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+));
+AnalyticsIcon.displayName = 'AnalyticsIcon';
+
+export const ReferralsIcon = memo(({ className, isActive }: { className?: string; isActive?: boolean }) => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M6.87187 8.1525C6.79687 8.145 6.70687 8.145 6.62437 8.1525C4.83937 8.0925 3.42188 6.63 3.42188 4.83C3.42187 2.9925 4.90688 1.5 6.75188 1.5C8.58938 1.5 10.0819 2.9925 10.0819 4.83C10.0744 6.63 8.65688 8.0925 6.87187 8.1525Z" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path opacity="0.4" d="M12.3084 3C13.7634 3 14.9334 4.1775 14.9334 5.625C14.9334 7.0425 13.8084 8.1975 12.4059 8.25C12.3459 8.2425 12.2784 8.2425 12.2109 8.25" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path d="M3.11906 10.92C1.30406 12.135 1.30406 14.115 3.11906 15.3225C5.18156 16.7025 8.56406 16.7025 10.6266 15.3225C12.4416 14.1075 12.4416 12.1275 10.6266 10.92C8.57156 9.5475 5.18906 9.5475 3.11906 10.92Z" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path opacity="0.4" d="M13.7578 15C14.2978 14.8875 14.8078 14.67 15.2278 14.3475C16.3978 13.47 16.3978 12.0225 15.2278 11.145C14.8153 10.83 14.3128 10.62 13.7803 10.5" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+));
+ReferralsIcon.displayName = 'ReferralsIcon';
+
+export const EarningsIcon = memo(({ className, isActive }: { className?: string; isActive?: boolean }) => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <g opacity="0.4">
+      <path d="M6 8.55039C6 9.12789 6.45 9.60039 6.9975 9.60039H8.1225C8.6025 9.60039 8.9925 9.18789 8.9925 8.68539C8.9925 8.13789 8.7525 7.94289 8.4 7.81539L6.6 7.18539C6.24 7.05789 6 6.86289 6 6.31539C6 5.81289 6.39 5.40039 6.87 5.40039H7.995C8.55 5.40789 9 5.87289 9 6.45039" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M7.5 9.63721V10.1922" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M7.5 4.80762V5.39262" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+    </g>
+    <path d="M7.4925 13.485C10.8021 13.485 13.485 10.8021 13.485 7.4925C13.485 4.18293 10.8021 1.5 7.4925 1.5C4.18293 1.5 1.5 4.18293 1.5 7.4925C1.5 10.8021 4.18293 13.485 7.4925 13.485Z" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+    <path opacity="0.4" d="M9.73828 14.91C10.4133 15.8625 11.5158 16.485 12.7758 16.485C14.8233 16.485 16.4883 14.82 16.4883 12.7725C16.4883 11.5275 15.8733 10.425 14.9358 9.75" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+));
+EarningsIcon.displayName = 'EarningsIcon';
+
+export const SettingsIcon = memo(({ className, isActive }: { className?: string; isActive?: boolean }) => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+    <path d="M6.75 16.5H11.25C15 16.5 16.5 15 16.5 11.25V6.75C16.5 3 15 1.5 11.25 1.5H6.75C3 1.5 1.5 3 1.5 6.75V11.25C1.5 15 3 16.5 6.75 16.5Z" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+    <g opacity="0.4">
+      <path d="M11.6777 13.8747V10.9497" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M11.6777 5.5875V4.125" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M11.6766 9.48789C12.7535 9.48789 13.6266 8.61485 13.6266 7.53789C13.6266 6.46094 12.7535 5.58789 11.6766 5.58789C10.5996 5.58789 9.72656 6.46094 9.72656 7.53789C9.72656 8.61485 10.5996 9.48789 11.6766 9.48789Z" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M6.32227 13.8746V12.4121" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M6.32227 7.05V4.125" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M6.32109 12.4122C7.39805 12.4122 8.27109 11.5392 8.27109 10.4622C8.27109 9.38525 7.39805 8.51221 6.32109 8.51221C5.24414 8.51221 4.37109 9.38525 4.37109 10.4622C4.37109 11.5392 5.24414 12.4122 6.32109 12.4122Z" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
+    </g>
+  </svg>
+));
+SettingsIcon.displayName = 'SettingsIcon';
