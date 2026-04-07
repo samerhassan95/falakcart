@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { useState, useRef, useEffect, useMemo, memo } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import api from '@/lib/api';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Plus } from 'lucide-react';
@@ -97,7 +97,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [isRTL, setIsRTL] = useState(true);
-  const [isReady, setIsReady] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
@@ -106,7 +105,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     const updateDirection = () => {
       const dir = document.documentElement.dir;
       setIsRTL(dir === 'rtl');
-      setIsReady(true);
     };
     
     updateDirection();

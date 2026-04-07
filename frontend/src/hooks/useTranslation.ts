@@ -14,27 +14,85 @@ export function useTranslation() {
     const savedLocale = (localStorage.getItem('NEXT_LOCALE') as 'ar' | 'en') || 'ar';
     
     // Load translations
+    const loadTranslations = (locale: 'ar' | 'en') => {
+      setIsLoading(true);
+      fetch(`/locales/${locale}.json`)
+        .then(res => res.json())
+        .then(data => {
+          setTranslations(data);
+          setLocale(locale);
+          
+          // Update document direction and lang
+          document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr';
+          document.documentElement.lang = locale;
+          
+          // Save to localStorage
+          localStorage.setItem('NEXT_LOCALE', locale);
+          localStorage.setItem('NEXT_DIR', locale === 'ar' ? 'rtl' : 'ltr');
+          
+          // Update font
+          if (locale === 'ar') {
+            document.body.style.fontFamily = 'var(--font-cairo)';
+          } else {
+            document.body.style.fontFamily = 'var(--font-geist-sans)';
+          }
+        })
+        .catch(err => {
+          console.error('Failed to load translations:', err);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    };
+
+    // Initial load
+    loadTranslations(savedLocale);
+
+    // Listen for language changes from LanguageSwitcher
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'NEXT_LOCALE' && e.newValue) {
+        loadTranslations(e.newValue as 'ar' | 'en');
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  const changeLanguage = (newLocale: 'ar' | 'en') => {
     setIsLoading(true);
-    fetch(`/locales/${savedLocale}.json`)
+    
+    // Load new translations
+    fetch(`/locales/${newLocale}.json`)
       .then(res => res.json())
       .then(data => {
         setTranslations(data);
-        setLocale(savedLocale);
-        
-        // Update document direction and lang
-        document.documentElement.dir = savedLocale === 'ar' ? 'rtl' : 'ltr';
-        document.documentElement.lang = savedLocale;
+        setLocale(newLocale);
         
         // Save to localStorage
-        localStorage.setItem('NEXT_LOCALE', savedLocale);
-        localStorage.setItem('NEXT_DIR', savedLocale === 'ar' ? 'rtl' : 'ltr');
+        localStorage.setItem('NEXT_LOCALE', newLocale);
+        localStorage.setItem('NEXT_DIR', newLocale === 'ar' ? 'rtl' : 'ltr');
+        
+        // Update document direction and lang
+        document.documentElement.dir = newLocale === 'ar' ? 'rtl' : 'ltr';
+        document.documentElement.lang = newLocale;
         
         // Update font
-        if (savedLocale === 'ar') {
+        if (newLocale === 'ar') {
           document.body.style.fontFamily = 'var(--font-cairo)';
         } else {
           document.body.style.fontFamily = 'var(--font-geist-sans)';
         }
+        
+        // Trigger storage event for other components to listen
+        window.dispatchEvent(new StorageEvent('storage', {
+          key: 'NEXT_LOCALE',
+          newValue: newLocale,
+          oldValue: locale
+        }));
       })
       .catch(err => {
         console.error('Failed to load translations:', err);
@@ -42,19 +100,6 @@ export function useTranslation() {
       .finally(() => {
         setIsLoading(false);
       });
-  }, []);
-
-  const changeLanguage = (newLocale: 'ar' | 'en') => {
-    // Save to localStorage
-    localStorage.setItem('NEXT_LOCALE', newLocale);
-    localStorage.setItem('NEXT_DIR', newLocale === 'ar' ? 'rtl' : 'ltr');
-    
-    // Update document direction and lang immediately
-    document.documentElement.dir = newLocale === 'ar' ? 'rtl' : 'ltr';
-    document.documentElement.lang = newLocale;
-    
-    // Reload to apply changes
-    window.location.reload();
   };
 
   const t = (key: string, params?: Record<string, string | number>): string => {

@@ -13,6 +13,21 @@ export default function LanguageSwitcher() {
     const locale = (localStorage.getItem('NEXT_LOCALE') as 'ar' | 'en') || 'ar';
     setCurrentLocale(locale);
     setIsRTL(locale === 'ar');
+
+    // Listen for storage changes from other components
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'NEXT_LOCALE' && e.newValue) {
+        const newLocale = e.newValue as 'ar' | 'en';
+        setCurrentLocale(newLocale);
+        setIsRTL(newLocale === 'ar');
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   const changeLanguage = (locale: 'ar' | 'en') => {
@@ -29,8 +44,12 @@ export default function LanguageSwitcher() {
     setIsRTL(locale === 'ar');
     setIsOpen(false);
     
-    // Reload to apply changes
-    window.location.reload();
+    // Trigger storage event for other components to listen
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'NEXT_LOCALE',
+      newValue: locale,
+      oldValue: currentLocale
+    }));
   };
 
   return (
