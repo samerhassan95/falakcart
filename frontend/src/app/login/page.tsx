@@ -2,13 +2,16 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { useTranslation } from '@/hooks/useTranslation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const { login } = useAuth();
+  const { t, isLoading } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,66 +19,107 @@ export default function LoginPage() {
       await login({ email, password });
     } catch (err: unknown) {
       const errorResponse = err as { response?: { data?: { error?: string } } };
-      setError(errorResponse.response?.data?.error || 'Login failed');
+      setError(errorResponse.response?.data?.error || t('auth.loginFailed'));
     }
   };
 
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-black">
-      <div className="w-full max-w-md space-y-8 rounded-2xl border border-zinc-800 bg-zinc-900 p-10 shadow-2xl">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-white">
-            Sign in to your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-zinc-400 font-medium">
-            Or{' '}
-            <Link href="/register" className="font-semibold text-blue-400 hover:text-blue-300">
-              create a new account
-            </Link>
-          </p>
+  // Show loading state while translations are loading
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#F8F9FA]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-3 border-[#050C9C] border-t-transparent rounded-full animate-spin" />
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && <div className="text-red-500 text-sm">{error}</div>}
-          <div className="space-y-4 rounded-md shadow-sm">
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[#F8F9FA] p-4">
+      <div className="w-full max-w-md">
+        {/* Logo/Brand Section */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center mb-4">
+            <Image 
+              src="/FalakLogoDark.png" 
+              alt="FalakCart Logo" 
+              width={180} 
+              height={60}
+              priority
+              className="object-contain"
+            />
+          </div>
+        </div>
+
+        {/* Login Card */}
+        <div className="bg-white rounded-2xl p-8 shadow-sm">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-[#191C1E] mb-2">
+              {t('auth.signInToAccount')}
+            </h2>
+            <p className="text-sm text-[#505F76]">
+              {t('auth.orCreateAccount')}{' '}
+              <Link href="/register" className="font-semibold text-[#050C9C] hover:text-[#050C9C]/80 transition-colors">
+                {t('auth.createNewAccount')}
+              </Link>
+            </p>
+          </div>
+
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            {error && (
+              <div className="p-3 rounded-xl bg-red-50 border border-red-100">
+                <p className="text-red-600 text-sm font-medium">{error}</p>
+              </div>
+            )}
+
             <div>
-              <label htmlFor="email-address" className="sr-only">Email address</label>
+              <label htmlFor="email-address" className="block text-sm font-semibold text-[#191C1E] mb-2">
+                {t('auth.emailAddress')}
+              </label>
               <input
                 id="email-address"
                 name="email"
                 type="email"
                 autoComplete="email"
                 required
-                className="relative block w-full rounded-lg border border-zinc-700 bg-black px-3 py-3 text-white placeholder-zinc-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                placeholder="Email address"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-[#F8F9FA] text-[#191C1E] placeholder-[#505F76]/50 focus:outline-none focus:ring-2 focus:ring-[#050C9C]/20 focus:border-[#050C9C] transition-all"
+                placeholder={t('auth.emailAddress')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
+
             <div>
-              <label htmlFor="password" className="sr-only">Password</label>
+              <label htmlFor="password" className="block text-sm font-semibold text-[#191C1E] mb-2">
+                {t('auth.password')}
+              </label>
               <input
                 id="password"
                 name="password"
                 type="password"
                 autoComplete="current-password"
                 required
-                className="relative block w-full rounded-lg border border-zinc-700 bg-black px-3 py-3 text-white placeholder-zinc-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                placeholder="Password"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-[#F8F9FA] text-[#191C1E] placeholder-[#505F76]/50 focus:outline-none focus:ring-2 focus:ring-[#050C9C]/20 focus:border-[#050C9C] transition-all"
+                placeholder={t('auth.password')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-          </div>
 
-          <div>
             <button
               type="submit"
-              className="group relative flex w-full justify-center rounded-lg bg-blue-600 px-3 py-3 text-sm font-semibold text-white hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
+              className="w-full py-3.5 rounded-xl text-white font-semibold transition-all shadow-lg hover:shadow-xl"
+              style={{ background: 'linear-gradient(135deg, #2A14B4 0%, #4338CA 100%)' }}
             >
-              Sign in
+              {t('auth.signIn')}
             </button>
-          </div>
-        </form>
+          </form>
+        </div>
+
+        {/* Footer */}
+        <p className="text-center text-xs text-[#505F76] mt-6">
+          © 2024 FalakCart. All rights reserved.
+        </p>
       </div>
     </div>
   );

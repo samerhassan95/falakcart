@@ -68,7 +68,7 @@ export default function LanguageSwitcher() {
             className="fixed inset-0 z-40" 
             onClick={() => setIsOpen(false)}
           />
-          <div className={`absolute ${isRTL ? 'left-0' : 'right-0'} mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50`}>
+          <div className={`absolute ${isRTL ? 'start-0' : 'end-0'} mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50`}>
             <button
               onClick={() => changeLanguage('ar')}
               className={`block w-full px-4 py-2 text-sm hover:bg-gray-50 transition-colors rounded-t-lg ${

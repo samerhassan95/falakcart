@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-type Translations = Record<string, string>;
+type Translations = Record<string, any>;
 
 export function useTranslation() {
   const [locale, setLocale] = useState<'ar' | 'en'>('ar');
@@ -13,12 +13,28 @@ export function useTranslation() {
     // Get locale from localStorage or default to 'ar'
     const savedLocale = (localStorage.getItem('NEXT_LOCALE') as 'ar' | 'en') || 'ar';
     
+    // Set initial document direction for Arabic if no locale is saved
+    if (!localStorage.getItem('NEXT_LOCALE')) {
+      document.documentElement.dir = 'rtl';
+      document.documentElement.lang = 'ar';
+      localStorage.setItem('NEXT_LOCALE', 'ar');
+      localStorage.setItem('NEXT_DIR', 'rtl');
+      // Set Arabic font as default
+      document.body.style.fontFamily = 'var(--font-cairo)';
+    }
+    
     // Load translations
     const loadTranslations = (locale: 'ar' | 'en') => {
       setIsLoading(true);
       fetch(`/locales/${locale}.json`)
-        .then(res => res.json())
+        .then(res => {
+          if (!res.ok) {
+            throw new Error(`Failed to load ${locale}.json: ${res.status}`);
+          }
+          return res.json();
+        })
         .then(data => {
+          console.log(`Loaded ${locale} translations:`, Object.keys(data));
           setTranslations(data);
           setLocale(locale);
           
@@ -39,6 +55,8 @@ export function useTranslation() {
         })
         .catch(err => {
           console.error('Failed to load translations:', err);
+          // Fallback to empty translations
+          setTranslations({});
         })
         .finally(() => {
           setIsLoading(false);
@@ -103,12 +121,29 @@ export function useTranslation() {
   };
 
   const t = (key: string, params?: Record<string, string | number>): string => {
-    let translation = translations[key] || key;
+    // Handle nested keys like 'navigation.dashboard'
+    const keys = key.split('.');
+    let translation: any = translations;
+    
+    for (const k of keys) {
+      if (translation && typeof translation === 'object' && k in translation) {
+        translation = translation[k];
+      } else {
+        // If key not found, return the original key
+        translation = key;
+        break;
+      }
+    }
+    
+    // Ensure we have a string
+    if (typeof translation !== 'string') {
+      translation = key;
+    }
     
     // Replace placeholders like {name}, {rate}, etc.
-    if (params) {
+    if (params && typeof translation === 'string') {
       Object.keys(params).forEach(param => {
-        translation = translation.replace(new RegExp(`{${param}}`, 'g'), String(params[param]));
+        translation = translation.replace(new RegExp(`\\{${param}\\}`, 'g'), String(params[param]));
       });
     }
     

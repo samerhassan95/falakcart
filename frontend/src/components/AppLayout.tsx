@@ -7,6 +7,7 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import api from '@/lib/api';
 import LanguageSwitcher from './LanguageSwitcher';
 import { Plus } from 'lucide-react';
+import { useTranslation } from '@/hooks/useTranslation';
 
 // Custom SVG Icons
 const LogoutIcon = ({ className }: { className?: string }) => (
@@ -80,17 +81,18 @@ const SettingsIcon = ({ className, isActive }: { className?: string; isActive?: 
 );
 
 const navItems = [
-  { label: 'Dashboard', href: '/', icon: DashboardIcon },
-  { label: 'My Links', href: '/links', icon: LinkIcon },
-  { label: 'Analytics', href: '/analytics', icon: AnalyticsIcon },
-  { label: 'Referrals', href: '/referrals', icon: ReferralsIcon },
-  { label: 'Earnings', href: '/earnings', icon: EarningsIcon },
-  { label: 'Settings', href: '/settings', icon: SettingsIcon },
+  { label: 'navigation.dashboard', href: '/', icon: DashboardIcon },
+  { label: 'navigation.myLinks', href: '/links', icon: LinkIcon },
+  { label: 'navigation.analytics', href: '/analytics', icon: AnalyticsIcon },
+  { label: 'navigation.referrals', href: '/referrals', icon: ReferralsIcon },
+  { label: 'navigation.earnings', href: '/earnings', icon: EarningsIcon },
+  { label: 'navigation.settings', href: '/settings', icon: SettingsIcon },
 ];
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
   
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -210,7 +212,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen ">
       {/* Sidebar */}
-      <aside className={`w-[280px] bg-[#F8FAFC] flex flex-col fixed h-full z-30  ${isRTL ? 'right-0' : 'left-0'}`}>
+      <aside className={`w-[280px] bg-[#F8FAFC] flex flex-col fixed h-full z-30  ${isRTL ? 'end-0' : 'start-0'}`}>
         {/* Brand */}
         <div className="px-6 pt-6 pb-6">
           <img 
@@ -248,7 +250,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               >
        
                 <Icon className="w-5 h-5 flex-shrink-0" isActive={isActive} />
-                {item.label}
+                {t(item.label)}
               </Link>
             );
           })}
@@ -262,14 +264,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             style={{ background: 'linear-gradient(135deg, #2A14B4 0%, #4338CA 100%)' }}
           >
             <Plus className="w-5 h-5" strokeWidth={2.5} />
-            Generate Link
+            {t('navigation.generateLink')}
           </Link>
           <button
             onClick={logout}
             className="w-full flex items-center justify-start gap-3 px-5 py-3 text-[#64748B] hover:text-red-500 rounded-2xl text-sm font-semibold transition-colors hover:bg-red-50"
           >
             <LogoutIcon className="w-[18px] h-[18px]" />
-            Logout
+            {t('navigation.logout')}
           </button>
         </div>
       </aside>
@@ -280,13 +282,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <header className="sticky top-0 z-20 bg-[#FFFFFFCC] backdrop-blur-md border-b border-gray-100 px-8 py-3 flex items-center justify-between">
           <div className="flex-1 max-w-md">
             <div className="relative">
-              <svg className={`absolute ${isRTL ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 w-4 h-4 text-[#505F76]`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className={`absolute ${isRTL ? 'end-3' : 'start-3'} top-1/2 -translate-y-1/2 w-4 h-4 text-[#505F76]`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input
                 type="text"
-                placeholder="Search analytics..."
-                className={`w-full ${isRTL ? 'pr-10 pl-4' : 'pl-10 pr-4'} py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 transition-all`}
+                placeholder={t('common.search')}
+                className={`w-full ${isRTL ? 'ps-10 ' : 'pl-10 pr-4'} py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 transition-all`}
               />
             </div>
           </div>
@@ -298,18 +300,18 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
                 {notifications.some(n => !n.read_at) && (
-                  <span className={`absolute top-1 ${isRTL ? 'left-1' : 'right-1'} w-2 h-2 bg-red-500 rounded-full ring-2 ring-white animate-pulse`} />
+                  <span className={`absolute top-1 ${isRTL ? 'start-1' : 'end-1'} w-2 h-2 bg-red-500 rounded-full ring-2 ring-white animate-pulse`} />
                 )}
               </button>
               
               {showNotifications && (
-                <div className={`absolute ${isRTL ? 'left-0' : 'right-0'} mt-2 w-80 max-h-96 overflow-y-auto bg-white border border-gray-100 rounded-2xl shadow-xl py-2 z-50`}>
+                <div className={`absolute mt-2 w-80 max-h-96 overflow-y-auto bg-white rounded-2xl shadow-xl py-2 z-50 ${isRTL ? 'end-0' : 'end-0'}`}>
                   <div className="px-4 py-3 border-b border-gray-50 flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-[#191C1E]">Notifications</h3>
+                    <h3 className="text-sm font-bold text-[#191C1E]">{t('notifications.title')}</h3>
                   </div>
                   {notifications.length === 0 ? (
                     <div className="p-8 text-center text-[#505F76] text-sm">
-                      No new notifications right now.
+                      {t('notifications.noNewNotifications')}
                     </div>
                   ) : (
                     <div className="divide-y divide-gray-50">
@@ -335,20 +337,20 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </button>
 
               {showUserMenu && (
-                <div className={`absolute ${isRTL ? 'left-0' : 'right-0'} mt-2 w-48 bg-white border border-gray-100 rounded-2xl shadow-xl py-2 z-50`}>
+                <div className={`absolute mt-2 w-48 bg-white rounded-2xl shadow-xl py-2 z-50 ${isRTL ? 'end-0' : 'end-0'}`}>
                   <div className="px-4 py-3 border-b border-gray-50 mb-1">
                     <p className="text-sm font-semibold text-[#191C1E] truncate">{user?.name}</p>
                     <p className="text-[10px] text-[#505F76] truncate">{user?.email}</p>
                   </div>
                   <Link href="/settings" onClick={() => setShowUserMenu(false)} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#050C9C]">
-                    My Profile
+                    {t('notifications.myProfile')}
                   </Link>
                   <Link href="/settings" onClick={() => setShowUserMenu(false)} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#050C9C]">
-                    Account Settings
+                    {t('notifications.accountSettings')}
                   </Link>
                   <div className="border-t border-gray-50 mt-1 pt-1">
-                    <button onClick={logout} className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50">
-                      Sign Out
+                    <button onClick={logout} className="w-full text-start px-4 py-2 text-sm text-red-500 hover:bg-red-50">
+                      {t('auth.signOut')}
                     </button>
                   </div>
                 </div>

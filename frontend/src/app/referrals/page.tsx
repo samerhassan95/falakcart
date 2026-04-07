@@ -4,8 +4,9 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import api from '@/lib/api';
 import { StatCard } from '@/components/StatCard';
-import { Download, Eye, TrendingDown, ChevronDown } from 'lucide-react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { Download, ChevronDown } from 'lucide-react';
+import { AreaChart, Area, Tooltip, ResponsiveContainer } from 'recharts';
+import { useTranslation } from '@/hooks/useTranslation';
 
 interface Referral {
   id: number;
@@ -19,6 +20,7 @@ interface Referral {
 
 export default function ReferralsPage() {
   const { user, loading } = useAuth();
+  const { t } = useTranslation();
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [isFetching, setIsFetching] = useState(true);
   const [filter, setFilter] = useState('All');
@@ -28,6 +30,16 @@ export default function ReferralsPage() {
   const [selectedRef, setSelectedRef] = useState<Referral | null>(null);
   const itemsPerPage = 5;
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const getPeriodLabel = (periodKey: string) => {
+    const periodMap: Record<string, string> = {
+      'Today': t('common.today'),
+      'This Week': t('common.thisWeek'),
+      'This Month': t('common.thisMonth'),
+      'All Time': t('common.allTime')
+    };
+    return periodMap[periodKey] || periodKey;
+  };
 
   const fetchReferrals = useCallback(async () => {
     setIsFetching(true);
@@ -144,20 +156,24 @@ export default function ReferralsPage() {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-[36px] font-bold text-[#191C1E] tracking-tight">Referrals</h1>
-          <p className="text-[#505F76] text-[16px] mt-1">Track users who signed up using your links</p>
+          <h1 className="text-[36px] font-bold text-[#191C1E] tracking-tight">{t('referrals.title')}</h1>
+          <p className="text-[#505F76] text-[16px] mt-1">{t('referrals.subtitle')}</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex bg-gray-100 rounded-full p-1">
-              {['All', 'Signed Up', 'Subscribed'].map((tab) => (
+              {[
+                { key: 'All', label: t('common.all') },
+                { key: 'Signed Up', label: t('referrals.signedUp') },
+                { key: 'Subscribed', label: t('referrals.subscribed') }
+              ].map((tab) => (
                 <button
-                  key={tab}
-                  onClick={() => { setFilter(tab); setCurrentPage(1); }}
+                  key={tab.key}
+                  onClick={() => { setFilter(tab.key); setCurrentPage(1); }}
                   className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
-                    filter === tab ? 'bg-white text-[#191C1E] ' : 'text-[#505F76] hover:text-gray-700'
+                    filter === tab.key ? 'bg-white text-[#191C1E] ' : 'text-[#505F76] hover:text-gray-700'
                   }`}
                 >
-                  {tab}
+                  {tab.label}
                 </button>
               ))}
             </div>
@@ -167,19 +183,24 @@ export default function ReferralsPage() {
                 className="flex items-center gap-2 px-4 py-3 bg-white  rounded-full text-sm font-semibold text-gray-700  hover:bg-gray-50 transition-colors"
               >
                 <CalendarIcon className="w-4 h-4" />
-                {period}
+                {getPeriodLabel(period)}
                 <ChevronDown className="w-4 h-4 text-[#505F76]" />
               </button>
               
               {showPeriodDropdown && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-100 rounded-xl shadow-lg py-1 z-10">
-                  {['Today', 'This Week', 'This Month', 'All Time'].map((option) => (
+                <div className="absolute end-0 mt-2 w-48 bg-white  rounded-xl shadow-lg py-1 z-10">
+                  {[
+                    { key: 'Today', label: t('common.today') },
+                    { key: 'This Week', label: t('common.thisWeek') },
+                    { key: 'This Month', label: t('common.thisMonth') },
+                    { key: 'All Time', label: t('common.allTime') }
+                  ].map((option) => (
                     <button
-                      key={option}
-                      className={`w-full text-left px-4 py-2 text-sm transition-colors ${period === option ? 'text-[#050C9C] bg-indigo-50/50 font-bold' : 'text-gray-600 hover:bg-gray-50'}`}
-                      onClick={() => { setPeriod(option); setShowPeriodDropdown(false); setCurrentPage(1); }}
+                      key={option.key}
+                      className={`w-full text-left px-4 py-2 text-sm transition-colors ${period === option.key ? 'text-[#050C9C] bg-indigo-50/50 font-bold' : 'text-gray-600 hover:bg-gray-50'}`}
+                      onClick={() => { setPeriod(option.key); setShowPeriodDropdown(false); setCurrentPage(1); }}
                     >
-                      {option}
+                      {option.label}
                     </button>
                   ))}
                 </div>
@@ -197,7 +218,7 @@ export default function ReferralsPage() {
               </svg>
             }
             iconBgColor="#F0F4FF"
-            label="Total Referrals"
+            label={t('stats.totalReferrals')}
             value={totalReferrals.toString()}
             change={getReferralsChange()}
             isPositive={totalReferrals > 0}
@@ -210,7 +231,7 @@ export default function ReferralsPage() {
               </svg>
             }
             iconBgColor="#F0FDF4"
-            label="Active Subscriptions"
+            label={t('stats.activeSubscriptions')}
             value={activeSubscriptions.toString()}
             change={getSubscriptionsChange()}
             isPositive={activeSubscriptions > 0}
@@ -223,7 +244,7 @@ export default function ReferralsPage() {
               </svg>
             }
             iconBgColor="#FFF7ED"
-            label="Conversion Rate"
+            label={t('stats.conversionRate')}
             value={`${conversionRate}%`}
             change={getConversionChange()}
             isPositive={parseFloat(conversionRate) > 5}
@@ -232,23 +253,23 @@ export default function ReferralsPage() {
         </div>
 
         {/* Table Content */}
-        <div className="bg-white rounded-2xl border border-gray-100  overflow-hidden">
+        <div className="bg-white rounded-2xl   overflow-hidden">
           <div className="p-6 flex items-center justify-between border-b border-gray-50">
-            <h3 className="text-lg font-bold text-[#191C1E]">Recent Activity</h3>
+            <h3 className="text-lg font-bold text-[#191C1E]">{t('dashboard.recentActivity')}</h3>
             <button onClick={handleExport} className="flex items-center gap-2 text-sm font-semibold text-[#050C9C] hover:text-[#050C9C]">
-              Download CSV <Download className="w-4 h-4" />
+              {t('referrals.downloadCsv')} <Download className="w-4 h-4" />
             </button>
           </div>
           <table className="w-full text-left">
             <thead>
               <tr className="text-[10px] font-bold uppercase tracking-wider text-[#505F76] border-b border-gray-50">
-                <th className="px-6 py-4">User</th>
-                <th className="px-6 py-4">Referral Link</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Plan Amount</th>
-                <th className="px-6 py-4 text-right">Commission</th>
-                <th className="px-6 py-4">Date Joined</th>
-                <th className="px-6 py-4 text-center">Actions</th>
+                <th className="px-6 py-4">{t('referrals.user')}</th>
+                <th className="px-6 py-4">{t('links.referralLink')}</th>
+                <th className="px-6 py-4">{t('common.status')}</th>
+                <th className="px-6 py-4">{t('referrals.planAmount')}</th>
+                <th className="px-6 py-4 text-right">{t('earnings.commission')}</th>
+                <th className="px-6 py-4">{t('referrals.dateJoined')}</th>
+                <th className="px-6 py-4 text-center">{t('common.actions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -274,7 +295,7 @@ export default function ReferralsPage() {
                     <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${
                       ref.status === 'subscribed' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'
                     }`}>
-                      {ref.status === 'subscribed' ? 'SUBSCRIBED' : 'SIGNED UP'}
+                      {ref.status === 'subscribed' ? t('referrals.subscribed').toUpperCase() : t('referrals.signedUp').toUpperCase()}
                     </span>
                   </td>
                   <td className="px-6 py-5 text-sm font-semibold text-[#191C1E]">{ref.plan_amount === '--' ? '—' : ref.plan_amount}</td>
@@ -287,7 +308,7 @@ export default function ReferralsPage() {
                       onClick={() => setSelectedRef(ref)}
                       className="px-4 py-2 border border-gray-200 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors  bg-white"
                     >
-                      View Details
+                      {t('referrals.viewDetails')}
                     </button>
                   </td>
                 </tr>
@@ -295,30 +316,30 @@ export default function ReferralsPage() {
               {paginatedReferrals.length === 0 && (
                 <tr>
                   <td colSpan={7} className="px-6 py-12 text-center text-[#505F76] text-sm">
-                    No referrals found.
+                    {t('referrals.noReferralsFound')}
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
           <div className="px-6 py-4 border-t border-gray-50 flex items-center justify-between text-sm text-[#505F76]">
-             <span>Showing {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, displayedReferrals.length)} of {displayedReferrals.length} referrals</span>
+             <span>{t('earnings.showing')} {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, displayedReferrals.length)} {t('earnings.of')} {displayedReferrals.length} referrals</span>
              <div className="flex gap-1">
-               <button disabled={currentPage === 1} onClick={prevPage} className="px-3 py-1.5 border border-gray-200 rounded-lg bg-white text-[#505F76] disabled:opacity-50">Previous</button>
+               <button disabled={currentPage === 1} onClick={prevPage} className="px-3 py-1.5 border border-gray-200 rounded-lg bg-white text-[#505F76] disabled:opacity-50">{t('common.previous')}</button>
                <span className="px-3 py-1.5 font-medium text-[#191C1E]">{currentPage} / {totalPages}</span>
-               <button disabled={currentPage === totalPages} onClick={nextPage} className="px-3 py-1.5 border border-gray-200 rounded-lg bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-50">Next</button>
+               <button disabled={currentPage === totalPages} onClick={nextPage} className="px-3 py-1.5 border border-gray-200 rounded-lg bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-50">{t('common.next')}</button>
              </div>
           </div>
         </div>
 
         {/* Bottom Section */}
         <div className="grid grid-cols-5 gap-6">
-          <div className="col-span-3 bg-white rounded-2xl border border-gray-100 p-6 ">
+          <div className="col-span-3 bg-white rounded-2xl  p-6 ">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-[#505F76]">Referral Velocity</h3>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-[#505F76]">{t('referrals.referralVelocity')}</h3>
               <div className="flex items-center gap-2">
                  <div className="w-2.5 h-2.5 bg-indigo-600 rounded-full" />
-                 <span className="text-xs font-semibold text-[#191C1E]">Daily Conversions</span>
+                 <span className="text-xs font-semibold text-[#191C1E]">{t('referrals.dailyConversions')}</span>
               </div>
             </div>
             <div className="h-[200px]">
@@ -338,13 +359,13 @@ export default function ReferralsPage() {
           </div>
 
           <div className="col-span-2 bg-indigo-800 rounded-2xl p-8 text-white relative shadow-lg overflow-hidden flex flex-col justify-center">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600 blur-3xl rounded-full opacity-50 translate-x-1/2 -translate-y-1/2" />
-            <h3 className="text-[12px] font-bold uppercase tracking-widest text-[#C1BEFF] mb-2">Milestone Progress</h3>
-            <h2 className="text-[#FFFFFF] text-[24px] font-bold mb-3">Refer {milestoneTarget.toLocaleString()} users</h2>
+            <div className="absolute top-0 end-0 w-64 h-64 bg-indigo-600 blur-3xl rounded-full opacity-50 translate-x-1/2 -translate-y-1/2" />
+            <h3 className="text-[12px] font-bold uppercase tracking-widest text-[#C1BEFF] mb-2">{t('referrals.milestoneProgress')}</h3>
+            <h2 className="text-[#FFFFFF] text-[24px] font-bold mb-3">{t('referrals.refer')} {milestoneTarget.toLocaleString()} {t('referrals.users')}</h2>
             <p className="text-[14] text-[#3572EF] leading-relaxed mb-6">
               {remainingReferrals > 0 
-                ? `You're only ${remainingReferrals} signups away from unlocking the "Platinum" commission tier.`
-                : "Congratulations! You've reached the Platinum commission tier!"
+                ? `${t('common.you')} ${remainingReferrals} ${t('referrals.signupsAway')} ${t('referrals.platinum')} ${t('referrals.commissionTier')}`
+                : `${t('common.congratulations')} ${t('referrals.platinum')} ${t('referrals.commissionTier')}!`
               }
             </p>
             <div className="space-y-2">
@@ -352,8 +373,8 @@ export default function ReferralsPage() {
                 <div className="h-full bg-white rounded-full transition-all duration-700" style={{ width: `${milestonePercent}%` }} />
               </div>
               <div className="flex justify-between text-[12px] font-bold tracking-widest uppercase">
-                <span className="text-white">{totalReferrals} Referred</span>
-                <span className="text-white">{milestoneTarget.toLocaleString()} Target</span>
+                <span className="text-white">{totalReferrals} {t('referrals.referred')}</span>
+                <span className="text-white">{milestoneTarget.toLocaleString()} {t('referrals.target')}</span>
               </div>
             </div>
           </div>
@@ -364,7 +385,7 @@ export default function ReferralsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="bg-white rounded-2xl w-full max-w-md p-8 shadow-2xl">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-[#191C1E]">Referral Details</h2>
+              <h2 className="text-xl font-bold text-[#191C1E]">{t('referrals.referralDetails')}</h2>
               <button onClick={() => setSelectedRef(null)} className="text-[#505F76] hover:text-gray-600">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
@@ -372,27 +393,27 @@ export default function ReferralsPage() {
             
             <div className="space-y-4">
               <div className="p-4 bg-gray-50 rounded-xl flex items-center justify-between">
-                <span className="text-sm font-semibold text-[#505F76]">User</span>
+                <span className="text-sm font-semibold text-[#505F76]">{t('referrals.user')}</span>
                 <span className="text-sm font-bold text-[#191C1E]">{selectedRef.user}</span>
               </div>
               <div className="p-4 bg-gray-50 rounded-xl flex items-center justify-between">
-                <span className="text-sm font-semibold text-[#505F76]">Status</span>
+                <span className="text-sm font-semibold text-[#505F76]">{t('common.status')}</span>
                 <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${selectedRef.status === 'subscribed' ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}>
-                  {selectedRef.status === 'subscribed' ? 'Subscribed' : 'Signed Up'}
+                  {selectedRef.status === 'subscribed' ? t('referrals.subscribed') : t('referrals.signedUp')}
                 </span>
               </div>
               <div className="p-4 bg-gray-50 rounded-xl flex items-center justify-between">
-                <span className="text-sm font-semibold text-[#505F76]">Plan Selected</span>
+                <span className="text-sm font-semibold text-[#505F76]">{t('referrals.planSelected')}</span>
                 <span className="text-sm font-bold text-[#191C1E]">{selectedRef.plan_amount}</span>
               </div>
               <div className="p-4 bg-indigo-50 rounded-xl flex items-center justify-between border border-indigo-100">
-                <span className="text-sm font-semibold text-[#050C9C]">Commission Earned</span>
+                <span className="text-sm font-semibold text-[#050C9C]">{t('referrals.commissionEarned')}</span>
                 <span className="text-lg font-black text-[#050C9C]">${selectedRef.commission.toFixed(2)}</span>
               </div>
             </div>
             
             <button onClick={() => setSelectedRef(null)} className="w-full mt-8 py-3 bg-indigo-600 hover:bg-[#050C9C] text-white rounded-xl text-sm font-semibold transition-colors">
-              Close Details
+              {t('referrals.closeDetails')}
             </button>
           </div>
         </div>

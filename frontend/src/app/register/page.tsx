@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { useTranslation } from '@/hooks/useTranslation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function RegisterPage() {
   const [name, setName] = useState('');
@@ -11,102 +13,150 @@ export default function RegisterPage() {
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [error, setError] = useState('');
   const { register } = useAuth();
+  const { t, isLoading } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== passwordConfirmation) {
-      setError('Passwords do not match');
+      setError(t('auth.passwordsDoNotMatch'));
       return;
     }
     try {
       await register({ name, email, password });
     } catch (err: unknown) {
       const errorResponse = err as { response?: { data?: { error?: string } } };
-      setError(errorResponse.response?.data?.error || 'Registration failed');
+      setError(errorResponse.response?.data?.error || t('auth.registrationFailed'));
     }
   };
 
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-black">
-      <div className="w-full max-w-md space-y-8 rounded-2xl border border-zinc-800 bg-zinc-900 p-10 shadow-2xl">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-white">
-            Create an affiliate account
-          </h2>
-          <p className="mt-2 text-center text-sm text-zinc-400 font-medium">
-            Already have an account?{' '}
-            <Link href="/login" className="font-semibold text-blue-400 hover:text-blue-300">
-              Sign in here
-            </Link>
-          </p>
+  // Show loading state while translations are loading
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#F8F9FA]">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-3 border-[#050C9C] border-t-transparent rounded-full animate-spin" />
         </div>
-        <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
-          {error && <div className="text-red-500 text-sm">{error}</div>}
-          <div className="space-y-4">
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[#F8F9FA] p-4">
+      <div className="w-full max-w-md">
+        {/* Logo/Brand Section */}
+        <div className="text-center mb-4">
+          <div className="inline-flex items-center justify-center mb-4">
+            <Image 
+              src="/FalakLogoDark.png" 
+              alt="FalakCart Logo" 
+              width={180} 
+              height={60}
+              priority
+              className="object-contain"
+            />
+          </div>
+        </div>
+
+        {/* Register Card */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <div className="mb-4">
+            <h2 className="text-2xl font-bold text-[#191C1E] mb-2">
+              {t('auth.createAffiliateAccount')}
+            </h2>
+            <p className="text-sm text-[#505F76]">
+              {t('auth.alreadyHaveAccount')}{' '}
+              <Link href="/login" className="font-semibold text-[#050C9C] hover:text-[#050C9C]/80 transition-colors">
+                {t('auth.signInHere')}
+              </Link>
+            </p>
+          </div>
+
+          <form className="space-y-2" onSubmit={handleSubmit}>
+            {error && (
+              <div className="p-3 rounded-xl bg-red-50 border border-red-100">
+                <p className="text-red-600 text-sm font-medium">{error}</p>
+              </div>
+            )}
+
             <div>
-              <label htmlFor="name" className="sr-only">Full Name</label>
+              <label htmlFor="name" className="block text-sm font-semibold text-[#191C1E] mb-2">
+                {t('auth.fullName')}
+              </label>
               <input
                 id="name"
                 name="name"
                 type="text"
                 required
-                className="relative block w-full rounded-lg border border-zinc-700 bg-black px-3 py-3 text-white placeholder-zinc-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                placeholder="Full Name"
+                className="w-full px-4 py-2 rounded-xl border border-gray-200 bg-[#F8F9FA] text-[#191C1E] placeholder-[#505F76]/50 focus:outline-none focus:ring-2 focus:ring-[#050C9C]/20 focus:border-[#050C9C] transition-all"
+                placeholder={t('auth.fullName')}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
+
             <div>
-              <label htmlFor="email-address" className="sr-only">Email address</label>
+              <label htmlFor="email-address" className="block text-sm font-semibold text-[#191C1E] mb-2">
+                {t('auth.emailAddress')}
+              </label>
               <input
                 id="email-address"
                 name="email"
                 type="email"
                 autoComplete="email"
                 required
-                className="relative block w-full rounded-lg border border-zinc-700 bg-black px-3 py-3 text-white placeholder-zinc-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                placeholder="Email address"
+                className="w-full px-4 py-2 rounded-xl border border-gray-200 bg-[#F8F9FA] text-[#191C1E] placeholder-[#505F76]/50 focus:outline-none focus:ring-2 focus:ring-[#050C9C]/20 focus:border-[#050C9C] transition-all"
+                placeholder={t('auth.emailAddress')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
+
             <div>
-              <label htmlFor="password" className="sr-only">Password</label>
+              <label htmlFor="password" className="block text-sm font-semibold text-[#191C1E] mb-2">
+                {t('auth.password')}
+              </label>
               <input
                 id="password"
                 name="password"
                 type="password"
                 required
-                className="relative block w-full rounded-lg border border-zinc-700 bg-black px-3 py-3 text-white placeholder-zinc-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                placeholder="Password"
+                className="w-full px-4 py-2 rounded-xl border border-gray-200 bg-[#F8F9FA] text-[#191C1E] placeholder-[#505F76]/50 focus:outline-none focus:ring-2 focus:ring-[#050C9C]/20 focus:border-[#050C9C] transition-all"
+                placeholder={t('auth.password')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
+
             <div>
-              <label htmlFor="password-confirmation" className="sr-only">Confirm Password</label>
+              <label htmlFor="password-confirmation" className="block text-sm font-semibold text-[#191C1E] mb-2">
+                {t('auth.confirmPassword')}
+              </label>
               <input
                 id="password-confirmation"
                 name="password_confirmation"
                 type="password"
                 required
-                className="relative block w-full rounded-lg border border-zinc-700 bg-black px-3 py-3 text-white placeholder-zinc-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                placeholder="Confirm Password"
+                className="w-full px-4 py-2 rounded-xl border border-gray-200 bg-[#F8F9FA] text-[#191C1E] placeholder-[#505F76]/50 focus:outline-none focus:ring-2 focus:ring-[#050C9C]/20 focus:border-[#050C9C] transition-all"
+                placeholder={t('auth.confirmPassword')}
                 value={passwordConfirmation}
                 onChange={(e) => setPasswordConfirmation(e.target.value)}
               />
             </div>
-          </div>
 
-          <div>
             <button
               type="submit"
-              className="group relative flex w-full justify-center rounded-lg bg-emerald-600 px-3 py-3 text-sm font-semibold text-white hover:bg-emerald-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 transition-colors"
+              className="w-full py-2.5 rounded-xl text-white font-semibold transition-all shadow-lg hover:shadow-xl mt-6"
+              style={{ background: 'linear-gradient(135deg, #2A14B4 0%, #4338CA 100%)' }}
             >
-              Register
+              {t('auth.register')}
             </button>
-          </div>
-        </form>
+          </form>
+        </div>
+
+        {/* Footer */}
+        <p className="text-center text-xs text-[#505F76] mt-6">
+          © 2024 FalakCart. All rights reserved.
+        </p>
       </div>
     </div>
   );

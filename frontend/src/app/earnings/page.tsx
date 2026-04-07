@@ -7,6 +7,8 @@ import { StatCard } from '@/components/StatCard';
 import { Wallet, Clock, CheckCircle2, MoreHorizontal, ArrowRight, Sparkles, Building, ChevronLeft, ChevronRight, TrendingUp } from 'lucide-react';
 import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
+import { useTranslation } from '@/hooks/useTranslation';
+
 interface EarningsData {
   total_earnings: number;
   available_balance: number;
@@ -25,6 +27,7 @@ interface Transaction {
 
 export default function EarningsPage() {
   const { user, loading } = useAuth();
+  const { t } = useTranslation();
   const [data, setData] = useState<EarningsData | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isFetching, setIsFetching] = useState(true);
@@ -123,11 +126,11 @@ export default function EarningsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-[#191C1E] tracking-tight">Earnings</h1>
-          <p className="text-[#505F76] mt-1">Financial performance summary</p>
+          <h1 className="text-3xl font-bold text-[#191C1E] tracking-tight">{t('earnings.title')}</h1>
+          <p className="text-[#505F76] mt-1">{t('earnings.subtitle')}</p>
         </div>
           <div className="flex items-center gap-4 border-b border-gray-200">
-             <button className="px-4 py-3 text-sm font-semibold text-[#050C9C] border-b-2 border-indigo-600">Overview Stats</button>
+             <button className="px-4 py-3 text-sm font-semibold text-[#050C9C] border-b-2 border-indigo-600">{t('earnings.overviewStats')}</button>
           </div>
         </div>
 
@@ -140,7 +143,7 @@ export default function EarningsPage() {
               </svg>
             }
             iconBgColor="#F0F4FF"
-            label="Total Earnings"
+            label={t('earnings.totalEarnings')}
             value={`$${(data?.total_earnings || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
             change="+15%"
             isPositive={true}
@@ -154,7 +157,7 @@ export default function EarningsPage() {
               </svg>
             }
             iconBgColor="#F0F4FF"
-            label="Available Balance"
+            label={t('earnings.availableBalance')}
             value={`$${(data?.available_balance || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
             change="+8%"
             isPositive={true}
@@ -168,7 +171,7 @@ export default function EarningsPage() {
               </svg>
             }
             iconBgColor="#FFF7ED"
-            label="Pending Earnings"
+            label={t('earnings.pendingEarnings')}
             value={`$${(data?.pending_earnings || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
             change="+3%"
             isPositive={true}
@@ -183,7 +186,7 @@ export default function EarningsPage() {
               </svg>
             }
             iconBgColor="#FFFFFF"
-            label="Paid Earnings"
+            label={t('earnings.paidEarnings')}
             value={`$${(data?.paid_earnings || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
             change="+12%"
             isPositive={true}
@@ -193,16 +196,20 @@ export default function EarningsPage() {
 
         {/* Charts & Payout Row */}
         <div className="grid grid-cols-3 gap-6">
-          <div className="col-span-2 bg-white rounded-2xl border border-gray-100  p-6 relative">
+          <div className="col-span-2 bg-white rounded-2xl   p-6 relative">
             <div className="flex items-center justify-between mb-8 text-center sm:text-left">
                <div>
-                 <h3 className="text-lg font-bold text-[#191C1E]">Commissions Insight</h3>
-                 <p className="text-sm text-[#505F76]">Performance over last 30 days</p>
+                 <h3 className="text-lg font-bold text-[#191C1E]">{t('earnings.commissionsInsight')}</h3>
+                 <p className="text-sm text-[#505F76]">{t('earnings.performanceLast30Days')}</p>
                </div>
                <div className="flex bg-gray-50 rounded-xl p-1">
-                 {['Daily', 'Weekly', 'Monthly'].map((p, i) => (
-                   <button key={i} onClick={() => setPeriod(p)} className={`px-4 py-1.5 text-xs font-semibold rounded-lg ${period === p ? 'bg-white  text-[#191C1E]' : 'text-[#505F76]'}`}>
-                     {p}
+                 {[
+                   { key: 'Daily', label: t('common.daily') },
+                   { key: 'Weekly', label: t('common.weekly') },
+                   { key: 'Monthly', label: t('common.monthly') }
+                 ].map((p, i) => (
+                   <button key={i} onClick={() => setPeriod(p.key)} className={`px-4 py-1.5 text-xs font-semibold rounded-lg ${period === p.key ? 'bg-white  text-[#191C1E]' : 'text-[#505F76]'}`}>
+                     {p.label}
                    </button>
                  ))}
                </div>
@@ -226,9 +233,9 @@ export default function EarningsPage() {
           </div>
 
           <div className="space-y-6">
-            <div className="bg-white rounded-2xl border border-gray-100 p-6 ">
-               <h3 className="text-[14px] font-bold text-[#191C1E] mb-6">Payout Details</h3>
-               <p className="text-[10px] font-bold uppercase tracking-wider text-[#505F76] mb-1">Available to withdraw</p>
+            <div className="bg-white rounded-2xl  p-6 ">
+               <h3 className="text-[14px] font-bold text-[#191C1E] mb-6">{t('earnings.payoutDetails')}</h3>
+               <p className="text-[10px] font-bold uppercase tracking-wider text-[#505F76] mb-1">{t('earnings.availableToWithdraw')}</p>
                <p className="text-[32px] font-black text-[#050C9C] mb-6">${(data?.available_balance || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
                
                <button 
@@ -240,22 +247,22 @@ export default function EarningsPage() {
                    boxShadow: '0px 4px 6px -4px #6366F133, 0px 10px 15px -3px #6366F133'
                  }}
                >
-                 Request Payout <ArrowRight className="w-4 h-4" />
+                 {t('earnings.requestPayout')} <ArrowRight className="w-4 h-4 rtl:rotate-180" />
                </button>
 
                <div className="space-y-4 pt-4 border-t border-gray-100">
                  <div className="flex justify-between items-center text-[12px]">
-                   <span className="text-[#505F76]">Payout Method</span>
+                   <span className="text-[#505F76]">{t('earnings.payoutMethod')}</span>
                    <div className="flex items-center gap-2 font-semibold text-[#191C1E]">
                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M1.75 9.33333V5.25H2.91667V9.33333H1.75ZM5.25 9.33333V5.25H6.41667V9.33333H5.25ZM0 11.6667V10.5H11.6667V11.6667H0ZM8.75 9.33333V5.25H9.91667V9.33333H8.75ZM0 4.08333V2.91667L5.83333 0L11.6667 2.91667V4.08333H0ZM2.59583 2.91667H5.83333H9.07083H2.59583ZM2.59583 2.91667H9.07083L5.83333 1.3125L2.59583 2.91667Z" fill="#191C1E"/>
 </svg>
 
-                     Bank Transfer (****4210)
+                     {t('earnings.bankTransfer')} (****4210)
                    </div>
                  </div>
                  <div className="flex justify-between items-center text-[12px]">
-                   <span className="text-[#505F76]">Next Scheduled</span>
+                   <span className="text-[#505F76]">{t('earnings.nextScheduled')}</span>
                    <span className="font-semibold text-[#191C1E]">{getNextPayoutDate()}</span>
                  </div>
                </div>
@@ -267,11 +274,11 @@ export default function EarningsPage() {
 </svg>
 </div>
               <div>
-                <h4 className="text-sm font-bold text-indigo-900 mb-1">Smart Insight</h4>
+                <h4 className="text-sm font-bold text-indigo-900 mb-1">{t('earnings.smartInsight')}</h4>
                 <p className="text-xs text-indigo-800/80 leading-relaxed">
-                  Great work! You have <span className="font-bold underline decoration-indigo-300">{transactions.length}</span> recorded commission transactions. 
+                  {t('earnings.greatWork')} <span className="font-bold underline decoration-indigo-300">{transactions.length}</span> {t('earnings.recordedTransactions')} 
                   {topLink && (
-                    <span> Your <span className="font-semibold">{topLink.name}</span> campaign remains your top earner, pulling in ${topLink.earnings}.</span>
+                    <span> {t('earnings.topEarner')} <span className="font-semibold">{topLink.name}</span> campaign remains your top earner, pulling in ${topLink.earnings}.</span>
                   )}
                 </p>
               </div>
@@ -280,22 +287,22 @@ export default function EarningsPage() {
         </div>
 
         {/* Transactions Table */}
-        <div className="bg-white rounded-2xl border border-gray-100  overflow-hidden pb-4">
+        <div className="bg-white rounded-2xl   overflow-hidden pb-4">
           <div className="p-6 flex items-center justify-between border-b border-gray-50">
             <div>
-               <h3 className="text-lg font-bold text-[#191C1E]">Recent Transactions</h3>
-               <p className="text-sm text-[#505F76] mt-1">Monitoring your latest commission events</p>
+               <h3 className="text-lg font-bold text-[#191C1E]">{t('earnings.recentTransactions')}</h3>
+               <p className="text-sm text-[#505F76] mt-1">{t('earnings.monitoringCommissions')}</p>
             </div>
-            <button className="px-5 py-2 bg-gray-50 text-sm font-semibold text-gray-700 rounded-xl hover:bg-gray-100">View All</button>
+            <button className="px-5 py-2 bg-gray-50 text-sm font-semibold text-gray-700 rounded-xl hover:bg-gray-100">{t('dashboard.viewAll')}</button>
           </div>
           <table className="w-full text-left mt-2">
             <thead>
               <tr className="text-[10px] font-bold uppercase tracking-wider text-[#505F76] border-b border-gray-50">
-                <th className="px-6 py-4">Date</th>
-                <th className="px-6 py-4">Type</th>
-                <th className="px-6 py-4">Source</th>
-                <th className="px-6 py-4 font-bold">Amount</th>
-                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">{t('common.date')}</th>
+                <th className="px-6 py-4">{t('earnings.type')}</th>
+                <th className="px-6 py-4">{t('earnings.source')}</th>
+                <th className="px-6 py-4 font-bold">{t('common.amount')}</th>
+                <th className="px-6 py-4">{t('common.status')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -309,7 +316,7 @@ export default function EarningsPage() {
                     <td className="px-6 py-5">
                       <span className="px-2.5 py-1 bg-indigo-50 text-[#050C9C] rounded-lg text-xs font-bold capitalize">{tr.type}</span>
                     </td>
-                    <td className="px-6 py-5 text-sm text-gray-600">{tr.source || 'General'}</td>
+                    <td className="px-6 py-5 text-sm text-gray-600">{tr.source || t('earnings.general')}</td>
                     <td className={`px-6 py-5 text-sm font-black ${isCommission ? 'text-emerald-600' : 'text-[#191C1E]'}`}>
                       {isCommission ? '+' : '-'}${Math.abs(tr.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </td>
@@ -324,18 +331,18 @@ export default function EarningsPage() {
               })}
               {transactions.length === 0 && (
                 <tr>
-                   <td colSpan={5} className="py-8 text-center text-sm text-[#505F76]">No transactions found.</td>
+                   <td colSpan={5} className="py-8 text-center text-sm text-[#505F76]">{t('earnings.noTransactionsFound')}</td>
                 </tr>
               )}
             </tbody>
           </table>
           
           <div className="px-6 pt-4 flex items-center justify-between text-xs text-[#505F76]">
-             <span>Showing {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, transactions.length)} of {transactions.length} transactions</span>
+             <span>{t('earnings.showing')} {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, transactions.length)} {t('earnings.of')} {transactions.length} {t('earnings.transactions')}</span>
              <div className="flex items-center gap-2">
-               <button disabled={currentPage === 1} onClick={prevPage} className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50"><ChevronLeft className="w-4 h-4" /></button>
+               <button disabled={currentPage === 1} onClick={prevPage} className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50"><ChevronLeft className="w-4 h-4 rtl:rotate-180" /></button>
                <span className="font-medium text-[#191C1E]">{currentPage} / {totalPages}</span>
-               <button disabled={currentPage === totalPages} onClick={nextPage} className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50"><ChevronRight className="w-4 h-4" /></button>
+               <button disabled={currentPage === totalPages} onClick={nextPage} className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50"><ChevronRight className="w-4 h-4 rtl:rotate-180" /></button>
              </div>
           </div>
         </div>

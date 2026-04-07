@@ -33,6 +33,20 @@ api.interceptors.response.use(
   },
   (error) => {
     console.error('API error:', error.response?.status, error.response?.data || error.message);
+    
+    // Handle 401 Unauthorized errors
+    if (error.response?.status === 401) {
+      // Clear invalid token
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('token');
+        
+        // Only redirect if not already on login/register pages
+        if (!window.location.pathname.match(/\/(login|register|refer|welcome)/)) {
+          window.location.href = '/login';
+        }
+      }
+    }
+    
     return Promise.reject(error);
   }
 );

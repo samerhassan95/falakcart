@@ -467,12 +467,12 @@ export default function AdminDashboard() {
                 >
                   <Bell className="w-5 h-5" />
                   {notifications.length > 0 && (
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                    <span className="absolute top-1 end-1 w-2 h-2 bg-red-500 rounded-full"></span>
                   )}
                 </button>
                 
                 {showNotifications && (
-                  <div className="absolute right-0 top-12 w-80 bg-[#FFFFFFCC] backdrop-blur-md rounded-xl shadow-lg border border-gray-200 z-50">
+                  <div className="absolute end-0 top-12 w-80 bg-[#FFFFFFCC] backdrop-blur-md rounded-xl shadow-lg border border-gray-200 z-50">
                     <div className="p-4 border-b border-gray-100">
                       <h3 className="font-semibold text-[#191C1E]">Notifications</h3>
                     </div>
@@ -525,7 +525,7 @@ export default function AdminDashboard() {
                 </button>
                 
                 {showPlatformMenu && (
-                  <div className="absolute right-0 top-12 w-72 bg-[#FFFFFFCC] backdrop-blur-md rounded-xl shadow-lg border border-gray-200 z-50">
+                  <div className="absolute end-0 top-12 w-72 bg-[#FFFFFFCC] backdrop-blur-md rounded-xl shadow-lg border border-gray-200 z-50">
                     {platformStats && (
                       <div className="p-4 border-b border-gray-100">
                         <h3 className="font-semibold text-[#191C1E] mb-3">System Status</h3>
@@ -792,7 +792,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#505F76]" />
+          <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#505F76]" />
           <input 
             type="text"
             placeholder="Search affiliates, transactions, or reports..."
@@ -1493,9 +1493,9 @@ function AnalyticsView({ summary, clickStats, affiliates, exportCSV }: Analytics
           {/* Map Placeholder */}
           <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl h-48 mb-6 flex items-center justify-center relative overflow-hidden">
             <MapPin className="w-16 h-16 text-indigo-300" />
-            <div className="absolute top-4 right-4 w-3 h-3 bg-indigo-600 rounded-full animate-pulse"></div>
-            <div className="absolute bottom-8 left-8 w-3 h-3 bg-blue-600 rounded-full animate-pulse"></div>
-            <div className="absolute top-12 right-16 w-3 h-3 bg-purple-600 rounded-full animate-pulse"></div>
+            <div className="absolute top-4 end-4 w-3 h-3 bg-indigo-600 rounded-full animate-pulse"></div>
+            <div className="absolute bottom-8 start-8 w-3 h-3 bg-blue-600 rounded-full animate-pulse"></div>
+            <div className="absolute top-12 end-16 w-3 h-3 bg-purple-600 rounded-full animate-pulse"></div>
           </div>
 
           <div className="space-y-3">
@@ -1635,7 +1635,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#505F76]" />
+          <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#505F76]" />
           <input 
             type="text"
             placeholder="Search by name or email..."
@@ -2954,7 +2954,7 @@ function SettingsView() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#505F76]" />
+          <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#505F76]" />
           <input 
             type="text"
             placeholder="Search parameters..."
@@ -2974,7 +2974,7 @@ function SettingsView() {
           >
             General
             {activeTab === 'general' && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600"></div>
+              <div className="absolute bottom-0 start-0 end-0 h-0.5 bg-indigo-600"></div>
             )}
           </button>
           <button 
@@ -3096,7 +3096,7 @@ function SettingsView() {
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">MINIMUM PAYOUT</label>
                       <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#505F76] font-semibold">$</span>
+                        <span className="absolute start-4 top-1/2 -translate-y-1/2 text-[#505F76] font-semibold">$</span>
                         <input 
                           type="number"
                           value={minPayout}
@@ -3180,7 +3180,7 @@ function SettingsView() {
                       <span className="text-sm font-medium text-gray-700">Two-Factor (2FA)</span>
                       <label className="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" className="sr-only peer" />
-                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[#FFFFFFCC] backdrop-blur-md after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-[#FFFFFFCC] backdrop-blur-md after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                       </label>
                     </div>
                   </div>
@@ -3236,7 +3236,7 @@ function SettingsView() {
                         onChange={(e) => setAutoApprove(e.target.checked)}
                         className="sr-only peer" 
                       />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[#FFFFFFCC] backdrop-blur-md after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-[#FFFFFFCC] backdrop-blur-md after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                     </label>
                   </div>
                 </div>
@@ -3269,7 +3269,7 @@ function SettingsView() {
                         onChange={(e) => setTwoFactorEnabled(e.target.checked)}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[#FFFFFFCC] backdrop-blur-md after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-[#FFFFFFCC] backdrop-blur-md after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                     </label>
                   </div>
 
