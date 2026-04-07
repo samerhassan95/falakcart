@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import Link from 'next/link';
@@ -10,8 +10,15 @@ export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [currentLocale, setCurrentLocale] = useState('ar');
   const { login } = useAuth();
   const { t, isLoading } = useTranslation();
+
+  useEffect(() => {
+    // Get current locale from localStorage
+    const locale = localStorage.getItem('NEXT_LOCALE') || 'ar';
+    setCurrentLocale(locale);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +41,8 @@ export default function LoginPage() {
     );
   }
 
+  const logoSrc = currentLocale === 'ar' ? '/FalakLogoDarkAr.png' : '/FalakLogoDark.png';
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#F8F9FA] p-4">
       <div className="w-full max-w-md">
@@ -41,7 +50,7 @@ export default function LoginPage() {
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center mb-4">
             <Image 
-              src="/FalakLogoDark.png" 
+              src={logoSrc}
               alt="FalakCart Logo" 
               width={180} 
               height={60}

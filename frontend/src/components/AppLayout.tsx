@@ -99,6 +99,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [isRTL, setIsRTL] = useState(true);
+  const [currentLocale, setCurrentLocale] = useState('ar');
   const menuRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
@@ -106,7 +107,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     // Detect current direction and listen for changes
     const updateDirection = () => {
       const dir = document.documentElement.dir;
+      const locale = localStorage.getItem('NEXT_LOCALE') || 'ar';
       setIsRTL(dir === 'rtl');
+      setCurrentLocale(locale);
     };
     
     updateDirection();

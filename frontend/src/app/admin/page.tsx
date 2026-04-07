@@ -2,6 +2,7 @@
 
 import { useAuth } from '@/context/AuthContext';
 import { useCallback, useEffect, useState, type ReactNode, type Dispatch, type SetStateAction } from 'react';
+import { useSearchParams } from 'next/navigation';
 import api from '@/lib/api';
 import { 
   Users, DollarSign, BarChart3, Settings as SettingsIcon,
@@ -231,7 +232,9 @@ const formatCurrency = (value?: number | string | null) => {
 
 export default function AdminDashboard() {
   const { user, loading } = useAuth();
-  const [activeView, setActiveView] = useState<'overview' | 'analytics' | 'affiliates' | 'commissions' | 'payouts' | 'settings'>('overview');
+  const searchParams = useSearchParams();
+  const activeView = (searchParams.get('view') || 'overview') as 'overview' | 'analytics' | 'affiliates' | 'commissions' | 'payouts' | 'settings';
+  
   const [summary, setSummary] = useState<Summary | null>(null);
   const [affiliates, setAffiliates] = useState<Affiliate[]>([]);
   const [clickStats, setClickStats] = useState<{ date: string; count: number }[]>([]);
@@ -248,6 +251,12 @@ export default function AdminDashboard() {
   const [isCreatingLink, setIsCreatingLink] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastType, setToastType] = useState<'success' | 'error'>('success');
+
+  const setActiveView = (view: ViewKey) => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('view', view);
+    window.history.pushState({}, '', url);
+  };
 
   const openGenerateLinkModal = () => {
     setNewLinkName(`Admin Link ${new Date().toISOString().slice(0, 10)}`);
@@ -442,315 +451,66 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
-      {/* Top Navigation */}
-      <nav className="bg-[#FFFFFFCC] backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2">
-                <svg className="w-8 h-8" viewBox="0 0 40 40" fill="none">
-                  <path d="M20 0L40 10V30L20 40L0 30V10L20 0Z" fill="#4F46E5"/>
-                  <path d="M20 10L30 15V25L20 30L10 25V15L20 10Z" fill="white"/>
-                </svg>
-                <span className="text-xl font-bold text-[#191C1E]">Falak</span>
+    <div className="space-y-6">
+      {/* Content will be wrapped by AdminLayout */}
+      {activeView === 'overview' && <OverviewView summary={summary} affiliates={affiliates} clickStats={clickStats} setActiveView={setActiveView} updateStatus={updateStatus} />}
+      {activeView === 'analytics' && <AnalyticsView summary={summary} clickStats={clickStats} affiliates={affiliates} exportCSV={exportCSV} />}
+      {activeView === 'affiliates' && <AffiliatesView affiliates={affiliates} searchQuery={searchQuery} setSearchQuery={setSearchQuery} fetchData={fetchData} updateStatus={updateStatus} deleteAffiliate={deleteAffiliate} />}
+      {activeView === 'commissions' && <CommissionsView />}
+      {activeView === 'payouts' && <PayoutsView />}
+      {activeView === 'settings' && <SettingsView />}
+      
+      {/* Modals */}
+      {showLinkModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-8">
+          <div className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-xl font-bold text-[#191C1E]">Create Affiliate Link</h2>
+                <p className="text-sm text-[#505F76]">Enter a name for the new generated link.</p>
+              </div>
+              <button onClick={closeGenerateLinkModal} className="text-[#505F76] hover:text-gray-700">
+                ✕
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Link Name</label>
+                <input
+                  type="text"
+                  value={newLinkName}
+                  onChange={(e) => setNewLinkName(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
+                  placeholder="Enter a name for the link"
+                />
+                {linkCreateError && <p className="mt-2 text-sm text-red-600">{linkCreateError}</p>}
               </div>
             </div>
-
-            {/* Right Side */}
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <button 
-                  onClick={() => setShowNotifications(!showNotifications)}
-                  className="relative p-2 text-[#505F76] hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                  <Bell className="w-5 h-5" />
-                  {notifications.length > 0 && (
-                    <span className="absolute top-1 end-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                  )}
-                </button>
-                
-                {showNotifications && (
-                  <div className="absolute end-0 top-12 w-80 bg-[#FFFFFFCC] backdrop-blur-md rounded-xl shadow-lg border border-gray-200 z-50">
-                    <div className="p-4 border-b border-gray-100">
-                      <h3 className="font-semibold text-[#191C1E]">Notifications</h3>
-                    </div>
-                    <div className="p-4 space-y-3 max-h-96 overflow-y-auto">
-                      {notifications.length > 0 ? (
-                        notifications.map((notif, idx) => (
-                          <div key={idx} className="flex items-start gap-3 p-3 hover:bg-[#F8FAFC] rounded-lg cursor-pointer">
-                            <div className={`w-8 h-8 ${notif.icon === 'trending' ? 'bg-blue-100' : 'bg-green-100'} rounded-lg flex items-center justify-center flex-shrink-0`}>
-                              {notif.icon === 'trending' ? (
-                                <TrendingUp className="w-4 h-4 text-blue-600" />
-                              ) : (
-                                <UserPlus className="w-4 h-4 text-green-600" />
-                              )}
-                            </div>
-                            <div className="flex-1">
-                              <p className="text-sm font-medium text-[#191C1E]">{notif.title}</p>
-                              <p className="text-xs text-[#505F76]">{notif.message}</p>
-                              <p className="text-xs text-[#505F76] mt-1">{notif.time}</p>
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-center py-8 text-[#505F76]">
-                          <Bell className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                          <p className="text-sm">No new notifications</p>
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-3 border-t border-gray-100">
-                      <button 
-                        onClick={() => {
-                          setShowNotifications(false);
-                          setActiveView('affiliates');
-                        }}
-                        className="w-full text-sm font-medium text-[#050C9C] hover:text-[#050C9C]"
-                      >
-                        View all notifications
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-              
-              <div className="relative">
-                <button 
-                  onClick={() => setShowPlatformMenu(!showPlatformMenu)}
-                  className="px-4 py-2 text-sm font-medium text-[#050C9C] bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors"
-                >
-                  Platform Overview
-                </button>
-                
-                {showPlatformMenu && (
-                  <div className="absolute end-0 top-12 w-72 bg-[#FFFFFFCC] backdrop-blur-md rounded-xl shadow-lg border border-gray-200 z-50">
-                    {platformStats && (
-                      <div className="p-4 border-b border-gray-100">
-                        <h3 className="font-semibold text-[#191C1E] mb-3">System Status</h3>
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-600">Status</span>
-                            <span className="text-sm font-semibold text-green-600 flex items-center gap-1">
-                              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                              {platformStats.systemStatus}
-                            </span>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-600">API Health</span>
-                            <span className="text-sm font-semibold text-[#191C1E]">{platformStats.apiHealth}</span>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-600">Active Users</span>
-                            <span className="text-sm font-semibold text-[#191C1E]">{platformStats.activeUsers}</span>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-gray-600">Total Revenue</span>
-                            <span className="text-sm font-semibold text-[#191C1E]">${platformStats.totalRevenue?.toLocaleString() || '0'}</span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    <div className="p-4 space-y-2">
-                      <button 
-                        onClick={() => {
-                          setShowPlatformMenu(false);
-                          setActiveView('analytics');
-                        }}
-                        className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-[#F8FAFC] rounded-lg"
-                      >
-                        Performance Metrics
-                      </button>
-                      <button 
-                        onClick={() => {
-                          setShowPlatformMenu(false);
-                          setActiveView('settings');
-                        }}
-                        className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-[#F8FAFC] rounded-lg"
-                      >
-                        System Settings
-                      </button>
-                      <div className="border-t border-gray-100 my-2"></div>
-                      <a 
-                        href="/api-docs" 
-                        target="_blank"
-                        className="block w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-[#F8FAFC] rounded-lg"
-                      >
-                        API Documentation
-                      </a>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex items-center gap-3 pl-4 border-l border-gray-200">
-                <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">{user?.name?.charAt(0) || 'A'}</span>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm font-semibold text-[#191C1E]">{user?.name}</p>
-                  <p className="text-xs text-[#505F76]">Administrator</p>
-                </div>
-              </div>
+            <div className="mt-6 flex items-center justify-end gap-3">
+              <button onClick={closeGenerateLinkModal} className="px-4 py-2 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-[#F8FAFC]">
+                Cancel
+              </button>
+              <button
+                onClick={createLink}
+                disabled={isCreatingLink}
+                className="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-[#050C9C] text-white text-sm font-semibold disabled:opacity-50"
+              >
+                {isCreatingLink ? 'Creating...' : 'Create Link'}
+              </button>
             </div>
           </div>
         </div>
-      </nav>
-
-      {/* Main Layout */}
-      <div className="flex">
-        {/* Sidebar */}
-        <aside className="w-64 bg-[#F8FAFC] min-h-[calc(100vh-73px)] sticky top-[73px]">
-          <div className="p-6">
-            {/* User Profile */}
-            <div className="flex items-center gap-3 mb-8 pb-6 border-b border-gray-100">
-              <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center">
-                <span className="text-white font-semibold">{user?.name?.charAt(0) || 'A'}</span>
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-[#191C1E]">{user?.name}</p>
-                <p className="text-xs text-[#505F76]">Affiliate Partner</p>
-              </div>
-            </div>
-
-            {/* Navigation */}
-            <nav className="space-y-1">
-              <NavItem 
-                icon={<BarChart3 className="w-5 h-5" />}
-                label="Overview"
-                active={activeView === 'overview'}
-                onClick={() => setActiveView('overview')}
-              />
-              <NavItem 
-                icon={<Users className="w-5 h-5" />}
-                label="Affiliates"
-                active={activeView === 'affiliates'}
-                onClick={() => setActiveView('affiliates')}
-              />
-              <NavItem 
-                icon={<DollarSign className="w-5 h-5" />}
-                label="Commissions"
-                active={activeView === 'commissions'}
-                onClick={() => setActiveView('commissions')}
-              />
-              <NavItem 
-                icon={<TrendingUp className="w-5 h-5" />}
-                label="Analytics"
-                active={activeView === 'analytics'}
-                onClick={() => setActiveView('analytics')}
-              />
-              <NavItem 
-                icon={<Clock className="w-5 h-5" />}
-                label="Payouts"
-                active={activeView === 'payouts'}
-                onClick={() => setActiveView('payouts')}
-              />
-              <NavItem 
-                icon={<SettingsIcon className="w-5 h-5" />}
-                label="Settings"
-                active={activeView === 'settings'}
-                onClick={() => setActiveView('settings')}
-              />
-            </nav>
-
-            {/* Generate Link Button */}
-            <button onClick={openGenerateLinkModal} className="w-full mt-8 px-4 py-3 bg-indigo-600 hover:bg-[#050C9C] text-white rounded-xl font-semibold text-sm transition-colors flex items-center justify-center gap-2">
-              <Plus className="w-4 h-4" />
-              Generate Link
-            </button>
-            {generatedLink && (
-              <p className="mt-3 text-xs text-[#505F76] break-all">Copied link: <a href={generatedLink} target="_blank" rel="noreferrer" className="text-[#050C9C] underline">{generatedLink}</a></p>
-            )}
-
-            {showLinkModal && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-8">
-                <div className="w-full max-w-lg rounded-3xl bg-[#FFFFFFCC] backdrop-blur-md p-6 shadow-2xl">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h2 className="text-xl font-bold text-[#191C1E]">Create Affiliate Link</h2>
-                      <p className="text-sm text-[#505F76]">Enter a name for the new generated link.</p>
-                    </div>
-                    <button onClick={closeGenerateLinkModal} className="text-[#505F76] hover:text-gray-700">
-                      ✕
-                    </button>
-                  </div>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">Link Name</label>
-                      <input
-                        type="text"
-                        value={newLinkName}
-                        onChange={(e) => setNewLinkName(e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
-                        placeholder="Enter a name for the link"
-                      />
-                      {linkCreateError && <p className="mt-2 text-sm text-red-600">{linkCreateError}</p>}
-                    </div>
-                  </div>
-                  <div className="mt-6 flex items-center justify-end gap-3">
-                    <button onClick={closeGenerateLinkModal} className="px-4 py-2 rounded-2xl border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-[#F8FAFC]">
-                      Cancel
-                    </button>
-                    <button
-                      onClick={createLink}
-                      disabled={isCreatingLink}
-                      className="px-4 py-2 rounded-2xl bg-indigo-600 hover:bg-[#050C9C] text-white text-sm font-semibold disabled:opacity-50"
-                    >
-                      {isCreatingLink ? 'Creating...' : 'Create Link'}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Logout */}
-            <button 
-              onClick={() => {
-                localStorage.removeItem('token');
-                window.location.href = '/login';
-              }}
-              className="w-full mt-4 px-4 py-2 text-gray-600 hover:text-[#191C1E] text-sm font-medium flex items-center gap-2"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-              </svg>
-              Logout
-            </button>
-          </div>
-        </aside>
-
-        {/* Main Content */}
-        <main className="flex-1 p-8">
-          {activeView === 'overview' && <OverviewView summary={summary} affiliates={affiliates} clickStats={clickStats} setActiveView={setActiveView} updateStatus={updateStatus} />}
-          {activeView === 'analytics' && <AnalyticsView summary={summary} clickStats={clickStats} affiliates={affiliates} exportCSV={exportCSV} />}
-          {activeView === 'affiliates' && <AffiliatesView affiliates={affiliates} searchQuery={searchQuery} setSearchQuery={setSearchQuery} fetchData={fetchData} updateStatus={updateStatus} deleteAffiliate={deleteAffiliate} />}
-          {activeView === 'commissions' && <CommissionsView />}
-          {activeView === 'payouts' && <PayoutsView />}
-          {activeView === 'settings' && <SettingsView />}
-        </main>
-      </div>
-    </div>
-  );
-}
-
-// Navigation Item Component
-function NavItem({ icon, label, active, onClick }: NavItemProps) {
-  return (
-    <button
-      onClick={onClick}
-      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-        active 
-          ? 'bg-indigo-50 text-[#050C9C]' 
-          : 'text-gray-600 hover:bg-[#F8FAFC] hover:text-[#191C1E]'
-      }`}
-    >
-      {icon}
-      <span>{label}</span>
-      {active && (
-        <div className="ml-auto w-1 h-6 bg-indigo-600 rounded-full"></div>
       )}
-    </button>
+      
+      {generatedLink && (
+        <div className="fixed bottom-4 end-4 bg-white rounded-xl shadow-lg p-4 border border-gray-200 max-w-md">
+          <p className="text-sm font-semibold text-[#191C1E] mb-2">Link Generated!</p>
+          <p className="text-xs text-[#505F76] break-all">
+            <a href={generatedLink} target="_blank" rel="noreferrer" className="text-[#050C9C] underline">{generatedLink}</a>
+          </p>
+        </div>
+      )}
+    </div>
   );
 }
 

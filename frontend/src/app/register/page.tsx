@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from '@/hooks/useTranslation';
 import Link from 'next/link';
@@ -12,8 +12,15 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [error, setError] = useState('');
+  const [currentLocale, setCurrentLocale] = useState('ar');
   const { register } = useAuth();
   const { t, isLoading } = useTranslation();
+
+  useEffect(() => {
+    // Get current locale from localStorage
+    const locale = localStorage.getItem('NEXT_LOCALE') || 'ar';
+    setCurrentLocale(locale);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,6 +46,8 @@ export default function RegisterPage() {
       </div>
     );
   }
+
+  const logoSrc = currentLocale === 'ar' ? '/FalakLogoDarkAr.png' : '/FalakLogoDark.png';
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#F8F9FA] p-4">
