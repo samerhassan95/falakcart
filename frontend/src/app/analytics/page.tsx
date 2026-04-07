@@ -84,7 +84,7 @@ export default function AnalyticsPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-[#050C9C] tracking-tight">Analytics</h1>
+        <h1 className="text-3xl font-bold text-[#191C1E] tracking-tight">Analytics</h1>
         <p className="text-[#505F76] mt-1">Track your performance and optimize your results.</p>
       </div>
 
