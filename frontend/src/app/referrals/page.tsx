@@ -153,14 +153,14 @@ export default function ReferralsPage() {
   const remainingReferrals = Math.max(milestoneTarget - totalReferrals, 0);
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-[36px] font-bold text-[#191C1E] tracking-tight">{t('referrals.title')}</h1>
-          <p className="text-[#505F76] text-[16px] mt-1">{t('referrals.subtitle')}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#191C1E] tracking-tight">{t('referrals.title')}</h1>
+          <p className="text-sm sm:text-base text-[#505F76] mt-1">{t('referrals.subtitle')}</p>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex bg-gray-100 rounded-full p-1">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
+          <div className="flex bg-gray-100 rounded-full p-1 w-full sm:w-auto">
               {[
                 { key: 'All', label: t('common.all') },
                 { key: 'Signed Up', label: t('referrals.signedUp') },
@@ -169,7 +169,7 @@ export default function ReferralsPage() {
                 <button
                   key={tab.key}
                   onClick={() => { setFilter(tab.key); setCurrentPage(1); }}
-                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                  className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all ${
                     filter === tab.key ? 'bg-white text-[#191C1E] ' : 'text-[#505F76] hover:text-gray-700'
                   }`}
                 >
@@ -210,7 +210,7 @@ export default function ReferralsPage() {
         </div>
 
         {/* Top Cards */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <StatCard
             icon={
               <svg width="22" height="16" viewBox="0 0 22 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -253,14 +253,66 @@ export default function ReferralsPage() {
         </div>
 
         {/* Table Content */}
-        <div className="bg-white rounded-2xl   overflow-hidden">
-          <div className="p-6 flex items-center justify-between border-b border-gray-50">
-            <h3 className="text-lg font-bold text-[#191C1E]">{t('dashboard.recentActivity')}</h3>
-            <button onClick={handleExport} className="flex items-center gap-2 text-sm font-semibold text-[#050C9C] hover:text-[#050C9C]">
+        <div className="bg-white rounded-2xl overflow-hidden">
+          <div className="p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-gray-50">
+            <h3 className="text-base sm:text-lg font-bold text-[#191C1E]">{t('dashboard.recentActivity')}</h3>
+            <button onClick={handleExport} className="flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#050C9C] hover:text-[#050C9C]">
               {t('referrals.downloadCsv')} <Download className="w-4 h-4" />
             </button>
           </div>
-          <table className="w-full text-left">
+
+          {/* Mobile Card View */}
+          <div className="lg:hidden p-4 space-y-3">
+            {paginatedReferrals.map((ref, idx) => (
+              <div key={idx} className="p-4 bg-gray-50 rounded-xl">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-full bg-indigo-50 text-[#050C9C] flex items-center justify-center font-bold text-xs ring-2 ring-white">
+                    {ref.user.substring(0, 2).toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-[#191C1E] text-sm truncate">{ref.user}</p>
+                    <p className="text-xs text-[#505F76]">#{(99000 + idx).toString()}</p>
+                  </div>
+                  <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase ${
+                    ref.status === 'subscribed' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600'
+                  }`}>
+                    {ref.status === 'subscribed' ? t('referrals.subscribed') : t('referrals.signedUp')}
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-200">
+                  <div>
+                    <p className="text-xs text-[#505F76] mb-1">{t('referrals.planAmount')}</p>
+                    <p className="text-sm font-semibold text-[#191C1E]">{ref.plan_amount === '--' ? '—' : ref.plan_amount}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#505F76] mb-1">{t('earnings.commission')}</p>
+                    <p className="text-sm font-bold text-[#050C9C]">${ref.commission.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-[#505F76] mb-1">{t('referrals.dateJoined')}</p>
+                    <p className="text-xs text-[#505F76]">{ref.date_joined}</p>
+                  </div>
+                  <div className="flex items-end">
+                    <button 
+                      onClick={() => setSelectedRef(ref)}
+                      className="w-full px-3 py-2 border border-gray-200 rounded-xl text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors bg-white"
+                    >
+                      {t('referrals.viewDetails')}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+            {paginatedReferrals.length === 0 && (
+              <div className="px-4 py-12 text-center text-[#505F76] text-sm">
+                {t('referrals.noReferralsFound')}
+              </div>
+            )}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden lg:block overflow-x-auto">
+            <table className="w-full text-left">
             <thead>
               <tr className="text-[10px] font-bold uppercase tracking-wider text-[#505F76] border-b border-gray-50">
                 <th className="px-6 py-4">{t('referrals.user')}</th>
@@ -322,7 +374,9 @@ export default function ReferralsPage() {
               )}
             </tbody>
           </table>
-          <div className="px-6 py-4 border-t border-gray-50 flex items-center justify-between text-sm text-[#505F76]">
+          </div>
+
+          <div className="px-4 sm:px-6 py-4 border-t border-gray-50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-[#505F76]">
              <span>{t('earnings.showing')} {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, displayedReferrals.length)} {t('earnings.of')} {displayedReferrals.length} referrals</span>
              <div className="flex gap-1">
                <button disabled={currentPage === 1} onClick={prevPage} className="px-3 py-1.5 border border-gray-200 rounded-lg bg-white text-[#505F76] disabled:opacity-50">{t('common.previous')}</button>
@@ -333,16 +387,16 @@ export default function ReferralsPage() {
         </div>
 
         {/* Bottom Section */}
-        <div className="grid grid-cols-5 gap-6">
-          <div className="col-span-3 bg-white rounded-2xl  p-6 ">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-[#505F76]">{t('referrals.referralVelocity')}</h3>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6">
+          <div className="lg:col-span-3 bg-white rounded-2xl p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4">
+              <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#505F76]">{t('referrals.referralVelocity')}</h3>
               <div className="flex items-center gap-2">
                  <div className="w-2.5 h-2.5 bg-indigo-600 rounded-full" />
                  <span className="text-xs font-semibold text-[#191C1E]">{t('referrals.dailyConversions')}</span>
               </div>
             </div>
-            <div className="h-[200px]">
+            <div className="h-48 sm:h-[200px]">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={velocityData}>
                   <defs>
@@ -358,7 +412,7 @@ export default function ReferralsPage() {
             </div>
           </div>
 
-          <div className="col-span-2 bg-indigo-800 rounded-2xl p-8 text-white relative shadow-lg overflow-hidden flex flex-col justify-center">
+          <div className="lg:col-span-2 bg-indigo-800 rounded-2xl p-6 sm:p-8 text-white relative shadow-lg overflow-hidden flex flex-col justify-center">
             <div className="absolute top-0 end-0 w-64 h-64 bg-indigo-600 blur-3xl rounded-full opacity-50 translate-x-1/2 -translate-y-1/2" />
             <h3 className="text-[12px] font-bold uppercase tracking-widest text-[#C1BEFF] mb-2">{t('referrals.milestoneProgress')}</h3>
             <h2 className="text-[#FFFFFF] text-[24px] font-bold mb-3">{t('referrals.refer')} {milestoneTarget.toLocaleString()} {t('referrals.users')}</h2>

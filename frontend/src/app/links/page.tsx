@@ -91,25 +91,26 @@ function MyLinksContent() {
   const nextPage = () => setCurrentPage(p => Math.min(totalPages, p + 1));
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-[44px]  text-[#191C1E] tracking-tight">{t('links.title')}</h1>
-          <p className="text-[#505F76] mt-1 text-[16px]">{t('links.subtitle')}</p>
+          <h1 className="text-3xl sm:text-[44px] text-[#191C1E] tracking-tight">{t('links.title')}</h1>
+          <p className="text-[#505F76] mt-1 text-sm sm:text-[16px]">{t('links.subtitle')}</p>
         </div>
         <button
           onClick={() => setShowCreate(true)}
-          className="flex items-center gap-2 px-5 py-2.5 text-white rounded-xl text-sm font-semibold transition-all shadow-lg"
-
-          style={{ background: 'linear-gradient(135deg, #2A14B4 0%, #4338CA 100%)' }}          >
+          className="flex items-center justify-center gap-2 px-5 py-2.5 text-white rounded-xl text-sm font-semibold transition-all shadow-lg"
+          style={{ background: 'linear-gradient(135deg, #2A14B4 0%, #4338CA 100%)' }}
+        >
           <Link2 className="w-4 h-4" />
-          {t('links.createNewLink')}
+          <span className="hidden sm:inline">{t('links.createNewLink')}</span>
+          <span className="sm:hidden">Create</span>
         </button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <StatCard
           icon={<svg width="20" height="10" viewBox="0 0 20 10" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M9 10H5C3.61667 10 2.4375 9.5125 1.4625 8.5375C0.4875 7.5625 0 6.38333 0 5C0 3.61667 0.4875 2.4375 1.4625 1.4625C2.4375 0.4875 3.61667 0 5 0H9V2H5C4.16667 2 3.45833 2.29167 2.875 2.875C2.29167 3.45833 2 4.16667 2 5C2 5.83333 2.29167 6.54167 2.875 7.125C3.45833 7.70833 4.16667 8 5 8H9V10ZM6 6V4H14V6H6ZM11 10V8H15C15.8333 8 16.5417 7.70833 17.125 7.125C17.7083 6.54167 18 5.83333 18 5C18 4.16667 17.7083 3.45833 17.125 2.875C16.5417 2.29167 15.8333 2 15 2H11V0H15C16.3833 0 17.5625 0.4875 18.5375 1.4625C19.5125 2.4375 20 3.61667 20 5C20 6.38333 19.5125 7.5625 18.5375 8.5375C17.5625 9.5125 16.3833 10 15 10H11Z" fill="#050C9C" />
@@ -147,67 +148,115 @@ function MyLinksContent() {
       </div>
 
       {/* Active Campaigns Table */}
-      <div className="bg-white rounded-2xl   overflow-hidden">
-        <div className="p-6 flex items-center justify-between border-b border-gray-50">
-          <h3 className="text-lg font-bold text-[#191C1E]">{t('links.activeCampaigns')}</h3>
+      <div className="bg-white rounded-2xl overflow-hidden">
+        <div className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-50">
+          <h3 className="text-base sm:text-lg font-bold text-[#191C1E]">{t('links.activeCampaigns')}</h3>
           <div className="relative">
             <svg className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#505F76]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             <input
               type="text"
               placeholder={t('links.searchLinks')}
-              className="ps-10  py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
+              className="w-full sm:w-auto ps-10 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
               value={searchQuery}
               onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
             />
           </div>
         </div>
 
-        <table className="w-full text-left">
-          <thead>
-            <tr className="text-[10px] font-bold uppercase tracking-wider text-[#505F76] border-b border-gray-50">
-              <th className="px-6 py-4">{t('links.linkName')}</th>
-              <th className="px-6 py-4">{t('links.referralLink')}</th>
-              <th className="px-6 py-4 text-center">{t('links.clicks')}</th>
-              <th className="px-6 py-4 text-center">{t('links.conversions')}</th>
-              <th className="px-6 py-4 text-right">{t('earnings.title')}</th>
-              <th className="px-6 py-4 text-right">{t('links.dateCreated')}</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-50">
-            {paginatedLinks.map((link) => (
-              <tr key={link.id} className="hover:bg-gray-50/50 transition-colors group">
-                <td className="px-6 py-5">
-                  <p className="font-semibold text-[#191C1E]">{link.name}</p>
+        {/* Mobile Card View */}
+        <div className="block lg:hidden divide-y divide-gray-50">
+          {paginatedLinks.map((link) => (
+            <div key={link.id} className="p-4 hover:bg-gray-50/50 transition-colors">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-[#191C1E] truncate">{link.name}</p>
                   <p className="text-xs text-[#505F76]">{t('links.generalTraffic')}</p>
-                </td>
-                <td className="px-6 py-5">
-                  <div className="flex items-center gap-2">
-                    <span className="px-3 py-1.5 bg-indigo-50 text-[#050C9C] rounded-lg text-xs font-mono font-medium truncate max-w-[200px]">
-                      {link.referral_url}
-                    </span>
-                    <button
-                      onClick={() => copyLink(link.id, link.referral_url)}
-                      className="text-gray-300 hover:text-[#050C9C] transition-colors"
-                    >
-                      {copiedId === link.id ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </td>
-                <td className="px-6 py-5 text-center font-semibold text-[#191C1E]">{link.clicks.toLocaleString()}</td>
-                <td className="px-6 py-5 text-center font-semibold text-[#191C1E]">{link.conversions}</td>
-                <td className="px-6 py-5 text-right font-bold text-emerald-600">${link.earnings.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
-                <td className="px-6 py-5 text-right text-sm text-[#505F76]">{link.created_at}</td>
+                </div>
+                <button
+                  onClick={() => copyLink(link.id, link.referral_url)}
+                  className="ml-2 text-gray-300 hover:text-[#050C9C] transition-colors"
+                >
+                  {copiedId === link.id ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                </button>
+              </div>
+              <div className="mb-3">
+                <span className="px-3 py-1.5 bg-indigo-50 text-[#050C9C] rounded-lg text-xs font-mono font-medium break-all block">
+                  {link.referral_url}
+                </span>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div>
+                  <p className="text-xs text-[#505F76]">Clicks</p>
+                  <p className="font-semibold text-[#191C1E]">{link.clicks.toLocaleString()}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-[#505F76]">Conv.</p>
+                  <p className="font-semibold text-[#191C1E]">{link.conversions}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-[#505F76]">Earnings</p>
+                  <p className="font-bold text-emerald-600">${link.earnings.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+                </div>
+              </div>
+              <div className="mt-2 pt-2 border-t border-gray-100">
+                <p className="text-xs text-[#505F76]">{link.created_at}</p>
+              </div>
+            </div>
+          ))}
+          {filtered.length === 0 && (
+            <div className="px-6 py-12 text-center text-[#505F76] text-sm">{t('links.noCampaignsFound')}</div>
+          )}
+        </div>
+
+        {/* Desktop Table View */}
+        <div className="hidden lg:block overflow-x-auto">
+          <table className="w-full text-left min-w-[800px]">
+            <thead>
+              <tr className="text-[10px] font-bold uppercase tracking-wider text-[#505F76] border-b border-gray-50">
+                <th className="px-6 py-4">{t('links.linkName')}</th>
+                <th className="px-6 py-4">{t('links.referralLink')}</th>
+                <th className="px-6 py-4 text-center">{t('links.clicks')}</th>
+                <th className="px-6 py-4 text-center">{t('links.conversions')}</th>
+                <th className="px-6 py-4 text-right">{t('earnings.title')}</th>
+                <th className="px-6 py-4 text-right">{t('links.dateCreated')}</th>
               </tr>
-            ))}
-            {filtered.length === 0 && (
-              <tr><td colSpan={6} className="px-6 py-12 text-center text-[#505F76] text-sm">{t('links.noCampaignsFound')}</td></tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {paginatedLinks.map((link) => (
+                <tr key={link.id} className="hover:bg-gray-50/50 transition-colors group">
+                  <td className="px-6 py-5">
+                    <p className="font-semibold text-[#191C1E]">{link.name}</p>
+                    <p className="text-xs text-[#505F76]">{t('links.generalTraffic')}</p>
+                  </td>
+                  <td className="px-6 py-5">
+                    <div className="flex items-center gap-2">
+                      <span className="px-3 py-1.5 bg-indigo-50 text-[#050C9C] rounded-lg text-xs font-mono font-medium truncate max-w-[200px]">
+                        {link.referral_url}
+                      </span>
+                      <button
+                        onClick={() => copyLink(link.id, link.referral_url)}
+                        className="text-gray-300 hover:text-[#050C9C] transition-colors"
+                      >
+                        {copiedId === link.id ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </td>
+                  <td className="px-6 py-5 text-center font-semibold text-[#191C1E]">{link.clicks.toLocaleString()}</td>
+                  <td className="px-6 py-5 text-center font-semibold text-[#191C1E]">{link.conversions}</td>
+                  <td className="px-6 py-5 text-right font-bold text-emerald-600">${link.earnings.toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
+                  <td className="px-6 py-5 text-right text-sm text-[#505F76]">{link.created_at}</td>
+                </tr>
+              ))}
+              {filtered.length === 0 && (
+                <tr><td colSpan={6} className="px-6 py-12 text-center text-[#505F76] text-sm">{t('links.noCampaignsFound')}</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
 
         {filtered.length > 0 && (
-          <div className="px-6 py-4 border-t border-gray-50 flex items-center justify-between text-sm text-[#505F76]">
-            <span>Showing {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} {t('links.campaigns')}</span>
+          <div className="px-4 sm:px-6 py-4 border-t border-gray-50 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[#505F76]">
+            <span className="text-xs sm:text-sm">Showing {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, filtered.length)} of {filtered.length} {t('links.campaigns')}</span>
             <div className="flex items-center gap-2">
               <button disabled={currentPage === 1} onClick={prevPage} className="px-3 py-1.5 border border-gray-200 rounded-lg text-[#505F76] hover:bg-gray-50 text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed">{t('common.previous')}</button>
               <span className="text-[#191C1E] font-medium px-2">{currentPage} / {totalPages}</span>
@@ -218,24 +267,24 @@ function MyLinksContent() {
       </div>
 
       {/* Bottom Cards */}
-      <div className="grid grid-cols-2 gap-6">
-        <div className="bg-[#F2F4F6] rounded-2xl  px-6 py-12  ">
-          <div className="flex items-center  gap-3 mb-3">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <div className="bg-[#F2F4F6] rounded-2xl px-4 sm:px-6 py-8 sm:py-12">
+          <div className="flex items-center gap-3 mb-3">
             <svg width="15" height="20" viewBox="0 0 15 20" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M7.5 20C6.95 20 6.47917 19.8042 6.0875 19.4125C5.69583 19.0208 5.5 18.55 5.5 18H9.5C9.5 18.55 9.30417 19.0208 8.9125 19.4125C8.52083 19.8042 8.05 20 7.5 20ZM3.5 17V15H11.5V17H3.5ZM3.75 14C2.6 13.3167 1.6875 12.4 1.0125 11.25C0.3375 10.1 0 8.85 0 7.5C0 5.41667 0.729167 3.64583 2.1875 2.1875C3.64583 0.729167 5.41667 0 7.5 0C9.58333 0 11.3542 0.729167 12.8125 2.1875C14.2708 3.64583 15 5.41667 15 7.5C15 8.85 14.6625 10.1 13.9875 11.25C13.3125 12.4 12.4 13.3167 11.25 14H3.75ZM4.35 12H10.65C11.4 11.4667 11.9792 10.8083 12.3875 10.025C12.7958 9.24167 13 8.4 13 7.5C13 5.96667 12.4667 4.66667 11.4 3.6C10.3333 2.53333 9.03333 2 7.5 2C5.96667 2 4.66667 2.53333 3.6 3.6C2.53333 4.66667 2 5.96667 2 7.5C2 8.4 2.20417 9.24167 2.6125 10.025C3.02083 10.8083 3.6 11.4667 4.35 12Z" fill="#050C9C" />
             </svg>
-            <h3 className="font-bold text-[16px] text-[#191C1E]">{t('links.performanceTip')}</h3>
+            <h3 className="font-bold text-sm sm:text-[16px] text-[#191C1E]">{t('links.performanceTip')}</h3>
           </div>
-          <p className="text-sm  text-[#505F76] leading-relaxed">
+          <p className="text-xs sm:text-sm text-[#505F76] leading-relaxed">
             {t('links.your')} <span className="font-semibold text-[#191C1E]">{t('links.summerCampaign')}</span> {t('links.conversionRateTip')}
           </p>
         </div>
 
-        <div className="bg-[#050C9C]  flex flex-col items-start  justify-center  rounded-2xl px-6 py-12 text-white relative overflow-hidden">
+        <div className="bg-[#050C9C] flex flex-col items-start justify-center rounded-2xl px-4 sm:px-6 py-8 sm:py-12 text-white relative overflow-hidden">
           <div className="absolute -bottom-6 -end-6 w-32 h-32 bg-white/10 rounded-full" />
-          <h3 className="text-[20px] font-bold text-white   mb-1">{t('links.scaleEarnings')}</h3>
-          <p className=" text-[14px] text-[#3572EF] mb-4">{t('links.premiumTier')}</p>
-          <button className="px-5 py-2.5 text-[#050C9c] bg-white p-4  rounded-full text-sm font-bold hover:bg-indigo-50 transition-colors flex items-center gap-2">
+          <h3 className="text-lg sm:text-[20px] font-bold text-white mb-1">{t('links.scaleEarnings')}</h3>
+          <p className="text-xs sm:text-[14px] text-[#3572EF] mb-4">{t('links.premiumTier')}</p>
+          <button className="px-5 py-2.5 text-[#050C9c] bg-white p-4 rounded-full text-sm font-bold hover:bg-indigo-50 transition-colors flex items-center gap-2">
             {t('links.upgradeNow')}
           </button>
         </div>
@@ -243,9 +292,9 @@ function MyLinksContent() {
 
       {/* Create Link Modal */}
       {showCreate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl w-full max-w-md p-8 shadow-2xl">
-            <h2 className="text-xl font-bold text-[#191C1E] mb-4">{t('links.createNewLink')}</h2>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+          <div className="bg-white rounded-2xl w-full max-w-md p-6 sm:p-8 shadow-2xl">
+            <h2 className="text-lg sm:text-xl font-bold text-[#191C1E] mb-4">{t('links.createNewLink')}</h2>
             <input
               type="text"
               placeholder={t('links.campaignNamePlaceholder')}

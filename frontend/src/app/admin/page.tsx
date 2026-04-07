@@ -548,9 +548,9 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#505F76]" />
           <input 
@@ -563,14 +563,14 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
           <button className="p-2 text-[#505F76] hover:text-gray-600 hover:bg-gray-100 rounded-lg">
             <Bell className="w-5 h-5" />
           </button>
-          <button className="px-4 py-2 text-sm font-medium text-[#050C9C] bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg hover:bg-[#F8FAFC]">
+          <button className="hidden sm:block px-4 py-2 text-sm font-medium text-[#050C9C] bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg hover:bg-[#F8FAFC]">
             Platform Overview
           </button>
         </div>
       </div>
 
       {/* Alerts */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Conversion Insight Alert */}
         {summary && summary.total_revenue > 5000 && topPerformers.length > 0 && (
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
@@ -639,7 +639,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
         <StatCard 
           label="TOTAL AFFILIATES"
           value={totalAffiliates.toLocaleString()}
@@ -673,18 +673,18 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
       </div>
 
       {/* Revenue Performance Chart & Widgets */}
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Revenue Performance Chart */}
-        <div className="col-span-2 bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-6">
+        <div className="lg:col-span-2 bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div>
-              <h3 className="text-lg font-bold text-[#191C1E]">Revenue Performance</h3>
-              <p className="text-sm text-[#505F76]">Visualizing income vs conversion rates</p>
+              <h3 className="text-base sm:text-lg font-bold text-[#191C1E]">Revenue Performance</h3>
+              <p className="text-xs sm:text-sm text-[#505F76]">Visualizing income vs conversion rates</p>
             </div>
             <div className="flex items-center gap-2">
               <button 
                 onClick={() => setChartPeriod('daily')}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                className={`px-2 sm:px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
                   chartPeriod === 'daily' ? 'text-[#050C9C] bg-indigo-50' : 'text-gray-600 hover:text-[#191C1E] hover:bg-gray-100'
                 }`}
               >
@@ -692,7 +692,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
               </button>
               <button 
                 onClick={() => setChartPeriod('weekly')}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                className={`px-2 sm:px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
                   chartPeriod === 'weekly' ? 'text-[#050C9C] bg-indigo-50' : 'text-gray-600 hover:text-[#191C1E] hover:bg-gray-100'
                 }`}
               >
@@ -700,7 +700,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
               </button>
               <button 
                 onClick={() => setChartPeriod('monthly')}
-                className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                className={`px-2 sm:px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
                   chartPeriod === 'monthly' ? 'text-[#050C9C] bg-indigo-50' : 'text-gray-600 hover:text-[#191C1E] hover:bg-gray-100'
                 }`}
               >
@@ -709,7 +709,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
             </div>
           </div>
           
-          <div className="h-80">
+          <div className="h-64 sm:h-80">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={getChartData()}>
                 <defs>
@@ -729,7 +729,7 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
         </div>
 
         {/* Right Side Widgets */}
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {/* Pending Actions Widget */}
           <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 overflow-hidden">
             <div className="bg-red-50 border-b border-red-100 px-4 py-3 flex items-center justify-between">
@@ -867,19 +867,19 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
       </div>
 
       {/* Top Performing Affiliates Table */}
-      <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold text-[#191C1E]">Top Performing Affiliates</h3>
+      <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4 sm:p-6">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <h3 className="text-base sm:text-lg font-bold text-[#191C1E]">Top Performing Affiliates</h3>
           <button 
             onClick={() => setActiveView('affiliates')}
-            className="text-sm font-medium text-[#050C9C] hover:text-[#050C9C]"
+            className="text-xs sm:text-sm font-medium text-[#050C9C] hover:text-[#050C9C]"
           >
             View All
           </button>
         </div>
         
-        {/* Table Header */}
-        <div className="grid grid-cols-6 gap-4 pb-3 border-b border-gray-100 text-xs font-semibold text-[#505F76] uppercase">
+        {/* Table Header - Hidden on mobile */}
+        <div className="hidden md:grid grid-cols-6 gap-4 pb-3 border-b border-gray-100 text-xs font-semibold text-[#505F76] uppercase">
           <div>AFFILIATE</div>
           <div className="text-center">CLICKS</div>
           <div className="text-center">CONVERSIONS</div>
@@ -898,9 +898,56 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
             const cvr = clicks > 0 ? ((conversions / clicks) * 100).toFixed(1) : '0.0';
             
             return (
-              <div key={aff.id} className="grid grid-cols-6 gap-4 py-3 items-center hover:bg-[#F8FAFC] rounded-lg transition-colors">
-                {/* Affiliate Info */}
-                <div className="flex items-center gap-3">
+              <div key={aff.id} className="md:grid md:grid-cols-6 gap-4 py-3 items-center hover:bg-[#F8FAFC] rounded-lg transition-colors">
+                {/* Mobile Card Layout */}
+                <div className="md:hidden space-y-3 p-4 bg-white rounded-lg border border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${
+                      idx === 0 ? 'bg-gradient-to-br from-blue-500 to-blue-600' : 
+                      idx === 1 ? 'bg-gradient-to-br from-purple-500 to-purple-600' : 
+                      'bg-gradient-to-br from-pink-500 to-pink-600'
+                    }`}>
+                      {aff.user.name.charAt(0)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-[#191C1E] text-sm truncate">{aff.user.name}</p>
+                      <p className="text-xs text-[#505F76] truncate">{aff.user.email.split('@')[0]}</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    <div>
+                      <p className="text-xs text-[#505F76]">Clicks</p>
+                      <p className="font-semibold text-[#191C1E] text-sm">{clicks.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-[#505F76]">Conv.</p>
+                      <p className="font-semibold text-[#191C1E] text-sm">{conversions}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-[#505F76]">CVR</p>
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${
+                        parseFloat(cvr) > 5 ? 'bg-green-100 text-green-800' : 
+                        parseFloat(cvr) > 2 ? 'bg-amber-100 text-amber-800' : 
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {cvr}%
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                    <div>
+                      <p className="text-xs text-[#505F76]">Revenue</p>
+                      <p className="font-semibold text-[#191C1E]">${revenue.toLocaleString()}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-[#505F76]">Commission</p>
+                      <p className="font-semibold text-[#050C9C]">${formatCurrency(commission)}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Desktop Table Layout */}
+                <div className="hidden md:flex items-center gap-3">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${
                     idx === 0 ? 'bg-gradient-to-br from-blue-500 to-blue-600' : 
                     idx === 1 ? 'bg-gradient-to-br from-purple-500 to-purple-600' : 
@@ -914,28 +961,23 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
                   </div>
                 </div>
                 
-                {/* Clicks */}
-                <div className="text-center">
+                <div className="hidden md:block text-center">
                   <p className="font-semibold text-[#191C1E]">{clicks.toLocaleString()}</p>
                 </div>
                 
-                {/* Conversions */}
-                <div className="text-center">
+                <div className="hidden md:block text-center">
                   <p className="font-semibold text-[#191C1E]">{conversions}</p>
                 </div>
                 
-                {/* Revenue */}
-                <div className="text-center">
+                <div className="hidden md:block text-center">
                   <p className="font-semibold text-[#191C1E]">${revenue.toLocaleString()}</p>
                 </div>
                 
-                {/* Commission */}
-                <div className="text-center">
+                <div className="hidden md:block text-center">
                   <p className="font-semibold text-[#050C9C]">${formatCurrency(commission)}</p>
                 </div>
                 
-                {/* CVR */}
-                <div className="text-center">
+                <div className="hidden md:block text-center">
                   <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${
                     parseFloat(cvr) > 5 ? 'bg-green-100 text-green-800' : 
                     parseFloat(cvr) > 2 ? 'bg-amber-100 text-amber-800' : 
@@ -1028,10 +1070,10 @@ function OverviewView({ summary, affiliates, clickStats, setActiveView, updateSt
 
 function StatCard({ label, value, change, trend }: StatCardProps) {
   return (
-    <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
-      <p className="text-xs font-semibold text-[#505F76] uppercase tracking-wider mb-2">{label}</p>
+    <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-3 sm:p-4">
+      <p className="text-[10px] sm:text-xs font-semibold text-[#505F76] uppercase tracking-wider mb-2">{label}</p>
       <div className="flex items-end justify-between">
-        <p className="text-2xl font-bold text-[#191C1E]">{value}</p>
+        <p className="text-xl sm:text-2xl font-bold text-[#191C1E]">{value}</p>
         <span className={`text-xs font-semibold ${trend === 'up' ? 'text-green-600' : 'text-red-600'}`}>
           {change}
         </span>
@@ -1391,9 +1433,9 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#505F76]" />
           <input 
@@ -1406,14 +1448,14 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
         </div>
         <button
           onClick={fetchData}
-          className="ml-4 px-4 py-2 text-sm font-semibold text-[#050C9C] bg-indigo-50 rounded-lg hover:bg-indigo-100"
+          className="sm:ml-4 px-4 py-2 text-sm font-semibold text-[#050C9C] bg-indigo-50 rounded-lg hover:bg-indigo-100"
         >
           Refresh
         </button>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-4">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
@@ -1460,11 +1502,11 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
       {/* Filters & Table */}
       <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200">
         {/* Filter Tabs */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-4 sm:px-6 py-4 border-b border-gray-100">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0">
             <button 
               onClick={() => setFilter('all')}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+              className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap ${
                 filter === 'all' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
@@ -1472,7 +1514,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
             </button>
             <button 
               onClick={() => setFilter('active')}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+              className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap ${
                 filter === 'active' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
@@ -1480,7 +1522,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
             </button>
             <button 
               onClick={() => setFilter('pending')}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+              className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap ${
                 filter === 'pending' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
@@ -1488,7 +1530,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
             </button>
             <button 
               onClick={() => setFilter('suspended')}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+              className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-colors whitespace-nowrap ${
                 filter === 'suspended' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
@@ -1503,7 +1545,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'performance' | 'name' | 'date')}
-              className="px-3 py-2 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg text-sm font-medium"
+              className="px-3 py-2 bg-[#FFFFFFCC] backdrop-blur-md border border-gray-200 rounded-lg text-xs sm:text-sm font-medium"
             >
               <option value="performance">Sort by: Performance</option>
               <option value="name">Sort by: Name</option>
@@ -1514,7 +1556,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
 
         {/* Table */}
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full min-w-[640px]">
             <thead>
               <tr className="border-b border-gray-100">
                 <th className="px-6 py-4 text-left text-xs font-semibold text-[#505F76] uppercase tracking-wider">AFFILIATE</th>
@@ -1602,7 +1644,7 @@ function AffiliatesView({ affiliates, searchQuery, setSearchQuery, fetchData, up
       </div>
 
       {/* Top Performers & Pending Approvals */}
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Top Performers */}
         <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">

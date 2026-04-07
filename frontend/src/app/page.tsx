@@ -133,26 +133,26 @@ export default function Dashboard() {
   const goalProgress = Math.min(Math.round(((stats?.earnings || 0) / goalTarget) * 100), 100);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-[#191C1E] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#191C1E] tracking-tight">
               {t('dashboard.welcomeBack', { name: user.name })}
             </h1>
-            <p className="text-[#505F76] mt-1">{t('dashboard.performanceOverview')}</p>
+            <p className="text-[#505F76] mt-1 text-sm sm:text-base">{t('dashboard.performanceOverview')}</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
             <div className="relative">
               <button 
                 onClick={() => setShowPeriodMenu(!showPeriodMenu)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-white rounded-xl text-sm font-medium text-gray-700 transition-colors "
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-white rounded-xl text-sm font-medium text-gray-700 transition-colors"
               >
                 <Calendar className="w-4 h-4" />
                 {getPeriodLabel(period)}
               </button>
               {showPeriodMenu && (
-                <div className="absolute end-0 mt-2 w-48 bg-white  rounded-2xl  py-2 z-50">
+                <div className="absolute end-0 mt-2 w-48 bg-white rounded-2xl py-2 z-50 shadow-xl">
                   {[
                     { key: 'Today', label: t('common.today') },
                     { key: 'This Week', label: t('common.thisWeek') },
@@ -172,18 +172,19 @@ export default function Dashboard() {
             </div>
             <button 
               onClick={handleExport} 
-              className="flex items-center gap-2 px-5 py-2.5 text-white rounded-xl text-sm font-semibold transition-all shadow-lg"
+              className="flex items-center justify-center gap-2 px-5 py-2.5 text-white rounded-xl text-sm font-semibold transition-all shadow-lg"
               style={{ background: 'linear-gradient(135deg, #2A14B4 0%, #4338CA 100%)' }}
             >
               <Download className="w-4 h-4" />
-              {t('dashboard.exportReport')}
+              <span className="hidden sm:inline">{t('dashboard.exportReport')}</span>
+              <span className="sm:hidden">Export</span>
             </button>
           </div>
         </div>
 
         {/* Campaign + Goal Row */}
-        <div className="grid grid-cols-3 gap-6">
-          <div className="col-span-2 bg-white rounded-2xl  p-6  relative overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="lg:col-span-2 bg-white rounded-2xl p-4 sm:p-6 relative overflow-hidden">
             {/* Decorative blur circle */}
             <div 
               className="absolute rounded-full pointer-events-none"
@@ -199,50 +200,52 @@ export default function Dashboard() {
             
             <div className="relative z-10">
               <span className="inline-block px-3 py-2 bg-[#E3DFFF] text-[#050C9C] text-[10px] font-bold uppercase tracking-wider rounded-full mb-3">{t('dashboard.primaryCampaign')}</span>
-              <h2 className="text-2xl font-bold text-[#191C1E] mb-1">{t('dashboard.shareAndEarn')}</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-[#191C1E] mb-1">{t('dashboard.shareAndEarn')}</h2>
               <p className="text-[#505F76] text-sm mb-5">{t('dashboard.commissionDescription', { rate: profile?.commission_rate || 15 })}</p>
-              <div className="flex items-center gap-3">
-                <div className="flex-1 px-4 py-3 bg-[#F2F4F6] border border-indigo-100 rounded-xl">
-                  <span className="text-sm font-medium text-[#050C9C] font-mono">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <div className="flex-1 px-4 py-3 bg-[#F2F4F6] border border-indigo-100 rounded-xl overflow-hidden">
+                  <span className="text-xs sm:text-sm font-medium text-[#050C9C] font-mono break-all">
                     {profile?.main_referral_url || `https://falakcart.com/register?ref=${profile?.referral_code || '...'}`}
                   </span>
                 </div>
-                <button
-                  onClick={copyLink}
-                  className="flex items-center gap-2 px-5 py-3 bg-white border border-gray-200 rounded-full shadow-md text-sm font-semibold text-[#050C9C] hover:bg-gray-50 transition-colors"
-                >
-                  {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
-                  {copied ? t('common.copied') : t('common.copy')}
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={copyLink}
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3 bg-white border border-gray-200 rounded-full shadow-md text-sm font-semibold text-[#050C9C] hover:bg-gray-50 transition-colors"
+                  >
+                    {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                    {copied ? t('common.copied') : t('common.copy')}
+                  </button>
                   <Link href="/settings" className="p-3 bg-[#3ABEF91A] border border-gray-200 rounded-full text-[#505F76] hover:bg-gray-50 transition-colors flex items-center justify-center">
-                  <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M8.75 11.6667C8.26389 11.6667 7.85069 11.4965 7.51042 11.1562C7.17014 10.816 7 10.4028 7 9.91667C7 9.85833 7.01458 9.72222 7.04375 9.50833L2.94583 7.11667C2.79028 7.2625 2.61042 7.37674 2.40625 7.45937C2.20208 7.54201 1.98333 7.58333 1.75 7.58333C1.26389 7.58333 0.850694 7.41319 0.510417 7.07292C0.170139 6.73264 0 6.31944 0 5.83333C0 5.34722 0.170139 4.93403 0.510417 4.59375C0.850694 4.25347 1.26389 4.08333 1.75 4.08333C1.98333 4.08333 2.20208 4.12465 2.40625 4.20729C2.61042 4.28993 2.79028 4.40417 2.94583 4.55L7.04375 2.15833C7.02431 2.09028 7.01215 2.02465 7.00729 1.96146C7.00243 1.89826 7 1.82778 7 1.75C7 1.26389 7.17014 0.850694 7.51042 0.510417C7.85069 0.170139 8.26389 0 8.75 0C9.23611 0 9.64931 0.170139 9.98958 0.510417C10.3299 0.850694 10.5 1.26389 10.5 1.75C10.5 2.23611 10.3299 2.64931 9.98958 2.98958C9.64931 3.32986 9.23611 3.5 8.75 3.5C8.51667 3.5 8.29792 3.45868 8.09375 3.37604C7.88958 3.2934 7.70972 3.17917 7.55417 3.03333L3.45625 5.425C3.47569 5.49306 3.48785 5.55868 3.49271 5.62187C3.49757 5.68507 3.5 5.75556 3.5 5.83333C3.5 5.91111 3.49757 5.9816 3.49271 6.04479C3.48785 6.10799 3.47569 6.17361 3.45625 6.24167L7.55417 8.63333C7.70972 8.4875 7.88958 8.37326 8.09375 8.29062C8.29792 8.20799 8.51667 8.16667 8.75 8.16667C9.23611 8.16667 9.64931 8.33681 9.98958 8.67708C10.3299 9.01736 10.5 9.43056 10.5 9.91667C10.5 10.4028 10.3299 10.816 9.98958 11.1562C9.64931 11.4965 9.23611 11.6667 8.75 11.6667ZM8.75 10.5C8.91528 10.5 9.05382 10.4441 9.16562 10.3323C9.27743 10.2205 9.33333 10.0819 9.33333 9.91667C9.33333 9.75139 9.27743 9.61285 9.16562 9.50104C9.05382 9.38924 8.91528 9.33333 8.75 9.33333C8.58472 9.33333 8.44618 9.38924 8.33438 9.50104C8.22257 9.61285 8.16667 9.75139 8.16667 9.91667C8.16667 10.0819 8.22257 10.2205 8.33438 10.3323C8.44618 10.4441 8.58472 10.5 8.75 10.5ZM1.75 6.41667C1.91528 6.41667 2.05382 6.36076 2.16563 6.24896C2.27743 6.13715 2.33333 5.99861 2.33333 5.83333C2.33333 5.66806 2.27743 5.52951 2.16563 5.41771C2.05382 5.3059 1.91528 5.25 1.75 5.25C1.58472 5.25 1.44618 5.3059 1.33438 5.41771C1.22257 5.52951 1.16667 5.66806 1.16667 5.83333C1.16667 5.99861 1.22257 6.13715 1.33438 6.24896C1.44618 6.36076 1.58472 6.41667 1.75 6.41667ZM8.75 2.33333C8.91528 2.33333 9.05382 2.27743 9.16562 2.16563C9.27743 2.05382 9.33333 1.91528 9.33333 1.75C9.33333 1.58472 9.27743 1.44618 9.16562 1.33438C9.05382 1.22257 8.91528 1.16667 8.75 1.16667C8.58472 1.16667 8.44618 1.22257 8.33438 1.33438C8.22257 1.44618 8.16667 1.58472 8.16667 1.75C8.16667 1.91528 8.22257 2.05382 8.33438 2.16563C8.44618 2.27743 8.58472 2.33333 8.75 2.33333Z" fill="#54647A"/>
-                  </svg>
-                </Link>
+                    <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M8.75 11.6667C8.26389 11.6667 7.85069 11.4965 7.51042 11.1562C7.17014 10.816 7 10.4028 7 9.91667C7 9.85833 7.01458 9.72222 7.04375 9.50833L2.94583 7.11667C2.79028 7.2625 2.61042 7.37674 2.40625 7.45937C2.20208 7.54201 1.98333 7.58333 1.75 7.58333C1.26389 7.58333 0.850694 7.41319 0.510417 7.07292C0.170139 6.73264 0 6.31944 0 5.83333C0 5.34722 0.170139 4.93403 0.510417 4.59375C0.850694 4.25347 1.26389 4.08333 1.75 4.08333C1.98333 4.08333 2.20208 4.12465 2.40625 4.20729C2.61042 4.28993 2.79028 4.40417 2.94583 4.55L7.04375 2.15833C7.02431 2.09028 7.01215 2.02465 7.00729 1.96146C7.00243 1.89826 7 1.82778 7 1.75C7 1.26389 7.17014 0.850694 7.51042 0.510417C7.85069 0.170139 8.26389 0 8.75 0C9.23611 0 9.64931 0.170139 9.98958 0.510417C10.3299 0.850694 10.5 1.26389 10.5 1.75C10.5 2.23611 10.3299 2.64931 9.98958 2.98958C9.64931 3.32986 9.23611 3.5 8.75 3.5C8.51667 3.5 8.29792 3.45868 8.09375 3.37604C7.88958 3.2934 7.70972 3.17917 7.55417 3.03333L3.45625 5.425C3.47569 5.49306 3.48785 5.55868 3.49271 5.62187C3.49757 5.68507 3.5 5.75556 3.5 5.83333C3.5 5.91111 3.49757 5.9816 3.49271 6.04479C3.48785 6.10799 3.47569 6.17361 3.45625 6.24167L7.55417 8.63333C7.70972 8.4875 7.88958 8.37326 8.09375 8.29062C8.29792 8.20799 8.51667 8.16667 8.75 8.16667C9.23611 8.16667 9.64931 8.33681 9.98958 8.67708C10.3299 9.01736 10.5 9.43056 10.5 9.91667C10.5 10.4028 10.3299 10.816 9.98958 11.1562C9.64931 11.4965 9.23611 11.6667 8.75 11.6667ZM8.75 10.5C8.91528 10.5 9.05382 10.4441 9.16562 10.3323C9.27743 10.2205 9.33333 10.0819 9.33333 9.91667C9.33333 9.75139 9.27743 9.61285 9.16562 9.50104C9.05382 9.38924 8.91528 9.33333 8.75 9.33333C8.58472 9.33333 8.44618 9.38924 8.33438 9.50104C8.22257 9.61285 8.16667 9.75139 8.16667 9.91667C8.16667 10.0819 8.22257 10.2205 8.33438 10.3323C8.44618 10.4441 8.58472 10.5 8.75 10.5ZM1.75 6.41667C1.91528 6.41667 2.05382 6.36076 2.16563 6.24896C2.27743 6.13715 2.33333 5.99861 2.33333 5.83333C2.33333 5.66806 2.27743 5.52951 2.16563 5.41771C2.05382 5.3059 1.91528 5.25 1.75 5.25C1.58472 5.25 1.44618 5.3059 1.33438 5.41771C1.22257 5.52951 1.16667 5.66806 1.16667 5.83333C1.16667 5.99861 1.22257 6.13715 1.33438 6.24896C1.44618 6.36076 1.58472 6.41667 1.75 6.41667ZM8.75 2.33333C8.91528 2.33333 9.05382 2.27743 9.16562 2.16563C9.27743 2.05382 9.33333 1.91528 9.33333 1.75C9.33333 1.58472 9.27743 1.44618 9.16562 1.33438C9.05382 1.22257 8.91528 1.16667 8.75 1.16667C8.58472 1.16667 8.44618 1.22257 8.33438 1.33438C8.22257 1.44618 8.16667 1.58472 8.16667 1.75C8.16667 1.91528 8.22257 2.05382 8.33438 2.16563C8.44618 2.27743 8.58472 2.33333 8.75 2.33333Z" fill="#54647A"/>
+                    </svg>
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="bg-[#F2F4F6] rounded-2xl  p-6 ">
+          <div className="bg-[#F2F4F6] rounded-2xl p-4 sm:p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-[18px] font-semibold text-black">{t('dashboard.goalProgress')}</h3>
-              <span className="text-[24px] font-bold text-[#050C9C]">{goalProgress}%</span>
+              <h3 className="text-base sm:text-[18px] font-semibold text-black">{t('dashboard.goalProgress')}</h3>
+              <span className="text-xl sm:text-[24px] font-bold text-[#050C9C]">{goalProgress}%</span>
             </div>
-            <p className="text-[14px] text-[#505F76] mb-3">{t('dashboard.monthlyTarget', { target: goalTarget.toLocaleString() })}</p>
+            <p className="text-xs sm:text-[14px] text-[#505F76] mb-3">{t('dashboard.monthlyTarget', { target: goalTarget.toLocaleString() })}</p>
             <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden mb-4">
               <div
                 className="h-full bg-indigo-600 rounded-full transition-all duration-700"
                 style={{ width: `${goalProgress}%` }}
               />
             </div>
-            <p className="text-[12px] text-[#505F76]">
+            <p className="text-xs sm:text-[12px] text-[#505F76]">
               <span className="font-semibold text-[#191C1E]">{t('dashboard.greatJob')}</span> {t('dashboard.awayFromGoal', { amount: Math.max(0, goalTarget - (stats?.earnings || 0)).toLocaleString() })}
             </p>
           </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
           <StatCard
             icon={
               <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -295,19 +298,19 @@ export default function Dashboard() {
         </div>
 
         {/* Chart + Activity Row */}
-        <div className="grid grid-cols-3 gap-6">
-          <div className="col-span-2 bg-white rounded-2xl  p-6 ">
-            <div className="flex items-center justify-between mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="lg:col-span-2 bg-white rounded-2xl p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
               <div>
-                <h3 className="text-lg font-bold text-[#191C1E]">{t('dashboard.earningsPerformance')}</h3>
-                <p className="text-sm text-[#505F76]">{t('dashboard.dailyCommissionTracking')}</p>
+                <h3 className="text-base sm:text-lg font-bold text-[#191C1E]">{t('dashboard.earningsPerformance')}</h3>
+                <p className="text-xs sm:text-sm text-[#505F76]">{t('dashboard.dailyCommissionTracking')}</p>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 bg-indigo-600 rounded-full" />
                 <span className="text-xs font-medium text-[#505F76]">{t('dashboard.thisPeriod')}</span>
               </div>
             </div>
-            <div className="h-[280px]">
+            <div className="h-64 sm:h-[280px]">
               {earningsData.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={earningsData}>
@@ -332,12 +335,12 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl  p-6 ">
+          <div className="bg-white rounded-2xl p-4 sm:p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-[#191C1E]">{t('dashboard.recentActivity')}</h3>
-              <Link href="/earnings" className="text-sm font-semibold text-[#050C9C] hover:text-[#050C9C]">{t('dashboard.viewAll')}</Link>
+              <h3 className="text-base sm:text-lg font-bold text-[#191C1E]">{t('dashboard.recentActivity')}</h3>
+              <Link href="/earnings" className="text-xs sm:text-sm font-semibold text-[#050C9C] hover:text-[#050C9C]">{t('dashboard.viewAll')}</Link>
             </div>
-            <div className="space-y-5">
+            <div className="space-y-4 sm:space-y-5">
               {activity.length > 0 ? activity.map((item, i) => (
                 <div key={i} className="flex items-start gap-3">
                   <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
@@ -370,27 +373,27 @@ function StatCard({ icon, label, value, change, positive, highlighted, bgColor }
   bgColor?: string;
 }) {
   return (
-    <div className={`rounded-2xl  p-6  transition-all ${
+    <div className={`rounded-2xl p-4 sm:p-6 transition-all ${
       highlighted
         ? 'bg-white'
         : 'bg-white'
     }`}
     >
       <div className="flex items-center justify-between mb-3">
-        <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${highlighted ? bgColor : bgColor || 'bg-[#F2F4F6]'}`}>
+        <div className={`w-9 h-9 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center ${highlighted ? bgColor : bgColor || 'bg-[#F2F4F6]'}`}>
           {icon}
         </div>
         <span className={`text-xs font-bold flex items-center gap-1 ${
         positive ? 'text-emerald-600' : 'text-red-500'
         }`}>
-          {positive ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
+          {positive ? <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> : <TrendingDown className="w-3 h-3 sm:w-3.5 sm:h-3.5" />}
           {change}
         </span>
       </div>
-      <p className={`text-[12px] font-bold uppercase tracking-wider mb-1 ${
+      <p className={`text-[10px] sm:text-[12px] font-bold uppercase tracking-wider mb-1 ${
         highlighted ? 'text-[#505F76]' : 'text-[#505F76]'
       }`}>{label}</p>
-      <p className={`text-[24px] font-bold tracking-tight ${highlighted ? 'text-[#050C9C]' : 'text-[#191C1E]'}`}>{value}</p>
+      <p className={`text-xl sm:text-[24px] font-bold tracking-tight ${highlighted ? 'text-[#050C9C]' : 'text-[#191C1E]'}`}>{value}</p>
     </div>
   );
 }

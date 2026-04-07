@@ -100,6 +100,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const [isRTL, setIsRTL] = useState(true);
   const [currentLocale, setCurrentLocale] = useState('ar');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
@@ -213,9 +214,35 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }, [userAvatar, user?.name]);
 
   return (
-    <div className="flex min-h-screen ">
+    <div className="flex min-h-screen">
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className={`w-[280px] bg-[#F8FAFC] flex flex-col fixed h-full z-30  ${isRTL ? 'end-0' : 'start-0'}`}>
+      <aside className={`w-[280px] bg-[#F8FAFC] flex flex-col fixed h-full z-50 transition-transform duration-300 lg:z-30 ${
+        isRTL ? 'end-0' : 'start-0'
+      } ${
+        isMobileMenuOpen 
+          ? 'translate-x-0' 
+          : isRTL 
+            ? 'translate-x-full lg:translate-x-0' 
+            : '-translate-x-full lg:translate-x-0'
+      }`}>
+        {/* Close button for mobile */}
+        <button
+          onClick={() => setIsMobileMenuOpen(false)}
+          className="lg:hidden absolute top-4 start-4 p-2 text-gray-600 hover:text-gray-900"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
         {/* Brand */}
         <div className="px-6 pt-6 pb-6">
           <img 
@@ -226,7 +253,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* User Profile Card */}
-        <div className=" mb-8 px-4 pt-4 b-2 bg-[#F8FAFC] rounded-2xl">
+        <div className="mb-8 px-4 pt-4 b-2 bg-[#F8FAFC] rounded-2xl">
           <div className="flex items-center gap-3">
             {renderAvatar('medium')}
             <div className="overflow-hidden">
@@ -237,7 +264,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 space-y-1">
+        <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
@@ -245,13 +272,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={() => setIsMobileMenuOpen(false)}
                 className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl text-[15px] font-semibold transition-all relative ${
                   isActive
-                    ? 'text-[#050C9C] bg-white  border-e-5 border-[#050C9C] '
+                    ? 'text-[#050C9C] bg-white border-e-5 border-[#050C9C]'
                     : 'text-[#64748B]'
                 }`}
               >
-       
                 <Icon className="w-5 h-5 flex-shrink-0" isActive={isActive} />
                 {t(item.label)}
               </Link>
@@ -261,8 +288,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
         {/* Bottom Actions */}
         <div className="px-4 pb-2 space-y-3">
-           <Link
+          <Link
             href="/links?create=true"
+            onClick={() => setIsMobileMenuOpen(false)}
             className="w-full flex items-center justify-center gap-2 px-5 py-3.5 text-white rounded-2xl text-sm font-bold transition-all shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/40"
             style={{ background: 'linear-gradient(135deg, #2A14B4 0%, #4338CA 100%)' }}
           >
@@ -280,22 +308,34 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Main Content */}
-      <main className={`flex-1 ${isRTL ? 'mr-[280px]' : 'ml-[280px]'}`}>
+      <main className={`flex-1 ${isRTL ? 'lg:mr-[280px]' : 'lg:ml-[280px]'}`}>
         {/* Top Bar */}
-        <header className="sticky top-0 z-20 bg-[#FFFFFFCC] backdrop-blur-md border-b border-gray-100 px-8 py-3 flex items-center justify-between">
-          <div className="flex-1 max-w-md">
-            <div className="relative">
+        <header className="sticky top-0 z-20 bg-[#FFFFFFCC] backdrop-blur-md border-b border-gray-100 px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="lg:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+
+          {/* Search Bar - Hidden on mobile */}
+          <div className="hidden md:flex flex-1 max-w-md">
+            <div className="relative w-full">
               <svg className={`absolute ${isRTL ? 'end-3' : 'start-3'} top-1/2 -translate-y-1/2 w-4 h-4 text-[#505F76]`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input
                 type="text"
                 placeholder={t('common.search')}
-                className={`w-full ${isRTL ? 'ps-10 ' : 'pl-10 pr-4'} py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 transition-all`}
+                className={`w-full ${isRTL ? 'ps-10' : 'pl-10 pr-4'} py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 transition-all`}
               />
             </div>
           </div>
-          <div className="flex items-center gap-4">
+
+          <div className="flex items-center gap-2 sm:gap-4">
             <LanguageSwitcher />
             <div className="relative" ref={notifRef}>
               <button onClick={toggleNotifications} className="relative p-2 text-[#505F76] hover:text-gray-600 transition-colors rounded-full hover:bg-gray-50">
@@ -308,7 +348,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </button>
               
               {showNotifications && (
-                <div className={`absolute mt-2 w-80 max-h-96 overflow-y-auto bg-white rounded-2xl shadow-xl py-2 z-50 ${isRTL ? 'end-0' : 'end-0'}`}>
+                <div className={`absolute mt-2 w-80 max-w-[calc(100vw-2rem)] max-h-96 overflow-y-auto bg-white rounded-2xl shadow-xl py-2 z-50 ${isRTL ? 'end-0' : 'end-0'}`}>
                   <div className="px-4 py-3 border-b border-gray-50 flex items-center justify-between">
                     <h3 className="text-sm font-bold text-[#191C1E]">{t('notifications.title')}</h3>
                   </div>
@@ -333,9 +373,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <div className="relative" ref={menuRef}>
               <button 
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className={`flex items-center gap-3 ps-4 border-s border-gray-200 hover:opacity-80 transition-opacity`}
+                className="flex items-center gap-2 sm:gap-3 sm:ps-4 sm:border-s border-gray-200 hover:opacity-80 transition-opacity"
               >
-                <span className="text-sm font-semibold text-gray-700">{user?.name || 'User'}</span>
+                <span className="hidden sm:inline text-sm font-semibold text-gray-700">{user?.name || 'User'}</span>
                 {renderAvatar('small')}
               </button>
 
@@ -363,7 +403,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </header>
 
         {/* Page Content */}
-        <div className="p-8 !bg-[#F7F9FBCC]">
+        <div className="p-4 sm:p-6 lg:p-8 !bg-[#F7F9FBCC]">
           {children}
         </div>
       </main>

@@ -178,16 +178,16 @@ export default function SettingsPage() {
   );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-[#191C1E] tracking-tight">{t('settings.title')}</h1>
-        <p className="text-[#505F76] mt-1">{t('settings.subtitle')}</p>
+        <h1 className="text-2xl sm:text-3xl font-bold text-[#191C1E] tracking-tight">{t('settings.title')}</h1>
+        <p className="text-sm sm:text-base text-[#505F76] mt-1">{t('settings.subtitle')}</p>
       </div>
 
-      <div className="grid grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 sm:gap-8">
         {/* Navigation Sidebar */}
-        <div className="col-span-1 space-y-1">
+        <div className="lg:col-span-1 space-y-1">
           <button
             onClick={() => setActiveTab('profile')}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${activeTab === 'profile'
@@ -242,19 +242,19 @@ export default function SettingsPage() {
         </div>
 
         {/* Main Content Area */}
-        <div className="col-span-3 space-y-6">
+        <div className="lg:col-span-3 space-y-4 sm:space-y-6">
 
           {/* Profile Tab */}
           {activeTab === 'profile' && (
             <>
-              <div className="bg-white rounded-2xl  p-8 ">
+              <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8">
 
-                <h2 className="text-[20px] font-bold text-[#191C1E] mb-2">{t('settings.profileInformation')}</h2>
-                <p className="text-[#505F76] text-[14px]  mb-4">Update your personal information and profile picture</p>
+                <h2 className="text-lg sm:text-xl font-bold text-[#191C1E] mb-2">{t('settings.profileInformation')}</h2>
+                <p className="text-[#505F76] text-xs sm:text-sm mb-4">Update your personal information and profile picture</p>
 
-                <div className="flex gap-12">
+                <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
                   {/* Avatar Section */}
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-col items-center lg:items-start">
                     <div className="relative">
                       <div className="w-32 h-32 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg overflow-hidden">
                         {avatar ? (
@@ -290,8 +290,8 @@ export default function SettingsPage() {
                   </div>
 
                   {/* Form Fields */}
-                  <div className="flex-1 space-y-6">
-                    <div className="grid grid-cols-2 gap-6">
+                  <div className="flex-1 space-y-4 sm:space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                       <div>
                         <label className="block text-[#505F76] text-[12px] font-medium mb-3 uppercase tracking-wider">{t('settings.fullName')}</label>
                         <input
@@ -333,7 +333,7 @@ export default function SettingsPage() {
           {/* Payout Methods Tab */}
           {activeTab === 'payout' && (
             <>
-              <div className="relative p-8 rounded-2xl overflow-hidden bg-white "
+              <div className="relative p-4 sm:p-6 lg:p-8 rounded-2xl overflow-hidden bg-white "
                 style={{
                   boxShadow: '0px 12px 32px 0px #2A14B40F',
                   border: '1px solid #3ABEF91A'
@@ -356,20 +356,20 @@ export default function SettingsPage() {
 
                 <div className="relative z-10">
                   {/* Header inside card */}
-                  <div className="flex items-center gap-4 mb-8">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
                     <div
-                      className="w-10 h-10 rounded-full flex items-center justify-center"
+                      className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
                       style={{ backgroundColor: '#050C9C' }}
                     >
                       <svg width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M2 18C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H16C16.55 0 17.0208 0.195833 17.4125 0.5875C17.8042 0.979167 18 1.45 18 2H10C8.81667 2 7.85417 2.37083 7.1125 3.1125C6.37083 3.85417 6 4.81667 6 6V12C6 13.1833 6.37083 14.1458 7.1125 14.8875C7.85417 15.6292 8.81667 16 10 16H18C18 16.55 17.8042 17.0208 17.4125 17.4125C17.0208 17.8042 16.55 18 16 18H2ZM10 14C9.45 14 8.97917 13.8042 8.5875 13.4125C8.19583 13.0208 8 12.55 8 12V6C8 5.45 8.19583 4.97917 8.5875 4.5875C8.97917 4.19583 9.45 4 10 4H17C17.55 4 18.0208 4.19583 18.4125 4.5875C18.8042 4.97917 19 5.45 19 6V12C19 12.55 18.8042 13.0208 18.4125 13.4125C18.0208 13.8042 17.55 14 17 14H10ZM13 10.5C13.4333 10.5 13.7917 10.3583 14.075 10.075C14.3583 9.79167 14.5 9.43333 14.5 9C14.5 8.56667 14.3583 8.20833 14.075 7.925C13.7917 7.64167 13.4333 7.5 13 7.5C12.5667 7.5 12.2083 7.64167 11.925 7.925C11.6417 8.20833 11.5 8.56667 11.5 9C11.5 9.43333 11.6417 9.79167 11.925 10.075C12.2083 10.3583 12.5667 10.5 13 10.5Z" fill="white" />
                       </svg>
                     </div>
-                    <div>
-                      <h2 className="text-[24px] font-bold text-[#191C1E]">{t('settings.bankTransferInfo')}</h2>
-                      <p className="text-[#505F76] text-[14px]">{t('settings.bankDetailsDescription')}</p>
+                    <div className="flex-1">
+                      <h2 className="text-xl sm:text-2xl font-bold text-[#191C1E]">{t('settings.bankTransferInfo')}</h2>
+                      <p className="text-[#505F76] text-xs sm:text-sm">{t('settings.bankDetailsDescription')}</p>
                     </div>
-                    <div className="ml-auto">
+                    <div className="sm:ml-auto">
                       <span className="px-2 py-1 bg-[#D0E1FB] text-[#050C9C] text-[10px] font-semibold rounded-full">
                         HIGH PRIORITY
                       </span>
@@ -377,7 +377,7 @@ export default function SettingsPage() {
                   </div>
 
                   {/* Payment Summary Grid */}
-                  <div className="grid grid-cols-4 gap-8 mb-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mb-6">
                     <div>
                       <label className="block text-[#505F76] text-[12px] font-medium mb-3 uppercase tracking-wider">{t('earnings.payoutMethod')}</label>
                       <div className="relative">
@@ -428,7 +428,7 @@ export default function SettingsPage() {
                   </div>
 
                   {/* Security Notice */}
-                  <div className="bg-[#EFF6FF] border border-[#BFDBFE] rounded-xl p-4 flex items-center gap-3 mb-8">
+                  <div className="bg-[#EFF6FF] border border-[#BFDBFE] rounded-xl p-3 sm:p-4 flex items-start sm:items-center gap-3 mb-6 sm:mb-8">
                     <div className="w-5 h-5 bg-[#3B82F6] rounded-full flex items-center justify-center flex-shrink-0">
                       <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -446,10 +446,10 @@ export default function SettingsPage() {
           {/* Notifications Tab */}
           {activeTab === 'notifications' && (
             <>
-              <div className="bg-white rounded-2xl  p-8">
-                <h2 className="text-2xl font-bold text-[#191C1E] mb-8">{t('settings.notificationPreferences')}</h2>
+              <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8">
+                <h2 className="text-xl sm:text-2xl font-bold text-[#191C1E] mb-6 sm:mb-8">{t('settings.notificationPreferences')}</h2>
 
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-[14px] font-semibold text-[#191C1E] mb-1">{t('settings.commissionNotifications')}</p>
@@ -502,10 +502,10 @@ export default function SettingsPage() {
           {/* Referral Preferences Tab */}
           {activeTab === 'referrals' && (
             <>
-              <div className="bg-white rounded-2xl  p-8">
-                <h2 className="text-[20px] font-bold text-[#191C1E] mb-4">{t('settings.referralPreferences')}</h2>
+              <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8">
+                <h2 className="text-lg sm:text-xl font-bold text-[#191C1E] mb-4">{t('settings.referralPreferences')}</h2>
 
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   <div>
                     <p className="text-[12px] font-medium text-[#505F76] uppercase tracking-wider mb-4">{t('settings.defaultLinkDestination')}</p>
 
@@ -561,11 +561,11 @@ export default function SettingsPage() {
           {/* Security Tab */}
           {activeTab === 'security' && (
             <>
-              <div className="bg-white rounded-2xl  p-8 ">
+              <div className="bg-white rounded-2xl p-4 sm:p-6 lg:p-8">
 
-                <h2 className="text-lg font-bold text-[#191C1E] mb-6">{t('settings.securitySettings')}</h2>
+                <h2 className="text-base sm:text-lg font-bold text-[#191C1E] mb-4 sm:mb-6">{t('settings.securitySettings')}</h2>
 
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   <div>
                     <h3 className="text-sm font-semibold text-[#191C1E] mb-3">{t('settings.changePassword')}</h3>
                     <div className="space-y-4">
@@ -587,7 +587,7 @@ export default function SettingsPage() {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-[#505F76] text-[12px] font-medium mb-1 uppercase tracking-wider">{t('settings.newPassword')}</label>
                           <input
@@ -630,11 +630,11 @@ export default function SettingsPage() {
             </>
           )}
 
-          <div className="mt-8 pt-6 border-t border-gray-50 flex justify-end">
+          <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-50 flex justify-end">
             <button
               onClick={handleSave}
               disabled={isSaving || (activeTab === 'profile' && name.trim() === '') || (activeTab === 'security' && newPassword !== '' && newPassword !== confirmPassword)}
-              className="px-8 py-4 disabled:opacity-50 text-white rounded-full font-semibold transition-colors"
+              className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 disabled:opacity-50 text-white rounded-full font-semibold transition-colors"
               style={{
                 background: 'linear-gradient(106.83deg, #2A14B4 0%, #4338CA 100%)',
                 fontSize: '14px',

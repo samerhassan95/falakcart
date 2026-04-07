@@ -77,6 +77,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isRTL, setIsRTL] = useState(true);
   const [currentLocale, setCurrentLocale] = useState('ar');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const currentView = searchParams.get('view') || '';
@@ -114,8 +115,34 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="flex min-h-screen bg-[#F8FAFC]">
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className={`w-[280px] bg-[#F8FAFC] flex flex-col fixed h-full z-30 ${isRTL ? 'end-0' : 'start-0'}`}>
+      <aside className={`w-[280px] bg-[#F8FAFC] flex flex-col fixed h-full z-50 transition-transform duration-300 lg:z-30 ${
+        isRTL ? 'end-0' : 'start-0'
+      } ${
+        isMobileMenuOpen 
+          ? 'translate-x-0' 
+          : isRTL 
+            ? 'translate-x-full lg:translate-x-0' 
+            : '-translate-x-full lg:translate-x-0'
+      }`}>
+        {/* Close button for mobile */}
+        <button
+          onClick={() => setIsMobileMenuOpen(false)}
+          className="lg:hidden absolute top-4 start-4 p-2 text-gray-600 hover:text-gray-900"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
         {/* Brand */}
         <div className="px-6 pt-6 pb-4">
           <img 
@@ -133,7 +160,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 space-y-1">
+        <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
             const isActive = currentView === item.view;
             const Icon = item.icon;
@@ -141,6 +168,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Link
                 key={item.href}
                 href={item.href}
+                onClick={() => setIsMobileMenuOpen(false)}
                 className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl text-[15px] font-semibold transition-all ${
                   isActive
                     ? 'text-[#050C9C] bg-white border-e-4 border-[#050C9C]'
@@ -158,6 +186,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="px-4 pb-6 space-y-3">
           <Link
             href="/links?create=true"
+            onClick={() => setIsMobileMenuOpen(false)}
             className="w-full flex items-center justify-center gap-2 px-5 py-3.5 text-white rounded-2xl text-sm font-bold transition-all shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/40"
             style={{ background: 'linear-gradient(135deg, #2A14B4 0%, #4338CA 100%)' }}
           >
@@ -177,30 +206,42 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* Main Content */}
-      <main className={`flex-1 ${isRTL ? 'mr-[280px]' : 'ml-[280px]'}`}>
+      <main className={`flex-1 ${isRTL ? 'lg:mr-[280px]' : 'lg:ml-[280px]'}`}>
         {/* Top Bar */}
-        <header className="sticky top-0 z-20 bg-[#FFFFFFCC] backdrop-blur-md border-b border-gray-100 px-8 py-3 flex items-center justify-between">
-          <div className="flex-1 max-w-md">
-            <div className="relative">
+        <header className="sticky top-0 z-20 bg-[#FFFFFFCC] backdrop-blur-md border-b border-gray-100 px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="lg:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+
+          {/* Search Bar - Hidden on mobile */}
+          <div className="hidden md:flex flex-1 max-w-md">
+            <div className="relative w-full">
               <svg className={`absolute ${isRTL ? 'end-3' : 'start-3'} top-1/2 -translate-y-1/2 w-4 h-4 text-[#505F76]`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input
                 type="text"
                 placeholder={t('common.search')}
-                className={`w-full ${isRTL ? 'ps-10' : 'pl-10 pr-4'} py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#050C9C]/20 focus:border-[#050C9C] transition-all`}
+                className={`w-full ${isRTL ? 'ps-10 pe-4' : 'pl-10 pr-4'} py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#050C9C]/20 focus:border-[#050C9C] transition-all`}
               />
             </div>
           </div>
-          <div className="flex items-center gap-4">
+
+          <div className="flex items-center gap-2 sm:gap-4">
             <LanguageSwitcher />
 
             <div className="relative" ref={menuRef}>
               <button 
                 onClick={() => setShowUserMenu(!showUserMenu)}
-                className="flex items-center gap-3 ps-4 border-s border-gray-200 hover:opacity-80 transition-opacity"
+                className="flex items-center gap-2 sm:gap-3 sm:ps-4 sm:border-s border-gray-200 hover:opacity-80 transition-opacity"
               >
-                <div className="text-end">
+                <div className="hidden sm:block text-end">
                   <p className="text-sm font-semibold text-gray-700">{user?.name || 'Admin'}</p>
                   <p className="text-xs text-[#505F76]">{t('admin.administrator')}</p>
                 </div>
@@ -210,7 +251,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </button>
 
               {showUserMenu && (
-                <div className={`absolute mt-2 w-48 bg-white rounded-2xl shadow-xl py-2 z-50 end-0`}>
+                <div className={`absolute mt-2 w-48 bg-white rounded-2xl shadow-xl py-2 z-50 ${isRTL ? 'start-0' : 'end-0'}`}>
                   <div className="px-4 py-3 border-b border-gray-50 mb-1">
                     <p className="text-sm font-semibold text-[#191C1E] truncate">{user?.name}</p>
                     <p className="text-[10px] text-[#505F76] truncate">{user?.email}</p>
@@ -230,7 +271,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </header>
 
         {/* Page Content */}
-        <div className="p-8">
+        <div className="p-4 sm:p-6 lg:p-8">
           {children}
         </div>
       </main>

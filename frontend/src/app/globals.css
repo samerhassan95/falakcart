@@ -73,15 +73,17 @@ body {
   direction: ltr;
 }
 
-/* Main content margin for sidebar */
-[dir="rtl"] main {
-  margin-left: 0 !important;
-  margin-right: 280px !important;
-}
+/* Main content margin for sidebar - Desktop only */
+@media (min-width: 1024px) {
+  [dir="rtl"] main {
+    margin-left: 0 !important;
+    margin-right: 280px !important;
+  }
 
-[dir="ltr"] main {
-  margin-left: 280px !important;
-  margin-right: 0 !important;
+  [dir="ltr"] main {
+    margin-left: 280px !important;
+    margin-right: 0 !important;
+  }
 }
 
 /* Sidebar positioning */

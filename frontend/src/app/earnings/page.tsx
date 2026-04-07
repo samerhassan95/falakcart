@@ -122,20 +122,20 @@ export default function EarningsPage() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-[#191C1E] tracking-tight">{t('earnings.title')}</h1>
-          <p className="text-[#505F76] mt-1">{t('earnings.subtitle')}</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#191C1E] tracking-tight">{t('earnings.title')}</h1>
+          <p className="text-sm sm:text-base text-[#505F76] mt-1">{t('earnings.subtitle')}</p>
         </div>
-          <div className="flex items-center gap-4 border-b border-gray-200">
-             <button className="px-4 py-3 text-sm font-semibold text-[#050C9C] border-b-2 border-indigo-600">{t('earnings.overviewStats')}</button>
+          <div className="flex items-center gap-4 border-b border-gray-200 w-full sm:w-auto">
+             <button className="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-semibold text-[#050C9C] border-b-2 border-indigo-600">{t('earnings.overviewStats')}</button>
           </div>
         </div>
 
         {/* Top Cards */}
-        <div className="grid grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           <StatCard
             icon={
               <svg width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -195,27 +195,27 @@ export default function EarningsPage() {
         </div>
 
         {/* Charts & Payout Row */}
-        <div className="grid grid-cols-3 gap-6">
-          <div className="col-span-2 bg-white rounded-2xl   p-6 relative">
-            <div className="flex items-center justify-between mb-8 text-center sm:text-left">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="lg:col-span-2 bg-white rounded-2xl p-4 sm:p-6 relative">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8 text-center sm:text-left">
                <div>
-                 <h3 className="text-lg font-bold text-[#191C1E]">{t('earnings.commissionsInsight')}</h3>
-                 <p className="text-sm text-[#505F76]">{t('earnings.performanceLast30Days')}</p>
+                 <h3 className="text-base sm:text-lg font-bold text-[#191C1E]">{t('earnings.commissionsInsight')}</h3>
+                 <p className="text-xs sm:text-sm text-[#505F76]">{t('earnings.performanceLast30Days')}</p>
                </div>
-               <div className="flex bg-gray-50 rounded-xl p-1">
+               <div className="flex bg-gray-50 rounded-xl p-1 w-full sm:w-auto">
                  {[
                    { key: 'Daily', label: t('common.daily') },
                    { key: 'Weekly', label: t('common.weekly') },
                    { key: 'Monthly', label: t('common.monthly') }
                  ].map((p, i) => (
-                   <button key={i} onClick={() => setPeriod(p.key)} className={`px-4 py-1.5 text-xs font-semibold rounded-lg ${period === p.key ? 'bg-white  text-[#191C1E]' : 'text-[#505F76]'}`}>
+                   <button key={i} onClick={() => setPeriod(p.key)} className={`flex-1 sm:flex-none px-3 sm:px-4 py-1.5 text-xs font-semibold rounded-lg ${period === p.key ? 'bg-white  text-[#191C1E]' : 'text-[#505F76]'}`}>
                      {p.label}
                    </button>
                  ))}
                </div>
             </div>
             
-            <div className="h-[250px] mt-4">
+            <div className="h-56 sm:h-[250px] mt-4">
               <ResponsiveContainer width="100%" height="100%">
                  <AreaChart data={insightData}>
                     <defs>
@@ -232,16 +232,16 @@ export default function EarningsPage() {
             </div>
           </div>
 
-          <div className="space-y-6">
-            <div className="bg-white rounded-2xl  p-6 ">
-               <h3 className="text-[14px] font-bold text-[#191C1E] mb-6">{t('earnings.payoutDetails')}</h3>
+          <div className="space-y-4 sm:space-y-6">
+            <div className="bg-white rounded-2xl p-4 sm:p-6">
+               <h3 className="text-sm sm:text-base font-bold text-[#191C1E] mb-4 sm:mb-6">{t('earnings.payoutDetails')}</h3>
                <p className="text-[10px] font-bold uppercase tracking-wider text-[#505F76] mb-1">{t('earnings.availableToWithdraw')}</p>
-               <p className="text-[32px] font-black text-[#050C9C] mb-6">${(data?.available_balance || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+               <p className="text-2xl sm:text-3xl font-black text-[#050C9C] mb-4 sm:mb-6">${(data?.available_balance || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
                
                <button 
                  onClick={requestPayout}
                  disabled={(data?.available_balance || 0) <= 0}
-                 className="w-full flex justify-center items-center gap-2 py-3.5 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-sm font-bold transition-all mb-6"
+                 className="w-full flex justify-center items-center gap-2 py-3 sm:py-3.5 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-xl text-xs sm:text-sm font-bold transition-all mb-4 sm:mb-6"
                  style={{ 
                    background: 'linear-gradient(100.03deg, #2A14B4 0%, #4338CA 100%)',
                    boxShadow: '0px 4px 6px -4px #6366F133, 0px 10px 15px -3px #6366F133'
@@ -250,8 +250,8 @@ export default function EarningsPage() {
                  {t('earnings.requestPayout')} <ArrowRight className="w-4 h-4 rtl:rotate-180" />
                </button>
 
-               <div className="space-y-4 pt-4 border-t border-gray-100">
-                 <div className="flex justify-between items-center text-[12px]">
+               <div className="space-y-3 sm:space-y-4 pt-3 sm:pt-4 border-t border-gray-100">
+                 <div className="flex justify-between items-center text-xs sm:text-sm">
                    <span className="text-[#505F76]">{t('earnings.payoutMethod')}</span>
                    <div className="flex items-center gap-2 font-semibold text-[#191C1E]">
                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -287,15 +287,56 @@ export default function EarningsPage() {
         </div>
 
         {/* Transactions Table */}
-        <div className="bg-white rounded-2xl   overflow-hidden pb-4">
-          <div className="p-6 flex items-center justify-between border-b border-gray-50">
+        <div className="bg-white rounded-2xl overflow-hidden pb-4">
+          <div className="p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-gray-50">
             <div>
-               <h3 className="text-lg font-bold text-[#191C1E]">{t('earnings.recentTransactions')}</h3>
-               <p className="text-sm text-[#505F76] mt-1">{t('earnings.monitoringCommissions')}</p>
+               <h3 className="text-base sm:text-lg font-bold text-[#191C1E]">{t('earnings.recentTransactions')}</h3>
+               <p className="text-xs sm:text-sm text-[#505F76] mt-1">{t('earnings.monitoringCommissions')}</p>
             </div>
-            <button className="px-5 py-2 bg-gray-50 text-sm font-semibold text-gray-700 rounded-xl hover:bg-gray-100">{t('dashboard.viewAll')}</button>
+            <button className="px-4 sm:px-5 py-2 bg-gray-50 text-xs sm:text-sm font-semibold text-gray-700 rounded-xl hover:bg-gray-100">{t('dashboard.viewAll')}</button>
           </div>
-          <table className="w-full text-left mt-2">
+
+          {/* Mobile Card View */}
+          <div className="lg:hidden p-4 space-y-3">
+            {paginatedTransactions.map((tr, i) => {
+              const isCommission = tr.type === 'commission' || tr.amount > 0;
+              return (
+                <div key={i} className="p-4 bg-gray-50 rounded-xl">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <p className="text-sm font-bold text-[#191C1E]">
+                        {new Date(tr.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </p>
+                      <span className="px-2 py-0.5 bg-indigo-50 text-[#050C9C] rounded-lg text-xs font-bold capitalize inline-block mt-1">{tr.type}</span>
+                    </div>
+                    <p className={`text-lg font-black ${isCommission ? 'text-emerald-600' : 'text-[#191C1E]'}`}>
+                      {isCommission ? '+' : '-'}${Math.abs(tr.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-200">
+                    <div>
+                      <p className="text-xs text-[#505F76] mb-1">{t('earnings.source')}</p>
+                      <p className="text-sm text-gray-600">{tr.source || t('earnings.general')}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-[#505F76] mb-1">{t('common.status')}</p>
+                      <div className="flex items-center gap-1.5 text-xs font-bold uppercase">
+                        <span className={`w-1.5 h-1.5 rounded-full ${tr.status === 'pending' ? 'bg-orange-500' : 'bg-emerald-500'}`} />
+                        <span className={tr.status === 'pending' ? 'text-orange-500' : 'text-emerald-600'}>{tr.status}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+            {transactions.length === 0 && (
+              <div className="py-8 text-center text-sm text-[#505F76]">{t('earnings.noTransactionsFound')}</div>
+            )}
+          </div>
+
+          {/* Desktop Table View */}
+          <div className="hidden lg:block">
+            <table className="w-full text-left mt-2">
             <thead>
               <tr className="text-[10px] font-bold uppercase tracking-wider text-[#505F76] border-b border-gray-50">
                 <th className="px-6 py-4">{t('common.date')}</th>
@@ -336,8 +377,9 @@ export default function EarningsPage() {
               )}
             </tbody>
           </table>
+          </div>
           
-          <div className="px-6 pt-4 flex items-center justify-between text-xs text-[#505F76]">
+          <div className="px-4 sm:px-6 pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#505F76]">
              <span>{t('earnings.showing')} {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, transactions.length)} {t('earnings.of')} {transactions.length} {t('earnings.transactions')}</span>
              <div className="flex items-center gap-2">
                <button disabled={currentPage === 1} onClick={prevPage} className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50"><ChevronLeft className="w-4 h-4 rtl:rotate-180" /></button>
