@@ -153,7 +153,7 @@ export default function ReferralsPage() {
   const remainingReferrals = Math.max(milestoneTarget - totalReferrals, 0);
 
   return (
-    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6">
+    <div className="space-y-4 sm:space-y-6 ">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-[#191C1E] tracking-tight">{t('referrals.title')}</h1>

@@ -149,6 +149,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Get logo based on current locale
+  const logoSrc = useMemo(() => {
+    return currentLocale === 'ar' ? '/FalakLogoDarkAr.png' : '/FalakLogoDark.png';
+  }, [currentLocale]);
+
   useEffect(() => {
     if (user && user.role === 'affiliate') {
       fetchNotifications();
@@ -246,9 +251,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         {/* Brand */}
         <div className="px-6 pt-6 pb-6">
           <img 
-            src="/FalakLogoDark.png" 
+            src={logoSrc}
             alt="Falak Logo" 
-            className="h-12 w-auto object-contain"
+            className={`w-auto object-contain ${currentLocale === 'ar' ? 'h-16' : 'h-12'}`}
           />
         </div>
 
@@ -258,7 +263,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             {renderAvatar('medium')}
             <div className="overflow-hidden">
               <p className="text-sm font-bold text-[#191C1E] truncate">{user?.name || 'User'}</p>
-              <p className="text-xs font-medium text-[#64748B] tracking-wide">Affiliate Partner</p>
+              <p className="text-xs font-medium text-[#64748B] tracking-wide">
+                {user?.role === 'admin' ? t('admin.administrator') : t('common.affiliatePartner')}
+              </p>
             </div>
           </div>
         </div>

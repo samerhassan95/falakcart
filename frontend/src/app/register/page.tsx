@@ -56,7 +56,7 @@ export default function RegisterPage() {
         <div className="text-center mb-4">
           <div className="inline-flex items-center justify-center mb-4">
             <Image 
-              src="/FalakLogoDark.png" 
+              src={logoSrc}
               alt="FalakCart Logo" 
               width={180} 
               height={60}

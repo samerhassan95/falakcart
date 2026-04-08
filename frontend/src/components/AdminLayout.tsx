@@ -1,11 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useTranslation } from '@/hooks/useTranslation';
+import api from '@/lib/api';
 
 // Icons
 const LogoutIcon = ({ className }: { className?: string }) => (
@@ -21,6 +22,27 @@ const DashboardIcon = ({ className, isActive }: { className?: string; isActive?:
     <path d="M7.875 9.825V14.925C7.875 16.05 7.395 16.5 6.2025 16.5H3.1725C1.98 16.5 1.5 16.05 1.5 14.925V9.825C1.5 8.7 1.98 8.25 3.1725 8.25H6.2025C7.395 8.25 7.875 8.7 7.875 9.825Z" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
     <path opacity="0.4" d="M7.875 3.075V4.425C7.875 5.55 7.395 6 6.2025 6H3.1725C1.98 6 1.5 5.55 1.5 4.425V3.075C1.5 1.95 1.98 1.5 3.1725 1.5H6.2025C7.395 1.5 7.875 1.95 7.875 3.075Z" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
+);
+const CommissionsIcon = ({ className, isActive }: { className?: string; isActive?: boolean }) => (
+<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+<g opacity="0.4">
+<path d="M6 8.55015C6 9.12765 6.45 9.60015 6.9975 9.60015H8.1225C8.6025 9.60015 8.9925 9.18765 8.9925 8.68515C8.9925 8.13765 8.7525 7.94265 8.4 7.81515L6.6 7.18515C6.24 7.05765 6 6.86265 6 6.31515C6 5.81265 6.39 5.40015 6.87 5.40015H7.995C8.55 5.40765 9 5.87265 9 6.45015" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M7.5 9.63721V10.1922" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M7.5 4.80762V5.39262" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+</g>
+<path d="M7.4925 13.485C10.8021 13.485 13.485 10.8021 13.485 7.4925C13.485 4.18293 10.8021 1.5 7.4925 1.5C4.18293 1.5 1.5 4.18293 1.5 7.4925C1.5 10.8021 4.18293 13.485 7.4925 13.485Z" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+<path opacity="0.4" d="M9.73828 14.91C10.4133 15.8625 11.5158 16.485 12.7758 16.485C14.8233 16.485 16.4883 14.82 16.4883 12.7725C16.4883 11.5275 15.8733 10.425 14.9358 9.75" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+</svg>
+
+);
+const PayoutsIcon = ({ className, isActive }: { className?: string; isActive?: boolean }) => (
+<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+<path d="M13.53 10.1625C13.215 10.47 13.035 10.9125 13.08 11.385C13.1475 12.195 13.89 12.7875 14.7 12.7875H16.125V13.68C16.125 15.2325 14.8575 16.5 13.305 16.5H4.695C3.1425 16.5 1.875 15.2325 1.875 13.68V8.63251C1.875 7.08001 3.1425 5.8125 4.695 5.8125H13.305C14.8575 5.8125 16.125 7.08001 16.125 8.63251V9.71251H14.61C14.19 9.71251 13.8075 9.87749 13.53 10.1625Z" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+<path opacity="0.4" d="M1.875 9.30772V5.88026C1.875 4.98776 2.4225 4.19273 3.255 3.87773L9.21 1.62773C10.14 1.27523 11.1375 1.96525 11.1375 2.96275V5.81274" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+<path d="M16.9191 10.4776V12.0227C16.9191 12.4352 16.5891 12.7726 16.1691 12.7876H14.6991C13.8891 12.7876 13.1466 12.1951 13.0791 11.3851C13.0341 10.9126 13.2141 10.4701 13.5291 10.1626C13.8066 9.87763 14.1891 9.71265 14.6091 9.71265H16.1691C16.5891 9.72765 16.9191 10.0651 16.9191 10.4776Z" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+<path opacity="0.4" d="M5.25 9H10.5" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+</svg>
+
 );
 
 const UsersIcon = ({ className, isActive }: { className?: string; isActive?: boolean }) => (
@@ -60,27 +82,50 @@ const SettingsIcon = ({ className, isActive }: { className?: string; isActive?: 
 );
 
 const navItems = [
-  { label: 'Overview', href: '/admin', icon: DashboardIcon, view: '' },
-  { label: 'Affiliates', href: '/admin?view=affiliates', icon: UsersIcon, view: 'affiliates' },
-  { label: 'Commissions', href: '/admin?view=commissions', icon: DashboardIcon, view: 'commissions' },
-  { label: 'Analytics', href: '/admin?view=analytics', icon: AnalyticsIcon, view: 'analytics' },
-  { label: 'Payouts', href: '/admin?view=payouts', icon: DashboardIcon, view: 'payouts' },
-  { label: 'Settings', href: '/admin?view=settings', icon: SettingsIcon, view: 'settings' },
+  { label: 'admin.overview', href: '/admin', icon: DashboardIcon },
+  { label: 'admin.affiliates', href: '/admin/affiliates', icon: UsersIcon },
+  { label: 'admin.commissions', href: '/admin/commissions', icon: CommissionsIcon },
+  { label: 'navigation.analytics', href: '/admin/analytics', icon: AnalyticsIcon },
+  { label: 'admin.payouts', href: '/admin/payouts', icon: PayoutsIcon },
+  { label: 'admin.settings', href: '/admin/settings', icon: SettingsIcon },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const { user, logout } = useAuth();
   const { t } = useTranslation();
   
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState<any[]>([]);
   const [isRTL, setIsRTL] = useState(true);
   const [currentLocale, setCurrentLocale] = useState('ar');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [userAvatar, setUserAvatar] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const notifRef = useRef<HTMLDivElement>(null);
 
-  const currentView = searchParams.get('view') || '';
+  const renderAvatar = useMemo(() => {
+    return (size: 'small' | 'medium') => {
+      const sizeClasses = size === 'small' ? 'w-8 h-8 text-xs' : 'w-9 h-9 text-sm';
+      
+      if (userAvatar) {
+        return (
+          <img 
+            src={userAvatar} 
+            alt="User Avatar" 
+            className={`${sizeClasses} rounded-full object-cover ring-2 ring-indigo-100`}
+          />
+        );
+      }
+      
+      return (
+        <div className={`${sizeClasses} bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold ${size === 'small' ? 'ring-2 ring-indigo-100' : ''}`}>
+          {user?.name?.charAt(0) || 'U'}
+        </div>
+      );
+    };
+  }, [userAvatar, user?.name]);
 
   useEffect(() => {
     const updateDirection = () => {
@@ -106,10 +151,39 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setShowUserMenu(false);
       }
+      if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
+      }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const fetchNotifications = async () => {
+    try {
+      const { data } = await api.get('/admin/notifications');
+      setNotifications(data);
+    } catch (e) {
+      console.error('Error fetching notifications:', e);
+    }
+  };
+
+  useEffect(() => {
+    if (user && user.role === 'admin') {
+      fetchNotifications();
+    }
+  }, [user]);
+
+  const toggleNotifications = () => {
+    if (!showNotifications) {
+      setShowNotifications(true);
+      if (notifications.some(n => !n.read_at)) {
+        api.post('/admin/notifications/read').then(() => fetchNotifications()).catch(() => {});
+      }
+    } else {
+      setShowNotifications(false);
+    }
+  };
 
   const logoSrc = currentLocale === 'ar' ? '/FalakLogoDarkAr.png' : '/FalakLogoDark.png';
 
@@ -148,21 +222,33 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <img 
             src={logoSrc}
             alt="Falak Logo" 
-            className="h-12 w-auto object-contain"
+            className={`w-auto object-contain ${currentLocale === 'ar' ? 'h-16' : 'h-12'}`}
           />
+        </div>
+        {/* User Profile Card */}
+        <div className="mb-8 px-4 pt-4 b-2 bg-[#F8FAFC] rounded-2xl">
+          <div className="flex items-center gap-3">
+            {renderAvatar('medium')}
+            <div className="overflow-hidden">
+              <p className="text-sm font-bold text-[#191C1E] truncate">{user?.name || 'User'}</p>
+              <p className="text-xs font-medium text-[#64748B] tracking-wide">
+                {user?.role === 'admin' ? t('admin.administrator') : t('common.affiliatePartner')}
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Admin Badge */}
-        <div className="px-6 pb-6">
+        {/* <div className="px-6 pb-6">
           <div className="px-3 py-1.5 bg-red-50 rounded-lg inline-block">
             <span className="text-xs font-bold text-red-600 uppercase tracking-wider">{t('admin.administrator')}</span>
           </div>
-        </div>
+        </div> */}
 
         {/* Navigation */}
         <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
-            const isActive = currentView === item.view;
+            const isActive = pathname === item.href;
             const Icon = item.icon;
             return (
               <Link
@@ -176,7 +262,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 }`}
               >
                 <Icon className="w-5 h-5 flex-shrink-0" isActive={isActive} />
-                {item.label}
+                {t(item.label)}
               </Link>
             );
           })}
@@ -236,6 +322,39 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex items-center gap-2 sm:gap-4">
             <LanguageSwitcher />
 
+            <div className="relative" ref={notifRef}>
+              <button onClick={toggleNotifications} className="relative p-2 text-[#505F76] hover:text-gray-600 transition-colors rounded-full hover:bg-gray-50">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                {notifications.some(n => !n.read_at) && (
+                  <span className={`absolute top-1 ${isRTL ? 'start-1' : 'end-1'} w-2 h-2 bg-red-500 rounded-full ring-2 ring-white animate-pulse`} />
+                )}
+              </button>
+              
+              {showNotifications && (
+                <div className={`absolute mt-2 w-80 max-w-[calc(100vw-2rem)] max-h-96 overflow-y-auto bg-white rounded-2xl shadow-xl py-2 z-50 ${isRTL ? 'end-0' : 'end-0'}`}>
+                  <div className="px-4 py-3 border-b border-gray-50 flex items-center justify-between">
+                    <h3 className="text-sm font-bold text-[#191C1E]">{t('notifications.title')}</h3>
+                  </div>
+                  {notifications.length === 0 ? (
+                    <div className="p-8 text-center text-[#505F76] text-sm">
+                      {t('notifications.noNewNotifications')}
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-gray-50">
+                      {notifications.map((notif, i) => (
+                        <div key={i} className={`p-4 hover:bg-gray-50 transition-colors ${!notif.read_at ? 'bg-indigo-50/30' : ''}`}>
+                          <p className="text-sm font-semibold text-[#191C1E] mb-1">{notif.title}</p>
+                          <p className="text-xs text-[#505F76] leading-relaxed">{notif.message}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
             <div className="relative" ref={menuRef}>
               <button 
                 onClick={() => setShowUserMenu(!showUserMenu)}
@@ -256,7 +375,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     <p className="text-sm font-semibold text-[#191C1E] truncate">{user?.name}</p>
                     <p className="text-[10px] text-[#505F76] truncate">{user?.email}</p>
                   </div>
-                  <Link href="/admin?view=settings" onClick={() => setShowUserMenu(false)} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#050C9C]">
+                  <Link href="/admin/settings" onClick={() => setShowUserMenu(false)} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#050C9C]">
                     {t('admin.settings')}
                   </Link>
                   <div className="border-t border-gray-50 mt-1 pt-1">
