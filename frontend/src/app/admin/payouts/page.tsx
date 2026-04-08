@@ -256,7 +256,7 @@ export default function AdminPayoutsPage() {
           <p className="text-sm text-[#505F76] mb-6">{t('payouts.reviewAndApprove')}</p>
 
           <div className="space-y-3">
-            <div className="grid grid-cols-5 gap-4 text-xs font-semibold text-[#505F76] uppercase pb-2 border-b border-gray-100">
+            <div className="grid grid-cols-5 gap-4 text-xs font-semibold text-[#505F76] uppercase pb-2 ">
               <div>{t('payouts.affiliate')}</div>
               <div>{t('payouts.requestedAmount')}</div>
               <div>{t('payouts.method')}</div>
@@ -411,7 +411,7 @@ export default function AdminPayoutsPage() {
         </div>
 
         <div className="space-y-3">
-          <div className="grid grid-cols-6 gap-4 text-xs font-semibold text-[#505F76] uppercase pb-3 border-b border-gray-100">
+          <div className="grid grid-cols-6 gap-4 text-xs font-semibold text-[#505F76] uppercase pb-3 ">
             <div>{t('payouts.transactionId')}</div>
             <div>{t('payouts.date')}</div>
             <div>{t('payouts.affiliate')}</div>

@@ -28,7 +28,7 @@ export function DataTable({
     <div className={`bg-[#FFFFFFCC] backdrop-blur-md rounded-xl border border-gray-200 overflow-hidden ${className}`}>
       {/* Header */}
       {(title || searchComponent) && (
-        <div className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100">
+        <div className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 ">
           {title && <h3 className="text-base sm:text-lg font-bold text-[#191C1E]">{title}</h3>}
           {searchComponent}
         </div>
@@ -38,7 +38,7 @@ export function DataTable({
       <div className="overflow-x-auto">
         <div className="space-y-3">
           {/* Header Row */}
-          <div className={`grid gap-4 px-6 py-3 text-xs font-semibold text-[#505F76] uppercase border-b border-gray-100`} 
+          <div className={`grid gap-4 px-6 py-3 text-xs font-semibold text-[#505F76] uppercase `} 
                style={{ gridTemplateColumns: `repeat(${columns.length}, 1fr)` }}>
             {columns.map((column) => (
               <div 

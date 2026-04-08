@@ -523,7 +523,7 @@ export default function AdminOverviewPage() {
           </div>
 
           <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl ">
-            <div className="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
+            <div className="px-4 py-3  flex items-center justify-between">
               <h3 className="font-bold text-[#191C1E] text-[16px]">{t('admin.recentActivity')}</h3>
             </div>
             <div className="p-4 space-y-3 max-h-96 overflow-y-auto">

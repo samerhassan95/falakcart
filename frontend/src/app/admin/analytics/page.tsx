@@ -278,7 +278,7 @@ export default function AdminAnalyticsPage() {
             <p className="text-sm text-[#505F76] mb-6">{t('analytics.topPartnersRanked')}</p>
             
             <div className="space-y-3">
-              <div className="grid grid-cols-5 gap-4 text-xs font-semibold text-[#505F76] uppercase pb-3 border-b border-gray-100">
+              <div className="grid grid-cols-5 gap-4 text-xs font-semibold text-[#505F76] uppercase pb-3 ">
                 <div>{t('admin.affiliate')}</div>
                 <div className="text-center">{t('analytics.clicks')}</div>
                 <div className="text-center">{t('admin.conversions')}</div>

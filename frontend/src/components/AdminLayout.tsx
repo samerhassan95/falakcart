@@ -294,7 +294,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Main Content */}
       <main className={`flex-1 ${isRTL ? 'lg:mr-[280px]' : 'lg:ml-[280px]'}`}>
         {/* Top Bar */}
-        <header className="sticky top-0 z-20 bg-[#FFFFFFCC] backdrop-blur-md border-b border-gray-100 px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+        <header className="sticky top-0 z-20 bg-[#FFFFFFCC] backdrop-blur-md  px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(true)}

@@ -306,7 +306,7 @@ export default function AdminCommissionsPage() {
         </div>
 
         <div className="space-y-3">
-          <div className="grid grid-cols-6 gap-4 text-xs font-semibold text-[#505F76] uppercase pb-2 border-b border-gray-100">
+          <div className="grid grid-cols-6 gap-4 text-xs font-semibold text-[#505F76] uppercase pb-2 ">
             <div>{t('admin.affiliate')}</div>
             <div>{t('admin.source')}</div>
             <div>{t('common.amount')}</div>

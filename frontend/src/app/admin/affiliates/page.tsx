@@ -8,7 +8,7 @@ import { StatCard } from '@/components/StatCard';
 import { useTranslation } from '@/hooks/useTranslation';
 
 export default function AdminAffiliatesPage() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const [affiliates, setAffiliates] = useState<Affiliate[]>([]);
 
   const [filter, setFilter] = useState<'all' | 'active' | 'pending' | 'suspended'>('all');
@@ -227,7 +227,9 @@ export default function AdminAffiliatesPage() {
                   aff.status === 'pending' ? 'bg-amber-100 text-amber-800' :
                   'bg-red-100 text-red-800'
                 }`}>
-                  {aff.status.toUpperCase()}
+                  {aff.status === 'active' ? t('common.active').toUpperCase() :
+                   aff.status === 'pending' ? t('common.pending').toUpperCase() :
+                   t('common.suspended').toUpperCase()}
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-2 text-sm">
@@ -244,20 +246,23 @@ export default function AdminAffiliatesPage() {
                 <button
                   onClick={() => updateStatus(aff.id, 'active')}
                   className="px-2 py-1 text-[10px] font-semibold text-green-700 bg-green-50 rounded-lg hover:bg-green-100"
+                  title={t('common.activate')}
                 >
-                  ACT
+                  {locale === 'ar' ? 'تفعيل' : 'ACT'}
                 </button>
                 <button
                   onClick={() => updateStatus(aff.id, 'suspended')}
                   className="px-2 py-1 text-[10px] font-semibold text-amber-700 bg-amber-50 rounded-lg hover:bg-amber-100"
+                  title={t('common.suspended')}
                 >
-                  SUS
+                  {locale === 'ar' ? 'تعليق' : 'SUS'}
                 </button>
                 <button
                   onClick={() => deleteAffiliate(aff.id)}
                   className="px-2 py-1 text-[10px] font-semibold text-red-700 bg-red-50 rounded-lg hover:bg-red-100"
+                  title={t('common.delete')}
                 >
-                  DEL
+                  {locale === 'ar' ? 'حذف' : 'DEL'}
                 </button>
               </div>
             </div>
@@ -276,6 +281,7 @@ export default function AdminAffiliatesPage() {
                 <th className="px-6 py-4 text-center">{t('admin.conversions')}</th>
                 <th className="px-6 py-4 text-center">{t('admin.revenue')}</th>
                 <th className="px-6 py-4 text-center">{t('common.status')}</th>
+                <th className="px-6 py-4 text-center">{t('common.actions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -302,34 +308,39 @@ export default function AdminAffiliatesPage() {
                     <p className="font-bold text-[#191C1E]">${formatCurrency(aff.total_earnings)}</p>
                   </td>
                   <td className="px-6 py-5 text-center">
-                    <div className="space-y-2">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
-                        aff.status === 'active' ? 'bg-green-100 text-green-800' :
-                        aff.status === 'pending' ? 'bg-amber-100 text-amber-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {aff.status.toUpperCase()}
-                      </span>
-                      <div className="flex items-center justify-center gap-1">
-                        <button
-                          onClick={() => updateStatus(aff.id, 'active')}
-                          className="px-2 py-1 text-[10px] font-semibold text-green-700 bg-green-50 rounded-lg hover:bg-green-100"
-                        >
-                          ACT
-                        </button>
-                        <button
-                          onClick={() => updateStatus(aff.id, 'suspended')}
-                          className="px-2 py-1 text-[10px] font-semibold text-amber-700 bg-amber-50 rounded-lg hover:bg-amber-100"
-                        >
-                          SUS
-                        </button>
-                        <button
-                          onClick={() => deleteAffiliate(aff.id)}
-                          className="px-2 py-1 text-[10px] font-semibold text-red-700 bg-red-50 rounded-lg hover:bg-red-100"
-                        >
-                          DEL
-                        </button>
-                      </div>
+                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${
+                      aff.status === 'active' ? 'bg-green-100 text-green-800' :
+                      aff.status === 'pending' ? 'bg-amber-100 text-amber-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      {aff.status === 'active' ? t('common.active').toUpperCase() :
+                       aff.status === 'pending' ? t('common.pending').toUpperCase() :
+                       t('common.suspended').toUpperCase()}
+                    </span>
+                  </td>
+                  <td className="px-6 py-5 text-center">
+                    <div className="flex items-center justify-center gap-1">
+                      <button
+                        onClick={() => updateStatus(aff.id, 'active')}
+                        className="px-2 py-1 text-[10px] font-semibold text-green-700 bg-green-50 rounded-lg hover:bg-green-100"
+                        title={t('common.activate')}
+                      >
+                        {locale === 'ar' ? 'تفعيل' : 'ACT'}
+                      </button>
+                      <button
+                        onClick={() => updateStatus(aff.id, 'suspended')}
+                        className="px-2 py-1 text-[10px] font-semibold text-amber-700 bg-amber-50 rounded-lg hover:bg-amber-100"
+                        title={t('common.suspended')}
+                      >
+                        {locale === 'ar' ? 'تعليق' : 'SUS'}
+                      </button>
+                      <button
+                        onClick={() => deleteAffiliate(aff.id)}
+                        className="px-2 py-1 text-[10px] font-semibold text-red-700 bg-red-50 rounded-lg hover:bg-red-100"
+                        title={t('common.delete')}
+                      >
+                        {locale === 'ar' ? 'حذف' : 'DEL'}
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -395,15 +406,15 @@ export default function AdminAffiliatesPage() {
                       <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center">
                         <span className="text-white font-bold text-[14px]">{aff.user.name.charAt(0)}</span>
                       </div>
-                      <div className={`absolute -top-2 -start-2 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-lg ${
+                      <div className={`absolute -top-2 -start-2 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-[12px] ${
                         idx === 0 ? 'bg-[#F59E0B]' : idx === 1 ? 'bg-[#505F76]' : 'bg-[#FBBF24]'
                       }`}>
                         {idx + 1}
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-[#505F76] text-lg truncate">{aff.user.name}</p>
-                      <p className="text-sm text-[#505F76] truncate">{aff.user.email.split('@')[0]} {t('admin.media')}</p>
+                      <p className="font-bold text-[#505F76] text-[14px] truncate">{aff.user.name}</p>
+                      <p className="text-[12px] text-[#505F76] truncate">{aff.user.email.split('@')[0]} {t('admin.media')}</p>
                       <div className="mt-2 w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                         <div 
                           className="h-full bg-[#050C9C] rounded-full transition-all duration-500" 
@@ -412,14 +423,14 @@ export default function AdminAffiliatesPage() {
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <p className="font-bold text-[#191C1E] text-xl">${formatCurrency(aff.total_earnings)}</p>
+                      <p className="font-bold text-[#191C1E] text-[14px]">${formatCurrency(aff.total_earnings)}</p>
                     </div>
                   </div>
                 );
               })}
             </div>
             
-            <button className="w-full mt-6 py-3 text-base font-semibold text-[#050C9C] hover:bg-[#F8FAFC] rounded-xl transition-colors">
+            <button className="w-full mt-6 py-3 text-[14px] font-semibold text-[#050C9C] hover:bg-[#F8FAFC] rounded-xl transition-colors">
               {t('admin.viewAllRankings')}
             </button>
           </div>
