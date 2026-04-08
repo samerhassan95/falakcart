@@ -161,7 +161,7 @@ export default function AdminCommissionsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[#191C1E]">{t('admin.commissionsManagement')}</h1>
           <p className="text-sm text-[#505F76]">{t('admin.searchOrdersAffiliates')}</p>
@@ -224,7 +224,7 @@ export default function AdminCommissionsPage() {
       </div>
 
       {/* Commission Performance Chart & Insight */}
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="col-span-2 bg-white rounded-2xl p-4 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
             <div>
@@ -298,7 +298,7 @@ export default function AdminCommissionsPage() {
       {/* Pending Approvals */}
       <div className="bg-[#FFFFFFCC] backdrop-blur-md rounded-xl  p-6">
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <h3 className="text-lg font-bold text-[#191C1E]">{t('admin.pendingApprovals')}</h3>
             <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs font-bold rounded-full">{pendingCommissions.length} {t('admin.new')}</span>
           </div>
@@ -341,7 +341,7 @@ export default function AdminCommissionsPage() {
       <div className="bg-white rounded-2xl overflow-hidden">
         <div className="p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-50">
           <h3 className="text-base sm:text-lg font-bold text-[#191C1E]">{t('admin.allCommissions')}</h3>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <select 
               value={statusFilter}
               onChange={(e) => {

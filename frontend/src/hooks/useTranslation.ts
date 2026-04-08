@@ -25,6 +25,35 @@ export function useTranslation() {
     
     // Load translations
     const loadTranslations = (locale: 'ar' | 'en') => {
+      // Check if translations are cached in sessionStorage
+      const cacheKey = `translations_${locale}`;
+      const cached = sessionStorage.getItem(cacheKey);
+      
+      if (cached) {
+        try {
+          const data = JSON.parse(cached);
+          setTranslations(data);
+          setLocale(locale);
+          
+          // Update document direction and lang
+          document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr';
+          document.documentElement.lang = locale;
+          
+          // Update font
+          if (locale === 'ar') {
+            document.body.style.fontFamily = 'var(--font-cairo)';
+          } else {
+            document.body.style.fontFamily = 'var(--font-geist-sans)';
+          }
+          
+          setIsLoading(false);
+          return;
+        } catch (err) {
+          console.error('Failed to parse cached translations:', err);
+        }
+      }
+      
+      // If not cached, fetch from server
       setIsLoading(true);
       fetch(`/locales/${locale}.json`)
         .then(res => {
@@ -35,6 +64,14 @@ export function useTranslation() {
         })
         .then(data => {
           console.log(`Loaded ${locale} translations:`, Object.keys(data));
+          
+          // Cache translations in sessionStorage
+          try {
+            sessionStorage.setItem(cacheKey, JSON.stringify(data));
+          } catch (err) {
+            console.error('Failed to cache translations:', err);
+          }
+          
           setTranslations(data);
           setLocale(locale);
           
@@ -81,12 +118,57 @@ export function useTranslation() {
   }, []);
 
   const changeLanguage = (newLocale: 'ar' | 'en') => {
+    // Check if translations are cached
+    const cacheKey = `translations_${newLocale}`;
+    const cached = sessionStorage.getItem(cacheKey);
+    
+    if (cached) {
+      try {
+        const data = JSON.parse(cached);
+        setTranslations(data);
+        setLocale(newLocale);
+        
+        // Save to localStorage
+        localStorage.setItem('NEXT_LOCALE', newLocale);
+        localStorage.setItem('NEXT_DIR', newLocale === 'ar' ? 'rtl' : 'ltr');
+        
+        // Update document direction and lang
+        document.documentElement.dir = newLocale === 'ar' ? 'rtl' : 'ltr';
+        document.documentElement.lang = newLocale;
+        
+        // Update font
+        if (newLocale === 'ar') {
+          document.body.style.fontFamily = 'var(--font-cairo)';
+        } else {
+          document.body.style.fontFamily = 'var(--font-geist-sans)';
+        }
+        
+        // Trigger storage event
+        window.dispatchEvent(new StorageEvent('storage', {
+          key: 'NEXT_LOCALE',
+          newValue: newLocale,
+          oldValue: locale
+        }));
+        
+        return;
+      } catch (err) {
+        console.error('Failed to parse cached translations:', err);
+      }
+    }
+    
     setIsLoading(true);
     
     // Load new translations
     fetch(`/locales/${newLocale}.json`)
       .then(res => res.json())
       .then(data => {
+        // Cache translations
+        try {
+          sessionStorage.setItem(cacheKey, JSON.stringify(data));
+        } catch (err) {
+          console.error('Failed to cache translations:', err);
+        }
+        
         setTranslations(data);
         setLocale(newLocale);
         

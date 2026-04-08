@@ -259,7 +259,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
         {/* User Profile Card */}
         <div className="mb-8 px-4 pt-4 b-2 bg-[#F8FAFC] rounded-2xl">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             {renderAvatar('medium')}
             <div className="overflow-hidden">
               <p className="text-sm font-bold text-[#191C1E] truncate">{user?.name || 'User'}</p>

@@ -405,7 +405,7 @@ export default function AdminOverviewPage() {
                     return (
                       <tr key={aff.id} className="hover:bg-gray-50/50 transition-colors group">
                         <td className="px-6 py-5">
-                          <div className="flex items-center gap-3">
+                          <div className="flex flex-wrap items-center gap-3">
                             <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${
                               idx === 0 ? 'bg-gradient-to-br from-blue-500 to-blue-600' : 
                               idx === 1 ? 'bg-gradient-to-br from-purple-500 to-purple-600' : 

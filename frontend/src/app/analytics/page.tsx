@@ -263,22 +263,22 @@ export default function AnalyticsPage() {
                 </div>
               </div>
               <div className="space-y-4 w-full">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center justify-between">
+                  <div className="flex flex-wrap items-center gap-3">
                     <span className="w-3 h-3 rounded-full bg-[#050C9C]"></span>
                     <span className="text-sm text-[#6B7280]">{t('analytics.direct')}</span>
                   </div>
                   <span className="text-sm font-bold text-[#191C1E]">45%</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center justify-between">
+                  <div className="flex flex-wrap items-center gap-3">
                     <span className="w-3 h-3 rounded-full bg-[#A7E6FF]"></span>
                     <span className="text-sm text-[#6B7280]">{t('analytics.social')}</span>
                   </div>
                   <span className="text-sm font-bold text-[#191C1E]">25%</span>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center justify-between">
+                  <div className="flex flex-wrap items-center gap-3">
                     <span className="w-3 h-3 rounded-full bg-[#CBD5E1]"></span>
                     <span className="text-sm text-[#6B7280]">{t('analytics.referral')}</span>
                   </div>
@@ -386,7 +386,7 @@ export default function AnalyticsPage() {
                 {(data?.top_links || []).map((link, i) => (
                   <tr key={i} className="hover:bg-gray-50/50 transition-colors">
                     <td className="px-4 py-4">
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-wrap items-center gap-3">
                         <div className="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center">
                           <span className="text-[#050C9C] text-xs font-bold">{link.name.charAt(0)}</span>
                         </div>

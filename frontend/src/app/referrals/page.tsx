@@ -328,7 +328,7 @@ export default function ReferralsPage() {
               {paginatedReferrals.map((ref, idx) => (
                 <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-6 py-5">
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
                       <div className="w-9 h-9 rounded-full bg-indigo-50 text-[#050C9C] flex items-center justify-center font-bold text-xs ring-2 ring-white ">
                         {ref.user.substring(0, 2).toUpperCase()}
                       </div>

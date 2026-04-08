@@ -82,7 +82,7 @@ const SettingsIcon = ({ className, isActive }: { className?: string; isActive?: 
 );
 
 const navItems = [
-  { label: 'admin.overview', href: '/admin', icon: DashboardIcon },
+  { label: 'admin.overview', href: '/admin/overview', icon: DashboardIcon },
   { label: 'admin.affiliates', href: '/admin/affiliates', icon: UsersIcon },
   { label: 'admin.commissions', href: '/admin/commissions', icon: CommissionsIcon },
   { label: 'navigation.analytics', href: '/admin/analytics', icon: AnalyticsIcon },
@@ -227,7 +227,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
         {/* User Profile Card */}
         <div className="mb-8 px-4 pt-4 b-2 bg-[#F8FAFC] rounded-2xl">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             {renderAvatar('medium')}
             <div className="overflow-hidden">
               <p className="text-sm font-bold text-[#191C1E] truncate">{user?.name || 'User'}</p>
