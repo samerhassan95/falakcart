@@ -56,6 +56,8 @@ export default function Dashboard() {
   const [isFetching, setIsFetching] = useState(true);
   const [period, setPeriod] = useState('This Month');
   const [showPeriodMenu, setShowPeriodMenu] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const getPeriodLabel = (periodKey: string) => {
     const periodMap: Record<string, string> = {
@@ -69,20 +71,106 @@ export default function Dashboard() {
 
   const fetchData = useCallback(async () => {
     setIsFetching(true);
+    setHasError(false);
+    setErrorMessage('');
+    
     try {
       const periodParam = period === 'Today' ? '1' : period === 'This Week' ? '7' : period === 'This Month' ? '30' : '999';
-      const [statsRes, profileRes, activityRes, clicksRes] = await Promise.all([
+      
+      // Fetch data with individual error handling
+      const results = await Promise.allSettled([
         api.get(`/affiliate/stats?days=${periodParam}`),
         api.get('/affiliate/profile'),
         api.get('/affiliate/recent-activity'),
         api.get(`/affiliate/clicks?days=${periodParam}`),
       ]);
-      setStats(statsRes.data);
-      setProfile(profileRes.data);
-      setActivity(activityRes.data);
-      setEarningsData(clicksRes.data);
+
+      let hasAnyError = false;
+      let errorDetails = [];
+
+      // Handle stats
+      if (results[0].status === 'fulfilled') {
+        setStats(results[0].value.data);
+      } else {
+        hasAnyError = true;
+        errorDetails.push('Stats API failed');
+        console.error('Failed to fetch stats:', results[0].reason);
+        setStats({
+          clicks: 0,
+          referrals: 0,
+          subscriptions: 0,
+          earnings: 0,
+          conversion_rate: 0,
+          available_bal: 0,
+          pending_bal: 0,
+          paid_bal: 0
+        });
+      }
+
+      // Handle profile
+      if (results[1].status === 'fulfilled') {
+        setProfile(results[1].value.data);
+      } else {
+        hasAnyError = true;
+        errorDetails.push('Profile API failed');
+        console.error('Failed to fetch profile:', results[1].reason);
+        setProfile({
+          referral_code: 'LOADING',
+          status: 'active',
+          commission_rate: 15,
+          main_referral_url: ''
+        });
+      }
+
+      // Handle activity
+      if (results[2].status === 'fulfilled') {
+        setActivity(results[2].value.data);
+      } else {
+        hasAnyError = true;
+        errorDetails.push('Activity API failed');
+        console.error('Failed to fetch activity:', results[2].reason);
+        setActivity([]);
+      }
+
+      // Handle clicks data
+      if (results[3].status === 'fulfilled') {
+        setEarningsData(results[3].value.data);
+      } else {
+        hasAnyError = true;
+        errorDetails.push('Clicks API failed');
+        console.error('Failed to fetch clicks data:', results[3].reason);
+        setEarningsData([]);
+      }
+
+      if (hasAnyError) {
+        setHasError(true);
+        setErrorMessage(`Some data couldn't be loaded: ${errorDetails.join(', ')}`);
+      }
+
     } catch (err) {
       console.error('Error fetching dashboard data', err);
+      setHasError(true);
+      setErrorMessage('Failed to load dashboard data. Please check your connection.');
+      
+      // Set default values if everything fails
+      setStats({
+        clicks: 0,
+        referrals: 0,
+        subscriptions: 0,
+        earnings: 0,
+        conversion_rate: 0,
+        available_bal: 0,
+        pending_bal: 0,
+        paid_bal: 0
+      });
+      setProfile({
+        referral_code: 'ERROR',
+        status: 'active',
+        commission_rate: 15,
+        main_referral_url: ''
+      });
+      setActivity([]);
+      setEarningsData([]);
     } finally {
       setIsFetching(false);
     }
@@ -134,6 +222,25 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6 sm:space-y-8">
+        {/* Error Banner */}
+        {hasError && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-5 h-5 text-red-500">⚠️</div>
+              <div>
+                <h4 className="text-sm font-semibold text-red-800">Dashboard Loading Issues</h4>
+                <p className="text-xs text-red-600 mt-1">{errorMessage}</p>
+                <button 
+                  onClick={fetchData}
+                  className="text-xs text-red-700 underline mt-2 hover:text-red-800"
+                >
+                  Try Again
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>

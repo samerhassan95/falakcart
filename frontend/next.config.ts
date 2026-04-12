@@ -17,7 +17,12 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     forceSwcTransforms: true,
-  }
+  },
+  // Ensure static assets are properly copied
+  trailingSlash: false,
+  assetPrefix: '',
+  // Fix font loading issues
+  optimizeFonts: false,
 };
 
 export default nextConfig;
