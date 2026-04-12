@@ -1,50 +1,26 @@
-# FalakCart Affiliate System - aaPanel Deployment
-# This file handles routing for both Laravel backend and Next.js frontend
-# Document Root should be: /www/wwwroot/togaar.com/falakcart
+RewriteEngine On
 
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    
-    # Security Headers
-    Header always set X-Content-Type-Options nosniff
-    Header always set X-Frame-Options DENY
-    Header always set X-XSS-Protection "1; mode=block"
-    
-    # CORS Headers for API
-    Header always set Access-Control-Allow-Origin "*"
-    Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
-    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
-    
-    # Handle preflight OPTIONS requests
-    RewriteCond %{REQUEST_METHOD} OPTIONS
-    RewriteRule ^(.*)$ $1 [R=200,L]
-    
-    # API Routes - Direct to Laravel backend
-    RewriteCond %{REQUEST_URI} ^/api/
-    RewriteRule ^(.*)$ backend/public/index.php [L]
-    
-    # Try to proxy to Next.js server first (if PM2 is running)
-    RewriteCond %{REQUEST_URI} !^/api/
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ http://127.0.0.1:3001/$1 [P,L]
-    
-    # Fallback: Serve static files from frontend/out (if Next.js export exists)
-    RewriteCond %{REQUEST_URI} !^/api/
-    RewriteCond %{DOCUMENT_ROOT}/frontend/out%{REQUEST_URI} -f
-    RewriteRule ^(.*)$ frontend/out/$1 [L]
-    
-    # Fallback: Serve index.html for SPA routes from frontend/out
-    RewriteCond %{REQUEST_URI} !^/api/
-    RewriteCond %{DOCUMENT_ROOT}/frontend/out%{REQUEST_URI}/index.html -f
-    RewriteRule ^(.*)$ frontend/out/$1/index.html [L]
-    
-    # Final fallback: Serve frontend index.html for all non-API routes
-    RewriteCond %{REQUEST_URI} !^/api/
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ frontend/out/index.html [L]
-</IfModule>
+# Security Headers
+Header always set X-Content-Type-Options nosniff
+Header always set X-Frame-Options DENY
+Header always set X-XSS-Protection "1; mode=block"
+
+# CORS Headers for API
+Header always set Access-Control-Allow-Origin "*"
+Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+
+# Handle preflight OPTIONS requests
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L]
+
+# API Routes - Direct to Laravel backend
+RewriteCond %{REQUEST_URI} ^/api/
+RewriteRule ^(.*)$ backend/public/index.php [L]
+
+# All other routes - Proxy to Next.js PM2 server
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteRule ^(.*)$ http://127.0.0.1:3001/$1 [P,L]
 
 # Deny access to sensitive files and directories
 <Files ".env">

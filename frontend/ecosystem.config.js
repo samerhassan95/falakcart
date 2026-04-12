@@ -1,8 +1,7 @@
 module.exports = {
   apps: [{
     name: 'togaar-falakcart',
-    script: 'npm',
-    args: 'start',
+    script: '.next/standalone/server.js',
     cwd: '/www/wwwroot/togaar.com/falakcart/frontend',
     instances: 1,
     autorestart: true,
@@ -11,6 +10,7 @@ module.exports = {
     env: {
       NODE_ENV: 'production',
       PORT: 3001,
+      HOSTNAME: '0.0.0.0',
       NEXT_PUBLIC_API_URL: 'https://togaar.com/api',
       NEXT_PUBLIC_APP_URL: 'https://togaar.com'
     },
