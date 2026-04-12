@@ -81,7 +81,7 @@ const SettingsIcon = ({ className, isActive }: { className?: string; isActive?: 
 );
 
 const navItems = [
-  { label: 'navigation.dashboard', href: '/', icon: DashboardIcon },
+  { label: 'navigation.dashboard', href: '/dashboard', icon: DashboardIcon },
   { label: 'navigation.myLinks', href: '/links', icon: LinkIcon },
   { label: 'navigation.analytics', href: '/analytics', icon: AnalyticsIcon },
   { label: 'navigation.referrals', href: '/referrals', icon: ReferralsIcon },

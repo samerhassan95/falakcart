@@ -61,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (data.user.role === 'admin') {
       router.push('/admin');
     } else {
-      router.push('/');
+      router.push('/dashboard');
     }
   };
 
@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data } = await api.post('/register', { ...userData, password_confirmation: userData.password });
     localStorage.setItem('token', data.token);
     setUser(data.user);
-    router.push('/');
+    router.push('/dashboard');
   };
 
   const logout = async () => {
