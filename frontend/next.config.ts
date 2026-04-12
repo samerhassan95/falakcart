@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
   },
   // Fix font loading and optimize for production
   optimizeFonts: false,
+  trailingSlash: false,
 };
 
 export default nextConfig;

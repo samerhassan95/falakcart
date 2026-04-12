@@ -47,7 +47,7 @@ interface ClickStat {
   count: number;
 }
 
-export default function Dashboard() {
+export default function AffiliateDashboard() {
   const { user, loading } = useAuth();
   const { t, isLoading: translationsLoading } = useTranslation();
   const [stats, setStats] = useState<Stats | null>(null);
