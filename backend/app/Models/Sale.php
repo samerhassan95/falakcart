@@ -14,8 +14,13 @@ class Sale extends Model
         'reference_id',
         'customer_email',
         'customer_name',
+        'customer_phone',
         'plan_name',
         'subscription_id',
+        'currency',
+        'billing_cycle',
+        'falakcart_user_id',
+        'webhook_data',
     ];
 
     public function affiliate()

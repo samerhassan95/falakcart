@@ -60,23 +60,23 @@
     }
     
     /**
-     * تسجيل البيع في نظام الأفلييت
+     * تسجيل الاشتراك في نظام الأفلييت
      */
-    async function recordSale(orderData) {
+    async function recordSale(subscriptionData) {
         const referralCode = getCookie('referral_code') || localStorage.getItem('referral_code');
         
         if (!referralCode) {
-            console.log('ℹ️ No referral code found for sale');
+            console.log('ℹ️ No referral code found for subscription');
             return false;
         }
         
         try {
             const payload = {
                 referral_code: referralCode,
-                amount: orderData.total,
-                order_id: orderData.id,
-                customer_email: orderData.email,
-                product_name: orderData.product_name || 'FalakCart Subscription'
+                amount: subscriptionData.amount,
+                subscription_id: subscriptionData.subscription_id || subscriptionData.id,
+                customer_email: subscriptionData.customer_email || subscriptionData.email,
+                plan_name: subscriptionData.plan_name || 'FalakCart Subscription'
             };
             
             const response = await fetch(`${AFFILIATE_API_URL}/track/sale`, {
@@ -90,20 +90,20 @@
             
             if (response.ok) {
                 const data = await response.json();
-                console.log('✅ Sale recorded:', data);
+                console.log('✅ Subscription recorded:', data);
                 
-                // مسح كود الإحالة بعد تسجيل البيع
+                // مسح كود الإحالة بعد تسجيل الاشتراك
                 document.cookie = 'referral_code=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=.falakcart.com';
                 localStorage.removeItem('referral_code');
                 localStorage.removeItem('referral_timestamp');
                 
                 return true;
             } else {
-                console.error('❌ Failed to record sale:', response.status);
+                console.error('❌ Failed to record subscription:', response.status);
                 return false;
             }
         } catch (error) {
-            console.error('❌ Sale tracking error:', error);
+            console.error('❌ Subscription tracking error:', error);
             return false;
         }
     }
@@ -162,9 +162,10 @@
         initializeTracking();
     }
     
-    // إتاحة دالة تسجيل البيع للاستخدام الخارجي
+    // إتاحة دالة تسجيل الاشتراك للاستخدام الخارجي
     window.FalakCartAffiliate = {
         recordSale: recordSale,
+        trackSubscription: recordSale, // alias for subscriptions
         getReferralCode: () => getCookie('referral_code') || localStorage.getItem('referral_code')
     };
     

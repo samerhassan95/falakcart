@@ -188,7 +188,7 @@ class AffiliateController extends Controller
 
         $clicksCount    = Click::where('affiliate_id', $affiliate->id)->count();
         $salesCount     = Sale::where('affiliate_id', $affiliate->id)->where('status', 'completed')->count();
-        $totalEarnings  = Transaction::where('affiliate_id', $affiliate->id)->where('type', 'commission')->sum('amount');
+        $totalEarnings  = $affiliate->total_earnings; // Use affiliate's total_earnings which is updated by tracking
         $referralsCount = Sale::where('affiliate_id', $affiliate->id)->count();
         $subsCount      = Sale::where('affiliate_id', $affiliate->id)->where('status', 'completed')->count();
         $conversionRate = $clicksCount > 0 ? round(($referralsCount / $clicksCount) * 100, 1) : 0;
@@ -274,12 +274,14 @@ class AffiliateController extends Controller
             ->get()
             ->map(function ($link) {
                 $clicks = Click::where('referral_code', $link->slug)->count();
-                $conversions = Sale::whereHas('affiliate', fn($q) => $q->where('id', $link->affiliate_id))
-                    ->where('reference_id', 'LIKE', '%' . $link->slug . '%')
-                    ->count();
-                $earnings = Transaction::where('affiliate_id', $link->affiliate_id)
-                    ->where('source', $link->name)
-                    ->sum('amount');
+                
+                // Fix: Get sales by referral code using JSON_EXTRACT
+                $sales = Sale::where('affiliate_id', $link->affiliate_id)
+                    ->whereRaw("JSON_EXTRACT(webhook_data, '$.referral.referral_code') = ?", [$link->slug])
+                    ->get();
+                
+                $conversions = $sales->count();
+                $earnings = $sales->sum('commission_amount');
 
                 return [
                     'id'           => $link->id,

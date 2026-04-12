@@ -1,0 +1,27 @@
+{
+    "name": "falakcart/affiliate-system",
+    "description": "FalakCart Affiliate System - Backend & Frontend",
+    "type": "project",
+    "require": {
+        "php": "^8.1"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "cd backend && composer install --no-dev --optimize-autoloader",
+            "cd backend && php artisan key:generate --force",
+            "cd backend && php artisan config:cache",
+            "cd backend && php artisan route:cache",
+            "cd backend && php artisan view:cache"
+        ],
+        "post-update-cmd": [
+            "cd backend && php artisan config:cache",
+            "cd backend && php artisan route:cache",
+            "cd backend && php artisan view:cache"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    }
+}

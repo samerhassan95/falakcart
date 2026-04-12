@@ -93,3 +93,6 @@ Route::middleware(['auth:api'])->group(function () {
 // ── Public Tracking Routes ────────────────────────────────────────────────────
 Route::get('track/click', [TrackingController::class, 'recordClick']);
 Route::post('track/sale', [TrackingController::class, 'recordSale']);
+
+// ── FalakCart Webhook Routes ──────────────────────────────────────────────────
+Route::post('webhook/falakcart', [TrackingController::class, 'handleFalakCartWebhook']);

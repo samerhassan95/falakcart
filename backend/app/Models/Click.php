@@ -11,6 +11,11 @@ class Click extends Model
         'ip_address',
         'user_agent',
         'referral_code',
+        'customer_email',
+        'customer_name',
+        'utm_source',
+        'utm_medium',
+        'utm_campaign',
     ];
 
     public function affiliate()

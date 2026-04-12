@@ -4,13 +4,14 @@ import { usePathname } from 'next/navigation';
 import AppLayout from './AppLayout';
 import AdminLayout from './AdminLayout';
 
-const publicRoutes = ['/login', '/register', '/welcome'];
+const publicRoutes = ['/login', '/register', '/welcome', '/login/', '/register/', '/welcome/'];
+const referralRoutePattern = /^\/refer\/[^\/]+$/;
 
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   
   // Check if current route is public (no layout needed)
-  const isPublicRoute = publicRoutes.includes(pathname);
+  const isPublicRoute = publicRoutes.includes(pathname) || referralRoutePattern.test(pathname);
   
   // Check if current route is admin
   const isAdminRoute = pathname.startsWith('/admin');

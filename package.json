@@ -1,0 +1,21 @@
+{
+  "name": "falakcart-affiliate-system",
+  "version": "1.0.0",
+  "description": "FalakCart Affiliate System - Complete Solution",
+  "scripts": {
+    "install-all": "cd backend && composer install && cd ../frontend && npm install",
+    "build": "cd frontend && npm run build && npm run export",
+    "deploy": "chmod +x deploy-apanel.sh && ./deploy-apanel.sh",
+    "dev-backend": "cd backend && php artisan serve",
+    "dev-frontend": "cd frontend && npm run dev",
+    "migrate": "cd backend && php artisan migrate",
+    "seed": "cd backend && php artisan db:seed"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/affiliate-system.git"
+  },
+  "keywords": ["affiliate", "laravel", "nextjs", "falakcart"],
+  "author": "Your Name",
+  "license": "MIT"
+}
