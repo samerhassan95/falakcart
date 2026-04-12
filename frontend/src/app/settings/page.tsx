@@ -178,7 +178,7 @@ export default function SettingsPage() {
   );
 
   return (
-    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6">
+    <div className="space-y-4 sm:space-y-6 ">
       {/* Header */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold text-[#191C1E] tracking-tight">{t('settings.title')}</h1>
@@ -450,7 +450,7 @@ export default function SettingsPage() {
                 <h2 className="text-xl sm:text-2xl font-bold text-[#191C1E] mb-6 sm:mb-8">{t('settings.notificationPreferences')}</h2>
 
                 <div className="space-y-4 sm:space-y-6">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap items-center justify-between">
                     <div>
                       <p className="text-[14px] font-semibold text-[#191C1E] mb-1">{t('settings.commissionNotifications')}</p>
                       <p className="text-[12px] text-[#505F76]">{t('settings.commissionNotificationsDesc')}</p>
@@ -465,7 +465,7 @@ export default function SettingsPage() {
                     </button>
                   </div>
 
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap items-center justify-between">
                     <div>
                       <p className="text-[14px] font-semibold text-[#191C1E] mb-1">Payout processed</p>
                       <p className="text-[12px] text-[#505F76]">Receive alerts for completed payments</p>
@@ -480,7 +480,7 @@ export default function SettingsPage() {
                     </button>
                   </div>
 
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap items-center justify-between">
                     <div>
                       <p className="text-[14px] font-semibold text-[#191C1E] mb-1">Referral activity</p>
                       <p className="text-[12px] text-[#505F76]">Daily summary of new affiliate signups</p>
@@ -517,7 +517,7 @@ export default function SettingsPage() {
                           }`}
                         onClick={() => setDefaultLinkDestination('homepage')}
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-wrap items-center gap-3">
                           <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${defaultLinkDestination === 'homepage' ? 'border-[#050C9C]' : 'border-gray-300'
                             }`}>
                             {defaultLinkDestination === 'homepage' && (
@@ -538,7 +538,7 @@ export default function SettingsPage() {
                           }`}
                         onClick={() => setDefaultLinkDestination('pricing')}
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-wrap items-center gap-3">
                           <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${defaultLinkDestination === 'pricing' ? 'border-[#050C9C]' : 'border-gray-300'
                             }`}>
                             {defaultLinkDestination === 'pricing' && (
@@ -610,7 +610,7 @@ export default function SettingsPage() {
 
                   <div className="border-t border-gray-100 pt-6">
                     <h3 className="text-sm font-semibold text-[#191C1E] mb-3">{t('settings.twoFactorAuth')}</h3>
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-wrap items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-[#191C1E]">{t('settings.enable2fa')}</p>
                         <p className="text-xs text-[#505F76]">{t('settings.twoFactorDesc')}</p>

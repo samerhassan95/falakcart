@@ -32,7 +32,7 @@ export default function ReferralRedirect() {
       setTimeout(() => {
           router.push('/welcome');
       }, 1500);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Click tracking error', err);
       console.error('Error details:', err.response?.data || err.message);
       setError('Invalid referral link');

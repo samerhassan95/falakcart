@@ -51,6 +51,7 @@ export default function RegisterPage() {
   const logoSrc = currentLocale === 'ar' ? '/FalakLogoDarkAr.png' : '/FalakLogoDark.png';
 
   return (
+<<<<<<< HEAD
     <div className="min-h-screen bg-[#F8F9FA]">
       {/* Main Content */}
       <div className="flex min-h-screen items-center justify-center p-4">
@@ -67,6 +68,36 @@ export default function RegisterPage() {
                 className="object-contain"
               />
             </div>
+=======
+    <div className="flex min-h-screen items-center justify-center bg-[#F8F9FA] p-4">
+      <div className="w-full max-w-md">
+        {/* Logo/Brand Section */}
+        <div className="text-center mb-4">
+          <div className="inline-flex items-center justify-center mb-4">
+            <Image 
+              src={logoSrc}
+              alt="FalakCart Logo" 
+              width={180} 
+              height={60}
+              priority
+              className="object-contain"
+            />
+          </div>
+        </div>
+
+        {/* Register Card */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm">
+          <div className="mb-4">
+            <h2 className="text-2xl font-bold text-[#191C1E] mb-2">
+              {t('auth.createAffiliateAccount')}
+            </h2>
+            <p className="text-sm text-[#505F76]">
+              {t('auth.alreadyHaveAccount')}{' '}
+              <Link href="/login" className="font-semibold text-[#050C9C] hover:text-[#050C9C]/80 transition-colors">
+                {t('auth.signInHere')}
+              </Link>
+            </p>
+>>>>>>> 24d311596a139609f30fa4cfde7869e5df976d82
           </div>
 
           {/* Register Card */}

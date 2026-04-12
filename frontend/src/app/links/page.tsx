@@ -318,7 +318,7 @@ function MyLinksContent() {
 function LinkStatCard({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
   return (
     <div className="bg-white rounded-2xl  p-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between">
         <div>
           <p className="text-[16px] font-bold uppercase tracking-wider text-[#505F76] mb-1">{label}</p>
           <p className="text-3xl font-bold text-[#191C1E] tracking-tight">{value}</p>

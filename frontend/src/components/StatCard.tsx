@@ -36,7 +36,7 @@ export function StatCard({
 
   const baseClass = gradient
     ? 'rounded-2xl p-6 text-white relative overflow-hidden'
-    : 'bg-white rounded-2xl p-6 relative overflow-hidden border border-gray-100';
+    : 'bg-white rounded-2xl p-6 relative overflow-hidden ';
 
   const finalChangeColor = changeColor || (isPositive ? '#10B981' : '#EF4444');
 

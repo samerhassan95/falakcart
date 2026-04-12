@@ -149,6 +149,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Get logo based on current locale
+  const logoSrc = useMemo(() => {
+    return currentLocale === 'ar' ? '/FalakLogoDarkAr.png' : '/FalakLogoDark.png';
+  }, [currentLocale]);
+
   useEffect(() => {
     if (user && user.role === 'affiliate') {
       fetchNotifications();
@@ -246,19 +251,21 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         {/* Brand */}
         <div className="px-6 pt-6 pb-6">
           <img 
-            src="/FalakLogoDark.png" 
+            src={logoSrc}
             alt="Falak Logo" 
-            className="h-12 w-auto object-contain"
+            className={`w-auto object-contain ${currentLocale === 'ar' ? 'h-16' : 'h-12'}`}
           />
         </div>
 
         {/* User Profile Card */}
         <div className="mb-8 px-4 pt-4 b-2 bg-[#F8FAFC] rounded-2xl">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             {renderAvatar('medium')}
             <div className="overflow-hidden">
               <p className="text-sm font-bold text-[#191C1E] truncate">{user?.name || 'User'}</p>
-              <p className="text-xs font-medium text-[#64748B] tracking-wide">Affiliate Partner</p>
+              <p className="text-xs font-medium text-[#64748B] tracking-wide">
+                {user?.role === 'admin' ? t('admin.administrator') : t('common.affiliatePartner')}
+              </p>
             </div>
           </div>
         </div>
@@ -310,7 +317,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {/* Main Content */}
       <main className={`flex-1 ${isRTL ? 'lg:mr-[280px]' : 'lg:ml-[280px]'}`}>
         {/* Top Bar */}
-        <header className="sticky top-0 z-20 bg-[#FFFFFFCC] backdrop-blur-md border-b border-gray-100 px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+        <header className="sticky top-0 z-20 bg-[#FFFFFFCC] backdrop-blur-md  px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMobileMenuOpen(true)}
