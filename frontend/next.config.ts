@@ -7,21 +7,14 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true
   },
-  // Disable ESLint during build to avoid build failures
+  // Disable ESLint and TS errors during build to maximize compatibility
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Disable TypeScript errors during build
   typescript: {
     ignoreBuildErrors: true,
   },
-  experimental: {
-    forceSwcTransforms: true,
-  },
-  // Ensure static assets are properly copied
-  trailingSlash: false,
-  assetPrefix: '',
-  // Fix font loading issues
+  // Fix font loading and optimize for production
   optimizeFonts: false,
 };
 
