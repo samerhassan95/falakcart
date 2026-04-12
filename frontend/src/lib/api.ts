@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8080/api';
+// Use environment variable or fallback to production URL
+const baseURL = process.env.NEXT_PUBLIC_API_URL || 'https://togaar.com/api';
 
 console.log('API Base URL:', baseURL); // Debug log
 
@@ -10,7 +11,8 @@ const api = axios.create({
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
-  timeout: 10000, // 10 second timeout
+  timeout: 15000, // 15 second timeout for production
+  withCredentials: false, // Disable credentials for CORS
 });
 
 api.interceptors.request.use((config) => {
@@ -45,6 +47,11 @@ api.interceptors.response.use(
           window.location.href = '/login';
         }
       }
+    }
+    
+    // Handle 500 errors more gracefully
+    if (error.response?.status === 500) {
+      console.error('Server error - check backend logs');
     }
     
     return Promise.reject(error);

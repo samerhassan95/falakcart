@@ -6,6 +6,16 @@ use App\Http\Controllers\AffiliateController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\TrackingController;
 
+// Health check endpoint
+Route::get('health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'message' => 'FalakCart API is running',
+        'timestamp' => now(),
+        'version' => '1.0.0'
+    ]);
+});
+
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login'])->name('login');
 
@@ -87,6 +97,10 @@ Route::middleware(['auth:api'])->group(function () {
         // Global settings
         Route::get('settings', [AdminController::class, 'getSettings']);
         Route::put('settings', [AdminController::class, 'updateSettings']);
+        
+        // Admin notifications (separate from affiliate notifications)
+        Route::get('notifications', [AdminController::class, 'getNotifications']);
+        Route::post('notifications/read', [AdminController::class, 'markNotificationsRead']);
     });
 });
 

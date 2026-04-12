@@ -1,5 +1,6 @@
-# FalakCart Affiliate System - aPanel Deployment
+# FalakCart Affiliate System - aaPanel Deployment
 # This file handles routing for both Laravel backend and Next.js frontend
+# Document Root should be: /www/wwwroot/togaar.com/falakcart
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
@@ -18,55 +19,75 @@
     RewriteCond %{REQUEST_METHOD} OPTIONS
     RewriteRule ^(.*)$ $1 [R=200,L]
     
-    # Frontend Static Files (Next.js Export)
-    # Serve frontend from /frontend/ path
-    RewriteCond %{REQUEST_URI} ^/frontend/
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^frontend/(.*)$ frontend/out/$1 [L]
-    
-    # Frontend root files (favicon, robots.txt, etc.)
-    RewriteCond %{REQUEST_URI} ^/frontend/
-    RewriteRule ^frontend/(.*)$ frontend/out/$1 [L]
-    
-    # API Routes - Direct to Laravel
+    # API Routes - Direct to Laravel backend
     RewriteCond %{REQUEST_URI} ^/api/
     RewriteRule ^(.*)$ backend/public/index.php [L]
     
-    # Admin routes (if accessing directly)
-    RewriteCond %{REQUEST_URI} ^/admin
-    RewriteRule ^admin(.*)$ frontend/out/admin$1 [L]
-    
-    # Default: Serve Laravel for any other requests
+    # Try to proxy to Next.js server first (if PM2 is running)
+    RewriteCond %{REQUEST_URI} !^/api/
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ backend/public/index.php [L]
+    RewriteRule ^(.*)$ http://127.0.0.1:3001/$1 [P,L]
     
-    # Deny access to sensitive files
-    <Files ".env">
-        Order allow,deny
-        Deny from all
-    </Files>
+    # Fallback: Serve static files from frontend/out (if Next.js export exists)
+    RewriteCond %{REQUEST_URI} !^/api/
+    RewriteCond %{DOCUMENT_ROOT}/frontend/out%{REQUEST_URI} -f
+    RewriteRule ^(.*)$ frontend/out/$1 [L]
     
-    <Files "composer.json">
-        Order allow,deny
-        Deny from all
-    </Files>
+    # Fallback: Serve index.html for SPA routes from frontend/out
+    RewriteCond %{REQUEST_URI} !^/api/
+    RewriteCond %{DOCUMENT_ROOT}/frontend/out%{REQUEST_URI}/index.html -f
+    RewriteRule ^(.*)$ frontend/out/$1/index.html [L]
     
-    <Files "composer.lock">
-        Order allow,deny
-        Deny from all
-    </Files>
-    
-    # Cache static assets
-    <IfModule mod_expires.c>
-        ExpiresActive On
-        ExpiresByType text/css "access plus 1 month"
-        ExpiresByType application/javascript "access plus 1 month"
-        ExpiresByType image/png "access plus 1 month"
-        ExpiresByType image/jpg "access plus 1 month"
-        ExpiresByType image/jpeg "access plus 1 month"
-        ExpiresByType image/gif "access plus 1 month"
-        ExpiresByType image/svg+xml "access plus 1 month"
-    </IfModule>
+    # Final fallback: Serve frontend index.html for all non-API routes
+    RewriteCond %{REQUEST_URI} !^/api/
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ frontend/out/index.html [L]
+</IfModule>
+
+# Deny access to sensitive files and directories
+<Files ".env">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files "composer.json">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files "composer.lock">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files "package.json">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Deny access to backend directories (except public)
+<DirectoryMatch "^.*/backend/(?!public/).*">
+    Order allow,deny
+    Deny from all
+</DirectoryMatch>
+
+# Deny access to frontend source files (except out directory)
+<DirectoryMatch "^.*/frontend/(?!out/).*">
+    Order allow,deny
+    Deny from all
+</DirectoryMatch>
+
+# Cache static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpg "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType application/json "access plus 1 day"
 </IfModule>

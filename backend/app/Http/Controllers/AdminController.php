@@ -555,4 +555,27 @@ class AdminController extends Controller
 
         return response()->json($sales);
     }
+
+    // ─── Admin Notifications ──────────────────────────────────────────────────────
+
+    public function getNotifications()
+    {
+        $notifications = \App\Models\Notification::where('user_id', auth()->id())
+            ->orWhere('user_id', null) // Global notifications
+            ->orderByDesc('created_at')
+            ->limit(50)
+            ->get();
+
+        return response()->json($notifications);
+    }
+
+    public function markNotificationsRead()
+    {
+        \App\Models\Notification::where('user_id', auth()->id())
+            ->orWhere('user_id', null)
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+
+        return response()->json(['message' => 'Notifications marked as read']);
+    }
 }
