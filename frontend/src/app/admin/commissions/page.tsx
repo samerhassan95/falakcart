@@ -61,24 +61,26 @@ export default function AdminCommissionsPage() {
   const [allCommissions, setAllCommissions] = useState<Sale[]>([]);
   const [commissionTrend, setCommissionTrend] = useState<CommissionTrendPoint[]>([]);
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'paid'>('all');
-  const [dateRange, setDateRange] = useState<'30' | '7' | '90'>('30');
+  const [dateRange, setDateRange] = useState<'30' | '7' | '90' | 'all'>('all');
   const [currentPage, setCurrentPage] = useState(1);
+  const [mounted, setMounted] = useState(false);
   const pageSize = 10;
 
-  const filteredCommissions = allCommissions.filter((commission) => {
-    if (statusFilter === 'all') return true;
-    return commission.status === statusFilter;
-  });
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  const pageCount = Math.max(1, Math.ceil(filteredCommissions.length / pageSize));
-  const paginatedCommissions = filteredCommissions.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  const pageCount = Math.max(1, Math.ceil(allCommissions.length / pageSize));
+  const paginatedCommissions = allCommissions.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
 
   const fetchCommissionsData = useCallback(async () => {
     try {
       const [summaryRes, pendingRes, allRes] = await Promise.all([
         api.get('/admin/commissions/summary'),
         api.get('/admin/commissions/pending'),
-        api.get(`/admin/commissions?status=${statusFilter}`)
+        api.get(`/admin/commissions?status=${statusFilter}&days=${dateRange}`)
       ]);
       
       setCommissionsSummary(summaryRes.data);
@@ -87,15 +89,15 @@ export default function AdminCommissionsPage() {
     } catch (err) {
       console.error('Error fetching commissions:', err);
     }
-  }, [statusFilter]);
+  }, [statusFilter, dateRange]);
 
   const fetchCommissionTrend = useCallback(async () => {
     try {
       const response = await api.get(`/admin/analytics/commission-trend?period=${period}`);
       setCommissionTrend(
-        response.data.map((item: CommissionTrendPoint) => ({
-          period: item.period,
-          value: Number(item.value) || 0,
+        response.data.map((item: any) => ({
+          period: item.date,
+          value: Number(item.count) || 0,
         }))
       );
     } catch (err) {
@@ -110,6 +112,7 @@ export default function AdminCommissionsPage() {
   useEffect(() => {
     fetchCommissionsData();
   }, [fetchCommissionsData]);
+
 
   const approveCommission = async (id: number) => {
     try {
@@ -158,6 +161,8 @@ export default function AdminCommissionsPage() {
     setCurrentPage(1);
   };
 
+  if (!mounted) return null;
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -172,14 +177,14 @@ export default function AdminCommissionsPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
           icon={<svg width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M2 16V2C2 2 2 2.37083 2 3.1125C2 3.85417 2 4.81667 2 6V12C2 13.1833 2 14.1458 2 14.8875C2 15.6292 2 16 2 16ZM2 18C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H16C16.55 0 17.0208 0.195833 17.4125 0.5875C17.8042 0.979167 18 1.45 18 2V4.5H16V2H2V16H16V13.5H18V16C18 16.55 17.8042 17.0208 17.4125 17.4125C17.0208 17.8042 16.55 18 16 18H2ZM10 14C9.45 14 8.97917 13.8042 8.5875 13.4125C8.19583 13.0208 8 12.55 8 12V6C8 5.45 8.19583 4.97917 8.5875 4.5875C8.97917 4.19583 9.45 4 10 4H17C17.55 4 18.0208 4.19583 18.4125 4.5875C18.8042 4.97917 19 5.45 19 6V12C19 12.55 18.8042 13.0208 18.4125 13.4125C18.0208 13.8042 17.55 14 17 14H10ZM17 12V6H10V12H17ZM13 10.5C13.4167 10.5 13.7708 10.3542 14.0625 10.0625C14.3542 9.77083 14.5 9.41667 14.5 9C14.5 8.58333 14.3542 8.22917 14.0625 7.9375C13.7708 7.64583 13.4167 7.5 13 7.5C12.5833 7.5 12.2292 7.64583 11.9375 7.9375C11.6458 8.22917 11.5 8.58333 11.5 9C11.5 9.41667 11.6458 9.77083 11.9375 10.0625C12.2292 10.3542 12.5833 10.5 13 10.5Z" fill="#050C9C"/>
+<path d="M2 16V2C2 2 2 2.37083 2 3.1125C2 3.85417 2 4.81667 2 6V12C2 13.1833 2 14.1458 2 14.8875C2 15.6292 2 16 2 16ZM2 18C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H16C16.55 0 17.0208 0.195833 17.4125 0.5875C17.8042 0.979167 18 1.45 18 2V4.5H16V2H2V16H16V13.5H18V16C18 16.55 17.0208 17.4125 17.4125 17.4125C17.0208 17.8042 16.55 18 16 18H2ZM10 14C9.45 14 8.97917 13.8042 8.5875 13.4125C8.19583 13.0208 8 12.55 8 12V6C8 5.45 8.19583 4.97917 8.5875 4.5875C8.97917 4.19583 9.45 4 10 4H17C17.55 4 18.0208 4.19583 18.4125 4.5875C18.8042 4.97917 19 5.45 19 6V12C19 12.55 18.8042 13.0208 18.4125 13.4125C18.0208 13.8042 17.55 14 17 14H10ZM17 12V6H10V12H17ZM13 10.5C13.4167 10.5 13.7708 10.3542 14.0625 10.0625C14.3542 9.77083 14.5 9.41667 14.5 9C14.5 8.58333 14.3542 8.22917 14.0625 7.9375C13.7708 7.64583 13.4167 7.5 13 7.5C12.5833 7.5 12.2292 7.64583 11.9375 7.9375C11.6458 8.22917 11.5 8.58333 11.5 9C11.5 9.41667 11.6458 9.77083 11.9375 10.0625C12.2292 10.3542 12.5833 10.5 13 10.5Z" fill="#050C9C"/>
 </svg>
 }
           iconBgColor="#3ABEF91A"
           label={t('stats.totalCommissions')}
           value={`$${(commissionsSummary?.total_commissions || 0).toLocaleString()}`}
-          change="+12.5%"
-          isPositive={true}
+          change={`${(commissionsSummary?.trend_percentage || 0) > 0 ? '+' : ''}${commissionsSummary?.trend_percentage || 0}%`}
+          isPositive={(commissionsSummary?.trend_percentage || 0) >= 0}
           backgroundSvg={undefined}
         />
         <StatCard
@@ -284,10 +289,16 @@ export default function AdminCommissionsPage() {
 <path d="M2.5 21.25C1.8125 21.25 1.22396 21.0052 0.734375 20.5156C0.244792 20.026 0 19.4375 0 18.75C0 18.0625 0.244792 17.474 0.734375 16.9844C1.22396 16.4948 1.8125 16.25 2.5 16.25C2.625 16.25 2.73438 16.25 2.82812 16.25C2.92188 16.25 3.02083 16.2708 3.125 16.3125L8.8125 10.625C8.77083 10.5208 8.75 10.4219 8.75 10.3281C8.75 10.2344 8.75 10.125 8.75 10C8.75 9.3125 8.99479 8.72396 9.48438 8.23438C9.97396 7.74479 10.5625 7.5 11.25 7.5C11.9375 7.5 12.526 7.74479 13.0156 8.23438C13.5052 8.72396 13.75 9.3125 13.75 10C13.75 10.0417 13.7292 10.25 13.6875 10.625L16.875 13.8125C16.9792 13.7708 17.0781 13.75 17.1719 13.75C17.2656 13.75 17.375 13.75 17.5 13.75C17.625 13.75 17.7344 13.75 17.8281 13.75C17.9219 13.75 18.0208 13.7708 18.125 13.8125L22.5625 9.375C22.5208 9.27083 22.5 9.17188 22.5 9.07812C22.5 8.98438 22.5 8.875 22.5 8.75C22.5 8.0625 22.7448 7.47396 23.2344 6.98438C23.724 6.49479 24.3125 6.25 25 6.25C25.6875 6.25 26.276 6.49479 26.7656 6.98438C27.2552 7.47396 27.5 8.0625 27.5 8.75C27.5 9.4375 27.2552 10.026 26.7656 10.5156C26.276 11.0052 25.6875 11.25 25 11.25C24.875 11.25 24.7656 11.25 24.6719 11.25C24.5781 11.25 24.4792 11.2292 24.375 11.1875L19.9375 15.625C19.9792 15.7292 20 15.8281 20 15.9219C20 16.0156 20 16.125 20 16.25C20 16.9375 19.7552 17.526 19.2656 18.0156C18.776 18.5052 18.1875 18.75 17.5 18.75C16.8125 18.75 16.224 18.5052 15.7344 18.0156C15.2448 17.526 15 16.9375 15 16.25C15 16.125 15 16.0156 15 15.9219C15 15.8281 15.0208 15.7292 15.0625 15.625L11.875 12.4375C11.7708 12.4792 11.6719 12.5 11.5781 12.5C11.4844 12.5 11.375 12.5 11.25 12.5C11.2083 12.5 11 12.4792 10.625 12.4375L4.9375 18.125C4.97917 18.2292 5 18.3281 5 18.4219C5 18.5156 5 18.625 5 18.75C5 19.4375 4.75521 20.026 4.26562 20.5156C3.77604 21.0052 3.1875 21.25 2.5 21.25ZM3.75 8.71875L2.96875 7.03125L1.28125 6.25L2.96875 5.46875L3.75 3.78125L4.53125 5.46875L6.21875 6.25L4.53125 7.03125L3.75 8.71875ZM17.5 7.5L16.3125 4.9375L13.75 3.75L16.3125 2.5625L17.5 0L18.6875 2.5625L21.25 3.75L18.6875 4.9375L17.5 7.5Z" fill="white"/>
 </svg>
 
-            <h3 className="text-[20px] text-white font-bold">{t('admin.commissionsIncreasedBy')}</h3>
+            <h3 className="text-[20px] text-white font-bold">
+              {commissionsSummary?.trend_percentage >= 0 
+                ? t('admin.commissionsIncreasedBy', { percentage: Math.abs(commissionsSummary?.trend_percentage || 0) })
+                : t('admin.commissionsDecreasedBy', { percentage: Math.abs(commissionsSummary?.trend_percentage || 0) })}
+            </h3>
           </div>
           <p className="text-[#FFFFFFB2] text-[14px] mb-6">
-            {t('admin.springCampaignDescription')}
+            { (commissionsSummary?.trend_percentage || 0) >= 0 
+               ? t('admin.springCampaignDescription') 
+               : t('admin.lowActivityDescription') }
           </p>
           <button className="w-full py-3 text-[14px] rounded-xl font-semibold transition-colors mt-auto" style={{ background: '#FFFFFF1A', backdropFilter: 'blur(4px)' }}>
             {t('admin.viewCampaignBreakdown')}
@@ -353,13 +364,18 @@ export default function AdminCommissionsPage() {
               <option value="all">{t('admin.statusAll')}</option>
               <option value="pending">{t('common.pending')}</option>
               <option value="approved">{t('common.approved')}</option>
-              <option value="paid">{t('common.paid')}</option>
+              <option value="paid">{t('admin.paid')}</option>
+
             </select>
             <select
               value={dateRange}
-              onChange={(e) => setDateRange(e.target.value as '30' | '7' | '90')}
+              onChange={(e) => {
+                setDateRange(e.target.value as '30' | '7' | '90' | 'all');
+                setCurrentPage(1);
+              }}
               className="px-3 py-2 bg-[#F2F4F6] border-0 rounded-lg text-sm font-medium"
             >
+              <option value="all">{t('common.allTime')}</option>
               <option value="30">{t('common.last30Days')}</option>
               <option value="7">{t('common.last7Days')}</option>
               <option value="90">{t('common.last90Days')}</option>
@@ -367,6 +383,7 @@ export default function AdminCommissionsPage() {
             <button onClick={exportCommissionsCSV} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold text-sm">
               {t('admin.exportCsv')}
             </button>
+
           </div>
         </div>
 
@@ -443,8 +460,8 @@ export default function AdminCommissionsPage() {
                     <td className="px-6 py-5 text-center font-bold text-emerald-600">${formatCurrency(commission.commission_amount)}</td>
                     <td className="px-6 py-5 text-center">
                       <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${
-                        statusValue === 'approved' ? 'bg-green-100 text-green-800' :
-                        statusValue === 'paid' ? 'bg-emerald-100 text-emerald-800' :
+                        statusValue === 'approved' ? 'bg-blue-100 text-blue-800' :
+                        (statusValue === 'paid' || statusValue === 'completed') ? 'bg-emerald-100 text-emerald-800' :
                         'bg-amber-100 text-amber-800'
                       }`}>
                         {statusValue.toUpperCase()}
@@ -470,8 +487,9 @@ export default function AdminCommissionsPage() {
         {/* Pagination */}
         <div className="px-6 py-4 border-t border-gray-50 flex items-center justify-between">
           <p className="text-sm text-[#505F76]">
-            {t('earnings.showing')} {((currentPage - 1) * pageSize) + 1} {t('earnings.of')} {Math.min(currentPage * pageSize, filteredCommissions.length)} {t('earnings.of')} {filteredCommissions.length} {t('common.noResults')}
+            {t('earnings.showing')} {((currentPage - 1) * pageSize) + 1} {t('earnings.of')} {Math.min(currentPage * pageSize, allCommissions.length)} {t('earnings.of')} {allCommissions.length} {t('common.noResults')}
           </p>
+
           <div className="flex items-center gap-2">
             <button
               onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}

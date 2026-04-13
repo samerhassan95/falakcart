@@ -77,6 +77,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('analytics/geo', [AdminController::class, 'getGeoAnalytics']);
         Route::get('analytics/traffic-sources', [AdminController::class, 'getTrafficSourceAnalytics']);
         Route::get('analytics/commission-trend', [AdminController::class, 'getCommissionTrend']);
+        Route::get('analytics/revenue-trend', [AdminController::class, 'getRevenueTrend']);
 
         // Commissions
         Route::get('commissions/summary',           [AdminController::class, 'getCommissionsSummary']);

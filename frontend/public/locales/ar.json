@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "loading": "جاري التحميل...",
     "save": "حفظ",
@@ -25,6 +25,7 @@
     "success": "نجح",
     "warning": "تحذير",
     "info": "معلومات",
+    "gotIt": "حسناً",
     "all": "الكل",
     "active": "نشط",
     "pending": "في الانتظار",
@@ -160,7 +161,9 @@
     "noTransactionsFound": "لم يتم العثور على معاملات.",
     "showing": "عرض",
     "of": "من",
-    "transactions": "معاملات"
+    "transactions": "معاملات",
+    "payoutRequested": "تم تقديم طلب الدفع",
+    "payoutSuccessMessage": "تم استلام طلبك بنجاح. سيتم تحويل المبلغ إلى حسابك البنكي خلال فترة المعالجة القادمة."
   },
   "links": {
     "title": "روابط الإحالة الخاصة بي",
@@ -336,6 +339,7 @@
     "activeSubscriptions": "الاشتراكات النشطة",
     "pendingEarnings": "الأرباح المعلقة",
     "paidEarnings": "الأرباح المدفوعة",
+    "totalEarnings": "إجمالي الأرباح",
     "totalAffiliates": "إجمالي الشركاء",
     "activeAffiliates": "الشركاء النشطون",
     "totalClicks": "إجمالي النقرات",
@@ -516,9 +520,14 @@
     "paid": "مدفوع",
     "commissionPerformance": "أداء العمولات",
     "historicalTrendEarnings": "الاتجاه التاريخي لصافي الأرباح",
-    "commissionsIncreasedBy": "زادت العمولات بنسبة 22% هذا الشهر",
+    "commissionsIncreasedBy": "زادت العمولات بنسبة {percentage}% هذا الشهر",
+    "commissionsDecreasedBy": "انخفضت العمولات بنسبة {percentage}% هذا الشهر",
+    "lowActivityDescription": "لوحظ انخفاض في نشاط الشركاء خلال هذه الفترة، فكر في إرسال حملة تحفيزية لدعم العمولات.",
     "springCampaignDescription": "أدت حملة اندفاع الشركاء الربيعية الأخيرة إلى زيادة كبيرة في الإحالات عالية القيمة من الشركاء من الدرجة الأولى.",
     "viewCampaignBreakdown": "عرض تفاصيل الحملة",
+    "shareMessage": "أهلاً بك! انضم إلينا في فلك كارت وابدأ رحلتك التسويقية اليوم من خلال رابط الإحالة الخاص بي: {url}",
+    "shareOnWhatsApp": "مشاركة عبر واتساب",
+    "shareOnFacebook": "مشاركة عبر فيسبوك",
     "pendingApprovals": "الموافقات المعلقة",
     "new": "جديد",
     "reviewAll": "مراجعة الكل",

@@ -11,6 +11,7 @@ export default function SettingsPage() {
   const { t } = useTranslation();
   const [name, setName] = useState('');
   const [bio, setBio] = useState('');
+  const [phone, setPhone] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [activeTab, setActiveTab] = useState<'profile' | 'payout' | 'notifications' | 'referrals' | 'security'>('profile');
@@ -31,8 +32,6 @@ export default function SettingsPage() {
 
   // Referral preferences
   const [defaultLinkDestination, setDefaultLinkDestination] = useState('homepage');
-  const [payoutProcessed, setPayoutProcessed] = useState(true);
-  const [referralActivity, setReferralActivity] = useState(false);
 
   // Security settings
   const [currentPassword, setCurrentPassword] = useState('');
@@ -55,6 +54,7 @@ export default function SettingsPage() {
     try {
       const { data } = await api.get('/affiliate/profile');
       setBio(data.bio || '');
+      setPhone(data.phone || '');
       setAvatar(data.avatar || null);
     } catch (err) {
       console.error('Error loading profile:', err);
@@ -113,6 +113,7 @@ export default function SettingsPage() {
         await api.put('/affiliate/profile', {
           name: name.trim(),
           bio: bio.trim(),
+          phone: phone.trim(),
           avatar: avatar
         });
         // Trigger avatar update event for AppLayout
@@ -121,7 +122,7 @@ export default function SettingsPage() {
         await api.put('/affiliate/payout-settings', {
           bank_name: bankName.trim(),
           account_number: accountNumber.trim(),
-          account_holder_name: accountHolderName.trim(),
+          account_holder_name: accountHolderName.trim() || user?.name,
           iban: iban.trim(),
           minimum_payout: minimumPayout
         });
@@ -134,9 +135,7 @@ export default function SettingsPage() {
         });
       } else if (activeTab === 'referrals') {
         await api.put('/affiliate/referral-settings', {
-          default_link_destination: defaultLinkDestination,
-          payout_processed: payoutProcessed,
-          referral_activity: referralActivity
+          default_link_destination: defaultLinkDestination
         });
       } else if (activeTab === 'security') {
         if (newPassword) {
@@ -299,7 +298,7 @@ export default function SettingsPage() {
                           value={name}
                           onChange={(e) => setName(e.target.value)}
                           className="w-full px-6 py-4 border-1 border-[#6B7280] rounded-[16px] text-[#191C1E] text-[14px] focus:outline-none focus:border-[#4F46E5] transition-colors"
-                          placeholder="Noha Al-Falak"
+                          placeholder="Falak Guest"
                         />
                       </div>
                       <div>
@@ -308,21 +307,33 @@ export default function SettingsPage() {
                           type="email"
                           defaultValue={user?.email}
                           readOnly
-                          className="w-full px-6 py-4 border-1 border-[#6B7280] rounded-[16px] text-[#191C1E] text-[14px] focus:outline-none focus:border-[#4F46E5] transition-colors"
-                          placeholder="noha@falakcart.com"
+                          className="w-full px-6 py-4 border-1 border-[#6B7280] rounded-[16px] text-[#191C1E] text-[14px] bg-gray-50 focus:outline-none"
+                          placeholder="email@example.com"
                         />
                       </div>
                     </div>
 
-                    <div>
-                      <label className="block text-[#505F76] text-[12px] font-medium mb-3 uppercase tracking-wider">{t('common.phone')}</label>
-                      <input
-                        type="tel"
-                        value={bio}
-                        onChange={(e) => setBio(e.target.value)}
-                        className="w-full px-6 py-4 border-1 border-[#6B7280] rounded-[16px] text-[#191C1E] text-[14px] focus:outline-none focus:border-[#4F46E5] transition-colors"
-                        placeholder="+971 XX XXX XXXX"
-                      />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                      <div>
+                        <label className="block text-[#505F76] text-[12px] font-medium mb-3 uppercase tracking-wider">{t('common.phone')}</label>
+                        <input
+                          type="tel"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          className="w-full px-6 py-4 border-1 border-[#6B7280] rounded-[16px] text-[#191C1E] text-[14px] focus:outline-none focus:border-[#4F46E5] transition-colors"
+                          placeholder="+971 XX XXX XXXX"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[#505F76] text-[12px] font-medium mb-3 uppercase tracking-wider">{t('settings.bio')}</label>
+                        <input
+                          type="text"
+                          value={bio}
+                          onChange={(e) => setBio(e.target.value)}
+                          className="w-full px-6 py-4 border-1 border-[#6B7280] rounded-[16px] text-[#191C1E] text-[14px] focus:outline-none focus:border-[#4F46E5] transition-colors"
+                          placeholder="Your professional bio..."
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -339,21 +350,6 @@ export default function SettingsPage() {
                   border: '1px solid #3ABEF91A'
                 }}>
 
-                {/* Decorative Background Shape */}
-                <div
-                  className="absolute -top-32 -end-32 rounded-full pointer-events-none"
-                  style={{
-                    width: '200px',
-                    height: '206px',
-                    background: 'rgba(58, 190, 249, 0.08)',
-                    filter: 'blur(80px)',
-                    borderRadius: '9999px',
-                    backdropFilter: 'blur(64px)',
-                    top: '-32px',
-                    right: '-32px'
-                  }}
-                />
-
                 <div className="relative z-10">
                   {/* Header inside card */}
                   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
@@ -369,66 +365,68 @@ export default function SettingsPage() {
                       <h2 className="text-xl sm:text-2xl font-bold text-[#191C1E]">{t('settings.bankTransferInfo')}</h2>
                       <p className="text-[#505F76] text-xs sm:text-sm">{t('settings.bankDetailsDescription')}</p>
                     </div>
-                    <div className="sm:ml-auto">
-                      <span className="px-2 py-1 bg-[#D0E1FB] text-[#050C9C] text-[10px] font-semibold rounded-full">
-                        HIGH PRIORITY
-                      </span>
-                    </div>
                   </div>
 
                   {/* Payment Summary Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 mb-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
                     <div>
-                      <label className="block text-[#505F76] text-[12px] font-medium mb-3 uppercase tracking-wider">{t('earnings.payoutMethod')}</label>
-                      <div className="relative">
-                        <select
-                          className="w-full px-4 py-3 bg-[#F2F4F6] rounded-[16px] text-[#191C1E] text-sm focus:outline-none focus:border-[#4F46E5] transition-colors appearance-none"
-                          defaultValue="bank-transfer"
-                        >
-                          <option value="bank-transfer">{t('earnings.bankTransfer')}</option>
-                        </select>
-                        <svg className="absolute end-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#505F76]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-[#505F76] text-sm font-medium mb-3 uppercase tracking-wider">Payment Details</label>
+                      <label className="block text-[#505F76] text-[12px] font-medium mb-3 uppercase tracking-wider">{t('settings.bankName')}</label>
                       <input
                         type="text"
-                        placeholder="AE76 •••• •••• •••• 4590"
+                        value={bankName}
+                        onChange={(e) => setBankName(e.target.value)}
                         className="w-full px-4 py-3 bg-[#F2F4F6] rounded-[16px] text-[#191C1E] text-sm focus:outline-none focus:border-[#4F46E5] transition-colors"
+                        placeholder="e.g., ADCB, Emirates NBD"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[#505F76] text-sm font-medium mb-3 uppercase tracking-wider">Threshold</label>
+                      <label className="block text-[#505F76] text-[12px] font-medium mb-3 uppercase tracking-wider">{t('settings.accountHolderName')}</label>
                       <input
                         type="text"
-                        placeholder="$ 50.00"
+                        value={accountHolderName}
+                        onChange={(e) => setAccountHolderName(e.target.value)}
                         className="w-full px-4 py-3 bg-[#F2F4F6] rounded-[16px] text-[#191C1E] text-sm focus:outline-none focus:border-[#4F46E5] transition-colors"
+                        placeholder="As it appears on your bank account"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[#505F76] text-[12px] font-medium mb-3 uppercase tracking-wider">Currency</label>
-                      <div className="relative">
-                        <select
-                          className="w-full px-4 py-3 bg-[#F2F4F6] rounded-[16px] text-[#191C1E] text-sm focus:outline-none focus:border-[#4F46E5] transition-colors appearance-none"
-                          defaultValue="usd"
-                        >
-                          <option value="usd">USD - US Dollar</option>
-                        </select>
-                        <svg className="absolute end-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#505F76]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </div>
+                      <label className="block text-[#505F76] text-[12px] font-medium mb-3 uppercase tracking-wider">{t('settings.accountNumber')}</label>
+                      <input
+                        type="text"
+                        value={accountNumber}
+                        onChange={(e) => setAccountNumber(e.target.value)}
+                        className="w-full px-4 py-3 bg-[#F2F4F6] rounded-[16px] text-[#191C1E] text-sm focus:outline-none focus:border-[#4F46E5] transition-colors"
+                        placeholder="123456789"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[#505F76] text-[12px] font-medium mb-3 uppercase tracking-wider">{t('settings.iban')}</label>
+                      <input
+                        type="text"
+                        value={iban}
+                        onChange={(e) => setIban(e.target.value)}
+                        className="w-full px-4 py-3 bg-[#F2F4F6] rounded-[16px] text-[#191C1E] text-sm focus:outline-none focus:border-[#4F46E5] transition-colors"
+                        placeholder="AE76 0000 0000 0000 0000 000"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[#505F76] text-[12px] font-medium mb-3 uppercase tracking-wider">{t('settings.minimumPayout')}</label>
+                      <input
+                        type="number"
+                        value={minimumPayout}
+                        onChange={(e) => setMinimumPayout(Number(e.target.value))}
+                        className="w-full px-4 py-3 bg-[#F2F4F6] rounded-[16px] text-[#191C1E] text-sm focus:outline-none focus:border-[#4F46E5] transition-colors"
+                        min="50"
+                      />
                     </div>
                   </div>
 
                   {/* Security Notice */}
-                  <div className="bg-[#EFF6FF] border border-[#BFDBFE] rounded-xl p-3 sm:p-4 flex items-start sm:items-center gap-3 mb-6 sm:mb-8">
+                  <div className="bg-[#EFF6FF] border border-[#BFDBFE] rounded-xl p-3 sm:p-4 flex items-start sm:items-center gap-3">
                     <div className="w-5 h-5 bg-[#3B82F6] rounded-full flex items-center justify-center flex-shrink-0">
                       <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -452,8 +450,8 @@ export default function SettingsPage() {
                 <div className="space-y-4 sm:space-y-6">
                   <div className="flex flex-wrap items-center justify-between">
                     <div>
-                      <p className="text-[14px] font-semibold text-[#191C1E] mb-1">{t('settings.commissionNotifications')}</p>
-                      <p className="text-[12px] text-[#505F76]">{t('settings.commissionNotificationsDesc')}</p>
+                      <p className="text-[14px] font-semibold text-[#191C1E] mb-1">{t('settings.emailNotifications')}</p>
+                      <p className="text-[12px] text-[#505F76]">{t('settings.emailNotificationsDesc')}</p>
                     </div>
                     <button
                       onClick={() => setEmailNotifications(!emailNotifications)}
@@ -467,30 +465,45 @@ export default function SettingsPage() {
 
                   <div className="flex flex-wrap items-center justify-between">
                     <div>
-                      <p className="text-[14px] font-semibold text-[#191C1E] mb-1">Payout processed</p>
-                      <p className="text-[12px] text-[#505F76]">Receive alerts for completed payments</p>
+                      <p className="text-[14px] font-semibold text-[#191C1E] mb-1">SMS Notifications</p>
+                      <p className="text-[12px] text-[#505F76]">Receive critical alerts via SMS</p>
                     </div>
                     <button
-                      onClick={() => setPayoutProcessed(!payoutProcessed)}
-                      className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${payoutProcessed ? 'bg-[#050C9C]' : 'bg-gray-200'
+                      onClick={() => setSmsNotifications(!smsNotifications)}
+                      className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${smsNotifications ? 'bg-[#050C9C]' : 'bg-gray-200'
                         }`}
                     >
-                      <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${payoutProcessed ? 'rtl:translate-x-[-1.5rem] ltr:translate-x-6' : 'rtl:translate-x-[-0.25rem] ltr:translate-x-1'
+                      <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${smsNotifications ? 'rtl:translate-x-[-1.5rem] ltr:translate-x-6' : 'rtl:translate-x-[-0.25rem] ltr:translate-x-1'
                         }`} />
                     </button>
                   </div>
 
                   <div className="flex flex-wrap items-center justify-between">
                     <div>
-                      <p className="text-[14px] font-semibold text-[#191C1E] mb-1">Referral activity</p>
-                      <p className="text-[12px] text-[#505F76]">Daily summary of new affiliate signups</p>
+                      <p className="text-[14px] font-semibold text-[#191C1E] mb-1">Marketing Emails</p>
+                      <p className="text-[12px] text-[#505F76]">Newsletter and product updates</p>
                     </div>
                     <button
-                      onClick={() => setReferralActivity(!referralActivity)}
-                      className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${referralActivity ? 'bg-[#050C9C]' : 'bg-gray-200'
+                      onClick={() => setMarketingEmails(!marketingEmails)}
+                      className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${marketingEmails ? 'bg-[#050C9C]' : 'bg-gray-200'
                         }`}
                     >
-                      <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${referralActivity ? 'rtl:translate-x-[-1.5rem] ltr:translate-x-6' : 'rtl:translate-x-[-0.25rem] ltr:translate-x-1'
+                      <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${marketingEmails ? 'rtl:translate-x-[-1.5rem] ltr:translate-x-6' : 'rtl:translate-x-[-0.25rem] ltr:translate-x-1'
+                        }`} />
+                    </button>
+                  </div>
+
+                  <div className="flex flex-wrap items-center justify-between">
+                    <div>
+                      <p className="text-[14px] font-semibold text-[#191C1E] mb-1">Weekly Reports</p>
+                      <p className="text-[12px] text-[#505F76]">Summary of your performance every Monday</p>
+                    </div>
+                    <button
+                      onClick={() => setWeeklyReports(!weeklyReports)}
+                      className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${weeklyReports ? 'bg-[#050C9C]' : 'bg-gray-200'
+                        }`}
+                    >
+                      <span className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${weeklyReports ? 'rtl:translate-x-[-1.5rem] ltr:translate-x-6' : 'rtl:translate-x-[-0.25rem] ltr:translate-x-1'
                         }`} />
                     </button>
                   </div>

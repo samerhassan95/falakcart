@@ -37,6 +37,10 @@ export default function EarningsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  // Modal State
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [successAmount, setSuccessAmount] = useState(0);
+
   const fetchData = useCallback(async () => {
     setIsFetching(true);
     try {
@@ -76,15 +80,14 @@ export default function EarningsPage() {
     try {
       const response = await api.post('/affiliate/payout');
       
-      // Show success message
-      alert(`Payout requested successfully! Amount: $${response.data.amount.toFixed(2)}`);
+      // Show success modal
+      setSuccessAmount(response.data.amount);
+      setShowSuccessModal(true);
       
       // Refresh data
       fetchData();
     } catch (err: any) {
       console.error('Payout error', err);
-      
-      // Show error message
       const errorMessage = err.response?.data?.error || 'Failed to request payout. Please try again.';
       alert(`Error: ${errorMessage}`);
     }
@@ -123,6 +126,40 @@ export default function EarningsPage() {
 
   return (
     <div className="space-y-4 sm:space-y-6 ">
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300"
+            onClick={() => setShowSuccessModal(false)}
+          />
+          <div className="relative bg-white rounded-[32px] w-full max-w-sm p-8 shadow-2xl animate-in zoom-in-95 duration-300 text-center">
+            <div className="relative w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+               <div className="absolute inset-0 bg-emerald-100 rounded-full animate-ping opacity-25" />
+               <CheckCircle2 className="w-10 h-10 text-emerald-600 relative z-10" />
+            </div>
+            
+            <h2 className="text-2xl font-black text-[#191C1E] mb-2">{t('earnings.payoutRequested')}</h2>
+            <p className="text-[#505F76] text-sm mb-6 leading-relaxed">
+              {t('earnings.payoutSuccessMessage')}
+            </p>
+            
+            <div className="bg-gray-50 rounded-2xl p-4 mb-8">
+               <p className="text-[10px] font-bold text-[#505F76] uppercase tracking-widest mb-1">{t('common.amount')}</p>
+               <p className="text-3xl font-black text-[#050C9C]">${successAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+            </div>
+            
+            <button
+               onClick={() => setShowSuccessModal(false)}
+               className="w-full py-4 text-white rounded-2xl font-bold transition-all shadow-lg hover:opacity-90 active:scale-[0.98]"
+               style={{ background: 'linear-gradient(135deg, #2A14B4 0%, #4338CA 100%)' }}
+            >
+               {t('common.gotIt')}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>

@@ -208,15 +208,29 @@ class AdminController extends Controller
 
     public function getClickAnalytics(Request $request)
     {
+        $period = $request->query('period', 'daily');
         $days = (int) $request->query('days', 30);
 
-        $clicks = Click::where('created_at', '>=', now()->subDays($days))
-            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get();
+        $query = Click::query();
 
-        return response()->json($clicks);
+        if ($period === 'monthly') {
+            $query->selectRaw('DATE_FORMAT(created_at, "%b %Y") as date, COUNT(*) as count, MIN(created_at) as first_day')
+                ->where('created_at', '>=', now()->subMonths(12))
+                ->groupBy('date')
+                ->orderBy('first_day');
+        } elseif ($period === 'weekly') {
+            $query->selectRaw('CONCAT("Wk ", WEEK(created_at, 1), " ", YEAR(created_at)) as date, COUNT(*) as count, MIN(created_at) as first_day')
+                ->where('created_at', '>=', now()->subWeeks(12))
+                ->groupBy('date')
+                ->orderBy('first_day');
+        } else {
+            $query->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+                ->where('created_at', '>=', now()->subDays($days))
+                ->groupBy('date')
+                ->orderBy('date');
+        }
+
+        return response()->json($query->get());
     }
 
     public function getAllSales(Request $request)
@@ -226,6 +240,34 @@ class AdminController extends Controller
             ->get();
         return response()->json($sales);
     }
+    
+    public function getRevenueTrend(Request $request)
+    {
+        $period = $request->query('period', 'daily');
+        $days = (int) $request->query('days', 30);
+
+        $query = Sale::query();
+
+        if ($period === 'monthly') {
+            $query->selectRaw('DATE_FORMAT(created_at, "%b %Y") as date, SUM(amount) as count, MIN(created_at) as first_day')
+                ->where('created_at', '>=', now()->subMonths(12))
+                ->groupBy('date')
+                ->orderBy('first_day');
+        } elseif ($period === 'weekly') {
+            $query->selectRaw('CONCAT("Wk ", WEEK(created_at, 1), " ", YEAR(created_at)) as date, SUM(amount) as count, MIN(created_at) as first_day')
+                ->where('created_at', '>=', now()->subWeeks(12))
+                ->groupBy('date')
+                ->orderBy('first_day');
+        } else {
+            $query->selectRaw('DATE(created_at) as date, SUM(amount) as count')
+                ->where('created_at', '>=', now()->subDays($days))
+                ->groupBy('date')
+                ->orderBy('date');
+        }
+
+        return response()->json($query->get());
+    }
+
     public function getDeviceAnalytics(Request $request)
     {
         $days = (int) $request->query('days', 30);
@@ -301,30 +343,32 @@ class AdminController extends Controller
 
     public function getCommissionTrend(Request $request)
     {
-        $period = $request->query('period', 'weekly');
+        $period = $request->query('period', 'daily');
+        $days = (int) $request->query('days', 30);
 
-        if ($period === 'daily') {
-            $trend = Sale::selectRaw('DATE(created_at) as period, SUM(commission_amount) as value')
-                ->groupBy('period')
-                ->orderBy('period')
-                ->where('created_at', '>=', now()->subDays(6))
-                ->get();
-        } elseif ($period === 'monthly') {
-            $trend = Sale::selectRaw('DATE_FORMAT(created_at, "%b %Y") as period, SUM(commission_amount) as value')
-                ->groupBy('period')
-                ->orderBy('period')
-                ->where('created_at', '>=', now()->subMonths(5))
-                ->get();
+        $query = Sale::query();
+
+        if ($period === 'monthly') {
+            $query->selectRaw('DATE_FORMAT(created_at, "%b %Y") as date, SUM(commission_amount) as count, MIN(created_at) as first_day')
+                ->where('created_at', '>=', now()->subMonths(12))
+                ->groupBy('date')
+                ->orderBy('first_day');
+        } elseif ($period === 'weekly') {
+            $query->selectRaw('CONCAT("Wk ", WEEK(created_at, 1), " ", YEAR(created_at)) as date, SUM(commission_amount) as count, MIN(created_at) as first_day')
+                ->where('created_at', '>=', now()->subWeeks(12))
+                ->groupBy('date')
+                ->orderBy('first_day');
         } else {
-            $trend = Sale::selectRaw('CONCAT("Wk ", WEEK(created_at, 1), " ", YEAR(created_at)) as period, SUM(commission_amount) as value')
-                ->groupBy('period')
-                ->orderBy('period')
-                ->where('created_at', '>=', now()->subWeeks(4))
-                ->get();
+            $query->selectRaw('DATE(created_at) as date, SUM(commission_amount) as count')
+                ->where('created_at', '>=', now()->subDays($days))
+                ->groupBy('date')
+                ->orderBy('date');
         }
 
-        return response()->json($trend);
+        return response()->json($query->get());
     }
+
+
     // ─── CSV Export ───────────────────────────────────────────────────────────────
 
     public function exportCSV()
@@ -369,6 +413,20 @@ class AdminController extends Controller
             'timezone' => $settings['timezone'] ?? 'UTC +00:00',
             'cookie_duration' => $settings['cookie_duration'] ?? 30,
             'auto_approve' => $settings['auto_approve'] ?? false,
+            'logo_branding' => $settings['logo_branding'] ?? 'LS',
+            'minimum_payout' => $settings['minimum_payout'] ?? 100.00,
+            'payout_methods' => $settings['payout_methods'] ?? ['paypal' => true, 'directBank' => true, 'crypto' => false],
+            'payout_schedule' => $settings['payout_schedule'] ?? 'Monthly',
+            'notification_preferences' => $settings['notification_preferences'] ?? [
+                'newAffiliates' => true,
+                'newPayouts' => true,
+                'systemErrors' => false,
+                'commissions' => true
+            ],
+            'two_factor_enabled' => $settings['two_factor_enabled'] ?? true,
+            'session_timeout' => $settings['session_timeout'] ?? 30,
+            'integration_api_key' => $settings['integration_api_key'] ?? '',
+            'integration_status' => $settings['integration_status'] ?? 'Connected',
         ]);
     }
 
@@ -376,46 +434,69 @@ class AdminController extends Controller
     {
         $settings = $this->loadSettings();
 
-        // Update all provided settings
-        if ($request->has('default_commission_rate')) {
-            $settings['default_commission_rate'] = (float) $request->input('default_commission_rate', 10.00);
-        }
-        if ($request->has('platform_name')) {
-            $settings['platform_name'] = $request->input('platform_name');
-        }
-        if ($request->has('currency')) {
-            $settings['currency'] = $request->input('currency');
-        }
-        if ($request->has('timezone')) {
-            $settings['timezone'] = $request->input('timezone');
-        }
-        if ($request->has('cookie_duration')) {
-            $settings['cookie_duration'] = (int) $request->input('cookie_duration', 30);
-        }
-        if ($request->has('auto_approve')) {
-            $settings['auto_approve'] = (bool) $request->input('auto_approve', false);
-        }
+        // General
+        if ($request->has('platform_name')) $settings['platform_name'] = $request->input('platform_name');
+        if ($request->has('currency')) $settings['currency'] = $request->input('currency');
+        if ($request->has('timezone')) $settings['timezone'] = $request->input('timezone');
+        if ($request->has('logo_branding')) $settings['logo_branding'] = $request->input('logo_branding');
+
+        // Affiliate
+        if ($request->has('default_commission_rate')) $settings['default_commission_rate'] = (float) $request->input('default_commission_rate');
+        if ($request->has('cookie_duration')) $settings['cookie_duration'] = (int) $request->input('cookie_duration');
+        if ($request->has('auto_approve')) $settings['auto_approve'] = (bool) $request->input('auto_approve');
+
+        // Payout
+        if ($request->has('minimum_payout')) $settings['minimum_payout'] = (float) $request->input('minimum_payout');
+        if ($request->has('payout_methods')) $settings['payout_methods'] = $request->input('payout_methods');
+        if ($request->has('payout_schedule')) $settings['payout_schedule'] = $request->input('payout_schedule');
+
+        // Security
+        if ($request->has('two_factor_enabled')) $settings['two_factor_enabled'] = (bool) $request->input('two_factor_enabled');
+        if ($request->has('session_timeout')) $settings['session_timeout'] = (int) $request->input('session_timeout');
+
+        // Notifications
+        if ($request->has('notification_preferences')) $settings['notification_preferences'] = $request->input('notification_preferences');
+
+        // Integrations
+        if ($request->has('integration_api_key')) $settings['integration_api_key'] = $request->input('integration_api_key');
+        if ($request->has('integration_status')) $settings['integration_status'] = $request->input('integration_status');
 
         $this->saveSettings($settings);
         return response()->json($settings);
     }
 
+
     // ─── Commissions Management ───────────────────────────────────────────────
 
-    public function getCommissionsSummary()
+    public function getCommissionsSummary(Request $request)
     {
+        $days = (int) $request->query('days', 30);
         $totalCommissions = (float) Sale::sum('commission_amount');
         $pendingCommissions = (float) Sale::where('status', 'pending')->sum('commission_amount');
-        $approvedCommissions = (float) Sale::where('status', 'approved')->sum('commission_amount');
-        $paidCommissions = (float) Sale::where('status', 'paid')->sum('commission_amount');
+        // 'completed' is treated as approved/paid in this system
+        $approvedCommissions = (float) Sale::whereIn('status', ['approved', 'completed'])->sum('commission_amount');
+        $paidCommissions = (float) Sale::whereIn('status', ['paid', 'completed'])->sum('commission_amount');
+
+        // Calculate Trend (This Month vs Last Month)
+        $thisMonth = (float) Sale::where('created_at', '>=', now()->startOfMonth())->sum('commission_amount');
+        $lastMonth = (float) Sale::whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->subMonth()->endOfMonth()])->sum('commission_amount');
+        
+        $trend = 0;
+        if ($lastMonth > 0) {
+            $trend = (($thisMonth - $lastMonth) / $lastMonth) * 100;
+        } elseif ($thisMonth > 0) {
+            $trend = 100;
+        }
 
         return response()->json([
             'total_commissions' => $totalCommissions,
             'pending' => $pendingCommissions,
             'approved' => $approvedCommissions,
             'paid' => $paidCommissions,
+            'trend_percentage' => round($trend, 1)
         ]);
     }
+
 
     public function getPendingCommissions()
     {
@@ -430,17 +511,28 @@ class AdminController extends Controller
     public function getAllCommissions(Request $request)
     {
         $status = $request->query('status');
+        $days = $request->query('days');
 
         $query = Sale::with('affiliate.user')->orderByDesc('created_at');
 
         if ($status && $status !== 'all') {
-            $query->where('status', $status);
+            if ($status === 'paid') {
+                $query->whereIn('status', ['paid', 'completed']);
+            } else {
+                $query->where('status', $status);
+            }
+        }
+
+        if ($days && $days !== 'all') {
+            $query->where('created_at', '>=', now()->subDays((int)$days));
         }
 
         $commissions = $query->get();
 
         return response()->json($commissions);
     }
+
+
 
     public function approveCommission($id)
     {
@@ -529,14 +621,25 @@ class AdminController extends Controller
         $affiliate = Affiliate::findOrFail($affiliateId);
         $amount = $request->input('amount', $affiliate->pending_balance);
 
-        // Move from pending to current balance
+        if ($amount > $affiliate->pending_balance) {
+             return response()->json(['error' => 'Amount exceeds pending balance'], 400);
+        }
+
+        // Move from pending to paid balance
         $affiliate->pending_balance -= $amount;
-        $affiliate->current_balance += $amount;
+        $affiliate->paid_balance += $amount; // Source of truth for total paid
         $affiliate->save();
 
-        // Update related sales to paid
+        // Update the payout transaction record
+        Transaction::where('affiliate_id', $affiliateId)
+            ->where('type', 'payout')
+            ->where('status', 'pending')
+            ->orderBy('created_at')
+            ->first()?->update(['status' => 'completed']);
+
+        // Update related sales to paid (if tracking individual sales)
         Sale::where('affiliate_id', $affiliateId)
-            ->where('status', 'approved')
+            ->where('status', 'completed')
             ->update(['status' => 'paid']);
 
         return response()->json($affiliate->load('user'));

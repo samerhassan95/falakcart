@@ -395,9 +395,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   <Link href="/settings" onClick={() => setShowUserMenu(false)} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#050C9C]">
                     {t('notifications.myProfile')}
                   </Link>
-                  <Link href="/settings" onClick={() => setShowUserMenu(false)} className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-[#050C9C]">
-                    {t('notifications.accountSettings')}
-                  </Link>
                   <div className="border-t border-gray-50 mt-1 pt-1">
                     <button onClick={logout} className="w-full text-start px-4 py-2 text-sm text-red-500 hover:bg-red-50">
                       {t('auth.signOut')}

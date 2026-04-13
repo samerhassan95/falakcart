@@ -25,11 +25,13 @@ export function useTranslation() {
     
     // Load translations
     const loadTranslations = (locale: 'ar' | 'en') => {
-      // Check if translations are cached in sessionStorage
-      const cacheKey = `translations_${locale}`;
+      // Force refresh for this specific update to solve the 22% bug
+      const cacheVersion = 'v3';
+      const cacheKey = `translations_${locale}_${cacheVersion}`;
       const cached = sessionStorage.getItem(cacheKey);
       
       if (cached) {
+
         try {
           const data = JSON.parse(cached);
           setTranslations(data);
@@ -55,8 +57,9 @@ export function useTranslation() {
       
       // If not cached, fetch from server
       setIsLoading(true);
-      fetch(`/locales/${locale}.json`)
+      fetch(`/locales/${locale}.json?v=${new Date().getTime()}`)
         .then(res => {
+
           if (!res.ok) {
             throw new Error(`Failed to load ${locale}.json: ${res.status}`);
           }

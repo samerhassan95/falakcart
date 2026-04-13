@@ -69,32 +69,51 @@ export default function AdminSettingsPage() {
     }
   };
 
-  const handleSave = async () => {
+  const handleSave = async (forceAll: boolean = false) => {
     setLoading(true);
     try {
       const payload: any = {};
       
-      if (activeTab === 'general') {
+      // If forceAll is true (global save), we send everything. 
+      // Otherwise, we only send fields related to the active tab.
+      
+      if (activeTab === 'general' || forceAll) {
         payload.platform_name = platformName;
         payload.currency = currency;
         payload.timezone = timezone;
         payload.logo_branding = logoBranding;
-      } else if (activeTab === 'affiliate') {
-        payload.default_commission_rate = parseFloat(commissionRate);
-        payload.cookie_duration = parseInt(cookieDuration, 10);
+      }
+      
+      if (activeTab === 'affiliate' || forceAll) {
+        payload.default_commission_rate = parseFloat(commissionRate) || 0;
+        payload.cookie_duration = parseInt(cookieDuration, 10) || 0;
         payload.auto_approve = autoApprove;
-      } else if (activeTab === 'payout') {
-        payload.minimum_payout = parseFloat(minPayout);
+      }
+      
+      if (activeTab === 'payout' || forceAll) {
+        payload.minimum_payout = parseFloat(minPayout) || 0;
         payload.payout_methods = payoutMethods;
         payload.payout_schedule = payoutSchedule;
-      } else if (activeTab === 'security') {
+      }
+      
+      if (activeTab === 'security' || forceAll) {
         payload.two_factor_enabled = twoFactorEnabled;
-        payload.session_timeout = parseInt(sessionTimeout, 10);
-      } else if (activeTab === 'notifications') {
+        payload.session_timeout = parseInt(sessionTimeout, 10) || 0;
+      }
+      
+      if (activeTab === 'notifications' || forceAll) {
         payload.notification_preferences = notificationPrefs;
-      } else if (activeTab === 'integrations') {
+      }
+      
+      if (activeTab === 'integrations' || forceAll) {
         payload.integration_api_key = integrationApiKey;
         payload.integration_status = integrationStatus;
+      }
+      
+      // Only send request if we have something to save
+      if (Object.keys(payload).length === 0) {
+        setLoading(false);
+        return;
       }
 
       await api.put('/admin/settings', payload);
@@ -108,6 +127,7 @@ export default function AdminSettingsPage() {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -600,7 +620,7 @@ export default function AdminSettingsPage() {
       <div className="mt-8 pt-6 border-t border-gray-200">
         <div className="flex justify-center">
           <button
-            onClick={handleSave}
+            onClick={() => handleSave(true)}
             disabled={loading}
             className="px-10 py-4 disabled:opacity-50 text-white rounded-full font-bold transition-all hover:shadow-lg"
             style={{

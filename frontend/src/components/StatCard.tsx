@@ -30,6 +30,12 @@ export function StatCard({
   labelColor = '#9CA3AF',
   changeColor
 }: StatCardProps) {
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const cardStyle = gradient
     ? { background: gradient, boxShadow: boxShadow || 'none' }
     : {};
@@ -58,16 +64,16 @@ export function StatCard({
             <TrendingUp className={`w-3 h-3 ${!isPositive ? 'rotate-180' : ''}`} /> {change}
           </span>
         </div>
-        <p
+        <div
           className="text-xs font-medium uppercase tracking-wider mb-1"
           style={{ color: labelColor }}
         >
           {label}
-        </p>
-        <p className="text-3xl font-bold" style={{ color: textColor }}>
-          {value}
-        </p>
+        </div>
+        <div className="text-3xl font-bold" style={{ color: textColor }}>
+          {mounted ? value : '---'}
+        </div>
       </div>
     </div>
   );
-}
+}

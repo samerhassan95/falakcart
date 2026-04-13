@@ -5,7 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import api from '@/lib/api';
 import { StatCard } from '@/components/StatCard';
 import { Download, ChevronDown } from 'lucide-react';
-import { AreaChart, Area, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, Tooltip, ResponsiveContainer, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { useTranslation } from '@/hooks/useTranslation';
 
 interface Referral {
@@ -106,8 +106,9 @@ export default function ReferralsPage() {
   };
 
   const displayedReferrals = referrals.filter(r => {
-    if (filter === 'Signed Up') return r.status !== 'subscribed';
-    if (filter === 'Subscribed') return r.status === 'subscribed';
+    const status = r.status?.toLowerCase();
+    if (filter === 'Signed Up') return status !== 'subscribed';
+    if (filter === 'Subscribed') return status === 'subscribed';
     return true; // 'All'
   });
 
@@ -133,28 +134,44 @@ export default function ReferralsPage() {
     setTimeout(() => URL.revokeObjectURL(url), 100);
   };
 
-  const velocityMap = referrals.reduce((acc, r) => {
-    const d = r.date_joined;
-    acc[d] = (acc[d] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const velocityData = (() => {
+    const daysToCover = Math.max(15, period === 'This Week' ? 7 : period === 'Today' ? 1 : 30);
+    const dataMap: Record<string, number> = {};
+    
+    // Group referrals by date (YYYY-MM-DD)
+    referrals.forEach(r => {
+      // Parse "M d, Y" to "YYYY-MM-DD"
+      try {
+        const dateObj = new Date(r.date_joined);
+        if (!isNaN(dateObj.getTime())) {
+          const isoDate = dateObj.toISOString().split('T')[0];
+          dataMap[isoDate] = (dataMap[isoDate] || 0) + 1;
+        }
+      } catch (e) {}
+    });
 
-  const velocityData = Object.keys(velocityMap).reverse().map(date => ({
-    date: date.substring(0, 6),
-    count: velocityMap[date],
-  }));
-
-  if (velocityData.length === 0) {
-    velocityData.push({ date: 'Today', count: 0 });
-  }
+    const filled: { date: string; count: number }[] = [];
+    const now = new Date();
+    
+    for (let i = daysToCover - 1; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(now.getDate() - i);
+      const isoDate = d.toISOString().split('T')[0];
+      filled.push({
+        date: isoDate.substring(5, 10), // Short month-day format
+        count: dataMap[isoDate] || 0
+      });
+    }
+    return filled;
+  })();
 
   const milestoneTarget = 1000;
   const milestonePercent = Math.min((totalReferrals / milestoneTarget) * 100, 100);
   const remainingReferrals = Math.max(milestoneTarget - totalReferrals, 0);
 
   return (
-    <div className="space-y-4 sm:space-y-6 ">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-20">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-[#191C1E] tracking-tight">{t('referrals.title')}</h1>
           <p className="text-sm sm:text-base text-[#505F76] mt-1">{t('referrals.subtitle')}</p>
@@ -170,7 +187,7 @@ export default function ReferralsPage() {
                   key={tab.key}
                   onClick={() => { setFilter(tab.key); setCurrentPage(1); }}
                   className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all ${
-                    filter === tab.key ? 'bg-white text-[#191C1E] ' : 'text-[#505F76] hover:text-gray-700'
+                    filter === tab.key ? 'bg-white text-[#191C1E] shadow-sm' : 'text-[#505F76] hover:text-gray-700'
                   }`}
                 >
                   {tab.label}
@@ -180,15 +197,15 @@ export default function ReferralsPage() {
             <div className="relative" ref={dropdownRef}>
               <button 
                 onClick={() => setShowPeriodDropdown(!showPeriodDropdown)}
-                className="flex items-center gap-2 px-4 py-3 bg-white  rounded-full text-sm font-semibold text-gray-700  hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-2 px-4 py-3 bg-white border border-gray-100 rounded-full text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all shadow-sm"
               >
-                <CalendarIcon className="w-4 h-4" />
+                <CalendarIcon className="w-4 h-4 text-indigo-600" />
                 {getPeriodLabel(period)}
-                <ChevronDown className="w-4 h-4 text-[#505F76]" />
+                <ChevronDown className={`w-4 h-4 text-[#505F76] transition-transform ${showPeriodDropdown ? 'rotate-180' : ''}`} />
               </button>
               
               {showPeriodDropdown && (
-                <div className="absolute end-0 mt-2 w-48 bg-white  rounded-xl shadow-lg py-1 z-10">
+                <div className="absolute end-0 mt-2 w-48 bg-white rounded-xl shadow-xl py-2 z-50 border border-gray-100 ring-1 ring-black ring-opacity-5 animate-in fade-in zoom-in duration-200">
                   {[
                     { key: 'Today', label: t('common.today') },
                     { key: 'This Week', label: t('common.thisWeek') },
@@ -197,7 +214,7 @@ export default function ReferralsPage() {
                   ].map((option) => (
                     <button
                       key={option.key}
-                      className={`w-full text-left px-4 py-2 text-sm transition-colors ${period === option.key ? 'text-[#050C9C] bg-indigo-50/50 font-bold' : 'text-gray-600 hover:bg-gray-50'}`}
+                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${period === option.key ? 'text-indigo-600 bg-indigo-50 font-bold' : 'text-gray-600 hover:bg-gray-50'}`}
                       onClick={() => { setPeriod(option.key); setShowPeriodDropdown(false); setCurrentPage(1); }}
                     >
                       {option.label}
@@ -405,8 +422,19 @@ export default function ReferralsPage() {
                      <stop offset="95%" stopColor="#4F46E5" stopOpacity={0}/>
                    </linearGradient>
                   </defs>
-                  <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}/>
-                  <Area type="monotone" dataKey="count" stroke="#4F46E5" strokeWidth={4} fillOpacity={1} fill="url(#colorVelocity)" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+                  <XAxis 
+                    dataKey="date" 
+                    stroke="#9ca3af" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false}
+                    interval={'preserveStartEnd'}
+                    minTickGap={20}
+                  />
+                  <YAxis stroke="#9ca3af" fontSize={10} tickLine={false} axisLine={false} />
+                  <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontSize: '12px' }}/>
+                  <Area type="monotone" dataKey="count" stroke="#4F46E5" strokeWidth={3} fillOpacity={1} fill="url(#colorVelocity)" dot={{r: 3, fill: '#4F46E5', strokeWidth: 2, stroke: '#fff'}} activeDot={{r: 5}} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>

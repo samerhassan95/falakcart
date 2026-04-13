@@ -60,6 +60,25 @@ export default function AffiliateDashboard() {
   const [showPeriodMenu, setShowPeriodMenu] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [mounted, setMounted] = useState(false);
+  const [showShareMenu, setShowShareMenu] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Close share menu if clicked outside
+  useEffect(() => {
+    if (!showShareMenu) return;
+    const handleOutsideClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.share-menu-container')) {
+        setShowShareMenu(false);
+      }
+    };
+    window.addEventListener('mousedown', handleOutsideClick);
+    return () => window.removeEventListener('mousedown', handleOutsideClick);
+  }, [showShareMenu]);
 
   const getPeriodLabel = (periodKey: string) => {
     const periodMap: Record<string, string> = {
@@ -84,7 +103,7 @@ export default function AffiliateDashboard() {
         api.get(`/affiliate/stats?days=${periodParam}`),
         api.get('/affiliate/profile'),
         api.get('/affiliate/recent-activity'),
-        api.get(`/affiliate/clicks?days=${periodParam}`),
+        api.get(`/affiliate/analytics?days=${periodParam}`),
       ]);
 
       let hasAnyError = false;
@@ -136,8 +155,19 @@ export default function AffiliateDashboard() {
 
       // Handle clicks data
       if (results[3].status === 'fulfilled') {
-        setEarningsData(results[3].value.data);
+        const analyticsData = results[3].value.data;
+        // The chart expects 'earningsData' but it's labeled 'Earnings Performance'
+        // So we should use 'earnings_over_time' which has 'date' and 'total'
+        if (analyticsData.earnings_over_time) {
+          setEarningsData(analyticsData.earnings_over_time.map((item: any) => ({
+             date: item.date,
+             count: Number(item.total) || 0 // Keep 'count' name to avoid breaking Recharts if possible or update it
+          })));
+        } else {
+          setEarningsData([]);
+        }
       } else {
+
         hasAnyError = true;
         errorDetails.push('Clicks API failed');
         console.error('Failed to fetch clicks data:', results[3].reason);
@@ -208,7 +238,22 @@ export default function AffiliateDashboard() {
     setTimeout(() => URL.revokeObjectURL(url), 100);
   };
 
-  if (loading || isFetching || translationsLoading) return (
+  const shareOnWhatsApp = () => {
+    if (profile) {
+      const referralUrl = profile.main_referral_url || `https://falakcart.com/register?ref=${profile.referral_code}`;
+      const message = t('dashboard.shareMessage', { url: referralUrl });
+      window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+    }
+  };
+
+  const shareOnFacebook = () => {
+    if (profile) {
+      const referralUrl = profile.main_referral_url || `https://falakcart.com/register?ref=${profile.referral_code}`;
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(referralUrl)}`, '_blank');
+    }
+  };
+
+  if (loading || isFetching || translationsLoading || !mounted) return (
     <div className="flex items-center justify-center h-[60vh]">
       <div className="flex flex-col items-center gap-3">
         <div className="w-10 h-10 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin" />
@@ -293,7 +338,8 @@ export default function AffiliateDashboard() {
 
         {/* Campaign + Goal Row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-          <div className="lg:col-span-2 bg-white rounded-2xl p-4 sm:p-6 relative overflow-hidden">
+          <div className="lg:col-span-2 bg-white rounded-2xl p-4 sm:p-6 relative">
+
             {/* Decorative blur circle */}
             <div 
               className="absolute rounded-full pointer-events-none"
@@ -325,11 +371,44 @@ export default function AffiliateDashboard() {
                     {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                     {copied ? t('common.copied') : t('common.copy')}
                   </button>
-                  <Link href="/settings" className="p-3 bg-[#3ABEF91A] border border-gray-200 rounded-full text-[#505F76] hover:bg-gray-50 transition-colors flex items-center justify-center">
-                    <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M8.75 11.6667C8.26389 11.6667 7.85069 11.4965 7.51042 11.1562C7.17014 10.816 7 10.4028 7 9.91667C7 9.85833 7.01458 9.72222 7.04375 9.50833L2.94583 7.11667C2.79028 7.2625 2.61042 7.37674 2.40625 7.45937C2.20208 7.54201 1.98333 7.58333 1.75 7.58333C1.26389 7.58333 0.850694 7.41319 0.510417 7.07292C0.170139 6.73264 0 6.31944 0 5.83333C0 5.34722 0.170139 4.93403 0.510417 4.59375C0.850694 4.25347 1.26389 4.08333 1.75 4.08333C1.98333 4.08333 2.20208 4.12465 2.40625 4.20729C2.61042 4.28993 2.79028 4.40417 2.94583 4.55L7.04375 2.15833C7.02431 2.09028 7.01215 2.02465 7.00729 1.96146C7.00243 1.89826 7 1.82778 7 1.75C7 1.26389 7.17014 0.850694 7.51042 0.510417C7.85069 0.170139 8.26389 0 8.75 0C9.23611 0 9.64931 0.170139 9.98958 0.510417C10.3299 0.850694 10.5 1.26389 10.5 1.75C10.5 2.23611 10.3299 2.64931 9.98958 2.98958C9.64931 3.32986 9.23611 3.5 8.75 3.5C8.51667 3.5 8.29792 3.45868 8.09375 3.37604C7.88958 3.2934 7.70972 3.17917 7.55417 3.03333L3.45625 5.425C3.47569 5.49306 3.48785 5.55868 3.49271 5.62187C3.49757 5.68507 3.5 5.75556 3.5 5.83333C3.5 5.91111 3.49757 5.9816 3.49271 6.04479C3.48785 6.10799 3.47569 6.17361 3.45625 6.24167L7.55417 8.63333C7.70972 8.4875 7.88958 8.37326 8.09375 8.29062C8.29792 8.20799 8.51667 8.16667 8.75 8.16667C9.23611 8.16667 9.64931 8.33681 9.98958 8.67708C10.3299 9.01736 10.5 9.43056 10.5 9.91667C10.5 10.4028 10.3299 10.816 9.98958 11.1562C9.64931 11.4965 9.23611 11.6667 8.75 11.6667ZM8.75 10.5C8.91528 10.5 9.05382 10.4441 9.16562 10.3323C9.27743 10.2205 9.33333 10.0819 9.33333 9.91667C9.33333 9.75139 9.27743 9.61285 9.16562 9.50104C9.05382 9.38924 8.91528 9.33333 8.75 9.33333C8.58472 9.33333 8.44618 9.38924 8.33438 9.50104C8.22257 9.61285 8.16667 9.75139 8.16667 9.91667C8.16667 10.0819 8.22257 10.2205 8.33438 10.3323C8.44618 10.4441 8.58472 10.5 8.75 10.5ZM1.75 6.41667C1.91528 6.41667 2.05382 6.36076 2.16563 6.24896C2.27743 6.13715 2.33333 5.99861 2.33333 5.83333C2.33333 5.66806 2.27743 5.52951 2.16563 5.41771C2.05382 5.3059 1.91528 5.25 1.75 5.25C1.58472 5.25 1.44618 5.3059 1.33438 5.41771C1.22257 5.52951 1.16667 5.66806 1.16667 5.83333C1.16667 5.99861 1.22257 6.13715 1.33438 6.24896C1.44618 6.36076 1.58472 6.41667 1.75 6.41667ZM8.75 2.33333C8.91528 2.33333 9.05382 2.27743 9.16562 2.16563C9.27743 2.05382 9.33333 1.91528 9.33333 1.75C9.33333 1.58472 9.27743 1.44618 9.16562 1.33438C9.05382 1.22257 8.91528 1.16667 8.75 1.16667C8.58472 1.16667 8.44618 1.22257 8.33438 1.33438C8.22257 1.44618 8.16667 1.58472 8.16667 1.75C8.16667 1.91528 8.22257 2.05382 8.33438 2.16563C8.44618 2.27743 8.58472 2.33333 8.75 2.33333Z" fill="#54647A"/>
-                    </svg>
-                  </Link>
+                  <div className="relative share-menu-container">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowShareMenu(!showShareMenu);
+                      }}
+                      className="p-3 bg-[#3ABEF91A] border border-gray-200 rounded-full text-[#505F76] hover:bg-gray-50 transition-colors flex items-center justify-center"
+                    >
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                      </svg>
+                    </button>
+                                      {showShareMenu && (
+                      <div className="absolute left-0 top-full mt-3 flex items-center gap-2 bg-white rounded-2xl shadow-2xl border border-gray-100 p-2 z-[100] animate-in fade-in zoom-in duration-200">
+                        <button
+                          onClick={shareOnWhatsApp}
+                          title={t('dashboard.shareOnWhatsApp')}
+                          className="w-10 h-10 bg-[#25D366]/10 rounded-xl flex items-center justify-center text-[#25D366] hover:bg-[#25D366] hover:text-white transition-all duration-300"
+                        >
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                          </svg>
+                        </button>
+                        <button
+                          onClick={shareOnFacebook}
+                          title={t('dashboard.shareOnFacebook')}
+                          className="w-10 h-10 bg-[#1877F2]/10 rounded-xl flex items-center justify-center text-[#1877F2] hover:bg-[#1877F2] hover:text-white transition-all duration-300"
+                        >
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385h-3.047v-3.47h3.047v-2.64c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.248h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                          </svg>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+
                 </div>
               </div>
             </div>

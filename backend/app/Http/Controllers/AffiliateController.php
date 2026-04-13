@@ -33,20 +33,28 @@ class AffiliateController extends Controller
 
     public function getProfile()
     {
-        $affiliate = $this->getAffiliate()->load('user');
+        $user = Auth::user();
+        $affiliate = $this->getAffiliate();
 
-        // إضافة الرابط الرئيسي للإحالة
-        $affiliate->main_referral_url = config('app.falakcart_main_url', 'https://falakcart.com') . '/register?ref=' . $affiliate->referral_code;
-
-        return response()->json($affiliate);
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'role' => $user->role,
+            'bio' => $affiliate->bio,
+            'phone' => $affiliate->phone,
+            'avatar' => $affiliate->avatar,
+            'referral_code' => $affiliate->referral_code,
+        ]);
     }
 
     public function updateProfile(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'bio' => 'nullable|string|max:500',
-            'avatar' => 'nullable|string',
+            'bio' => 'nullable|string|max:1000',
+            'phone' => 'nullable|string|max:20',
+            'avatar' => 'nullable|string', // Base64 or URL
         ]);
 
         $user = Auth::user();
@@ -55,6 +63,7 @@ class AffiliateController extends Controller
 
         $affiliate = $this->getAffiliate();
         $affiliate->bio = $request->bio;
+        $affiliate->phone = $request->phone;
         $affiliate->avatar = $request->avatar;
         $affiliate->save();
 
@@ -237,10 +246,33 @@ class AffiliateController extends Controller
         return response()->json($sales);
     }
 
+    private function fillMissingDays($data, $days, $dateKey = 'date', $valueKey = 'count', $isCollection = true)
+    {
+        $filled = [];
+        $dataMap = [];
+        foreach ($data as $item) {
+            $key = $isCollection ? $item->{$dateKey} : $item[$dateKey];
+            $value = $isCollection ? $item->{$valueKey} : $item[$valueKey];
+            $dataMap[$key] = $value;
+        }
+
+        for ($i = $days - 1; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            $filled[] = [
+                $dateKey => $date,
+                $valueKey => (float) ($dataMap[$date] ?? 0)
+            ];
+        }
+
+        return $filled;
+    }
+
     public function getClicks(Request $request)
     {
         $affiliate = $this->getAffiliate();
         $days = (int) $request->query('days', 30);
+        // Ensure minimum 1 day
+        $days = $days < 1 ? 30 : $days;
 
         $clicks = Click::where('affiliate_id', $affiliate->id)
             ->where('created_at', '>=', now()->subDays($days))
@@ -249,8 +281,11 @@ class AffiliateController extends Controller
             ->orderBy('date')
             ->get();
 
-        return response()->json($clicks);
+        $filledClicks = $this->fillMissingDays($clicks, $days);
+
+        return response()->json($filledClicks);
     }
+
 
     public function getSales()
     {
@@ -366,68 +401,69 @@ class AffiliateController extends Controller
 
         $paidEarnings = Transaction::where('affiliate_id', $affiliate->id)
             ->where('type', 'payout')
+            ->where('status', 'completed')
             ->sum('amount');
 
         return response()->json([
             'total_earnings'    => (float) $totalEarnings,
             'available_balance' => (float) $affiliate->available_balance,
             'pending_earnings'  => (float) $affiliate->pending_balance,
-            'paid_earnings'     => (float) $paidEarnings,
+            'paid_earnings'     => abs((float) $paidEarnings),
         ]);
     }
 
     public function requestPayout(Request $request)
     {
-        $affiliate = $this->getAffiliate();
+        return \DB::transaction(function() {
+            $affiliate = Affiliate::where('user_id', Auth::id())->lockForUpdate()->first();
 
-        // Check minimum payout amount
-        $minimumPayout = $affiliate->minimum_payout ?? 50.00;
-        if ($affiliate->available_balance < $minimumPayout) {
+            // Check minimum payout amount
+            $minimumPayout = $affiliate->minimum_payout ?? 50.00;
+            if ($affiliate->available_balance < $minimumPayout) {
+                return response()->json([
+                    'error' => "Minimum payout amount is $" . number_format($minimumPayout, 2)
+                ], 400);
+            }
+
+            // Check if bank details are provided
+            if (!$affiliate->bank_name || !$affiliate->account_number) {
+                return response()->json([
+                    'error' => 'Please update your bank details in settings before requesting payout'
+                ], 400);
+            }
+
+            $amount = $affiliate->available_balance;
+
+            // Create payout transaction
+            $transaction = Transaction::create([
+                'affiliate_id' => $affiliate->id,
+                'type'         => 'payout',
+                'amount'       => -$amount, // Negative for payout
+                'status'       => 'pending',
+                'source'       => 'Bank Transfer to ' . $affiliate->bank_name,
+                'description'  => 'Payout to ' . ($affiliate->account_holder_name ?: 'Account ending in ' . substr($affiliate->account_number, -4)),
+            ]);
+
+            // Update affiliate balances
+            $affiliate->available_balance = 0;
+            $affiliate->pending_balance  += $amount;
+            $affiliate->save();
+
+            // Send notification
+            \App\Models\Notification::create([
+                'user_id' => $affiliate->user_id,
+                'type' => 'payout_requested',
+                'title' => 'Payout Requested',
+                'message' => "Payout of $" . number_format($amount, 2) . " has been requested and is being processed.",
+            ]);
+
             return response()->json([
-                'error' => "Minimum payout amount is $" . number_format($minimumPayout, 2)
-            ], 400);
-        }
-
-        // Check if bank details are provided
-        if (!$affiliate->bank_name || !$affiliate->account_number) {
-            return response()->json([
-                'error' => 'Please update your bank details in settings before requesting payout'
-            ], 400);
-        }
-
-        $amount = $affiliate->available_balance;
-
-        // Create payout transaction
-        $transaction = Transaction::create([
-            'affiliate_id' => $affiliate->id,
-            'type'         => 'payout',
-            'amount'       => -$amount, // Negative for payout
-            'status'       => 'pending',
-            'source'       => 'Bank Transfer to ' . $affiliate->bank_name,
-            'description'  => 'Payout to ' . ($affiliate->account_holder_name ?: 'Account ending in ' . substr($affiliate->account_number, -4)),
-        ]);
-
-        // Update affiliate balances
-        $affiliate->update([
-            'available_balance' => 0,
-            'pending_balance'   => $affiliate->pending_balance + $amount,
-        ]);
-
-        // Send notification (you can implement email notification here)
-        \App\Models\Notification::create([
-            'affiliate_id' => $affiliate->id,
-            'type' => 'payout_requested',
-            'title' => 'Payout Requested',
-            'message' => "Payout of $" . number_format($amount, 2) . " has been requested and is being processed.",
-            'is_read' => false
-        ]);
-
-        return response()->json([
-            'message' => 'Payout requested successfully',
-            'amount' => $amount,
-            'transaction_id' => $transaction->id,
-            'estimated_processing_time' => '3-5 business days'
-        ]);
+                'message' => 'Payout requested successfully',
+                'amount' => $amount,
+                'transaction_id' => $transaction->id,
+                'estimated_processing_time' => '3-5 business days'
+            ]);
+        });
     }
 
     // --- ANALYTICS ---
@@ -436,6 +472,7 @@ class AffiliateController extends Controller
     {
         $affiliate = $this->getAffiliate();
         $days = (int) $request->query('days', 30);
+        $days = $days < 1 ? 30 : $days;
 
         $earningsOverTime = Transaction::where('affiliate_id', $affiliate->id)
             ->where('type', 'commission')
@@ -445,12 +482,31 @@ class AffiliateController extends Controller
             ->orderBy('date')
             ->get();
 
-        $clicksPerDay = Click::where('affiliate_id', $affiliate->id)
+        $clicksPerDayRaw = Click::where('affiliate_id', $affiliate->id)
             ->where('created_at', '>=', now()->subDays($days))
-            ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
-            ->groupBy('date')
+            ->selectRaw('DATE(created_at) as date, utm_source, COUNT(*) as count')
+            ->groupBy('date', 'utm_source')
             ->orderBy('date')
             ->get();
+
+        $dailyClicksFormatted = [];
+        $tempMap = [];
+
+        foreach ($clicksPerDayRaw as $c) {
+            $source = strtolower($c->utm_source ?: 'direct');
+            $category = 'direct';
+            if (in_array($source, ['facebook', 'instagram', 'twitter', 'social', 'whatsapp', 'linkedin', 'tiktok'])) {
+                $category = 'social';
+            } elseif ($source !== 'direct' && $c->utm_source) {
+                $category = 'referral';
+            }
+            
+            if (!isset($tempMap[$c->date])) {
+                $tempMap[$c->date] = ['date' => $c->date, 'direct' => 0, 'social' => 0, 'referral' => 0, 'count' => 0];
+            }
+            $tempMap[$c->date][$category] += $c->count;
+            $tempMap[$c->date]['count'] += $c->count;
+        }
 
         $referralsPerDay = Sale::where('affiliate_id', $affiliate->id)
             ->where('created_at', '>=', now()->subDays($days))
@@ -459,39 +515,126 @@ class AffiliateController extends Controller
             ->orderBy('date')
             ->get();
 
-        $totalClicks  = Click::where('affiliate_id', $affiliate->id)->count();
-        $totalRefs    = Sale::where('affiliate_id', $affiliate->id)->count();
-        $totalSubs    = Sale::where('affiliate_id', $affiliate->id)->where('status', 'completed')->count();
-        $conversionRate = $totalClicks > 0 ? round(($totalRefs / $totalClicks) * 100, 1) : 0;
-        $totalEarnings = Transaction::where('affiliate_id', $affiliate->id)->where('type', 'commission')->sum('amount');
+        // Traffic Sources Analysis (Keeping existing logic but can reuse same data)
+        $trafficStats = ['direct' => 0, 'social' => 0, 'referral' => 0];
+        foreach ($tempMap as $day) {
+            $trafficStats['direct'] += $day['direct'];
+            $trafficStats['social'] += $day['social'];
+            $trafficStats['referral'] += $day['referral'];
+        }
+        $totalForSources = $trafficStats['direct'] + $trafficStats['social'] + $trafficStats['referral'];
 
-        // Top performing links
-        $topLinks = AffiliateLink::where('affiliate_id', $affiliate->id)
-            ->get()
-            ->map(function ($link) {
-                return [
-                    'name'      => $link->name,
-                    'url'       => 'falakcart.com/register?ref=' . $link->slug,
-                    'clicks'    => Click::where('referral_code', $link->slug)->count(),
-                    'referrals' => 0,
-                    'earnings'  => (float) Transaction::where('affiliate_id', $link->affiliate_id)->where('source', $link->name)->sum('amount'),
-                ];
-            })
-            ->sortByDesc('clicks')
-            ->take(5)
-            ->values();
+        $trafficSources = [
+            ['name' => 'Direct', 'value' => $totalForSources > 0 ? round(($trafficStats['direct'] / $totalForSources) * 100) : 0],
+            ['name' => 'Social', 'value' => $totalForSources > 0 ? round(($trafficStats['social'] / $totalForSources) * 100) : 0],
+            ['name' => 'Referral', 'value' => $totalForSources > 0 ? round(($trafficStats['referral'] / $totalForSources) * 100) : 0],
+        ];
+
+        // Fill missing days
+        $filledEarnings = $this->fillMissingDays($earningsOverTime, $days, 'date', 'total');
+        $filledReferrals = $this->fillMissingDays($referralsPerDay, $days, 'date', 'count');
+        
+        // Custom fill for stacked clicks
+        $filledClicks = [];
+        for ($i = $days - 1; $i >= 0; $i--) {
+            $date = now()->subDays($i)->format('Y-m-d');
+            if (isset($tempMap[$date])) {
+                $filledClicks[] = $tempMap[$date];
+            } else {
+                $filledClicks[] = ['date' => $date, 'direct' => 0, 'social' => 0, 'referral' => 0, 'count' => 0];
+            }
+        }
+
+        // Calculate Growth Trends and Summary Stats
+        $prevTotalClicks = Click::where('affiliate_id', $affiliate->id)
+            ->whereBetween('created_at', [now()->subDays($days * 2), now()->subDays($days)])
+            ->count();
+        $totalClicks = Click::where('affiliate_id', $affiliate->id)->where('created_at', '>=', now()->subDays($days))->count();
+        $clickTrend = $prevTotalClicks > 0 ? round((($totalClicks - $prevTotalClicks) / $prevTotalClicks) * 100, 1) : 0;
+
+        $prevTotalEarnings = Transaction::where('affiliate_id', $affiliate->id)->where('type', 'commission')
+            ->whereBetween('created_at', [now()->subDays($days * 2), now()->subDays($days)])->sum('amount');
+        $currTotalEarnings = Transaction::where('affiliate_id', $affiliate->id)->where('type', 'commission')
+            ->where('created_at', '>=', now()->subDays($days))->sum('amount');
+        $earningsTrend = $prevTotalEarnings > 0 ? round((($currTotalEarnings - $prevTotalEarnings) / $prevTotalEarnings) * 100, 1) : 0;
+
+        $totalRefs = Sale::where('affiliate_id', $affiliate->id)->where('created_at', '>=', now()->subDays($days))->count();
+        $totalSubscriptions = Sale::where('affiliate_id', $affiliate->id)
+            ->where('created_at', '>=', now()->subDays($days))
+            ->where('status', 'completed') // Assuming 'completed' means a successful subscription/sale
+            ->count();
+            
+        $totalClicksOverall = Click::where('affiliate_id', $affiliate->id)->count();
+        $conversionRate = $totalClicksOverall > 0 ? round(($totalRefs / $totalClicksOverall) * 100, 1) : 0;
+
+        // Top performing links including main referral code
+        $links = AffiliateLink::where('affiliate_id', $affiliate->id)->get();
+        
+        $topLinks = $links->map(function ($link) use ($affiliate) {
+            return [
+                'name'      => $link->name,
+                'url'       => 'falakcart.com/register?ref=' . $link->slug,
+                'clicks'    => Click::where('referral_code', $link->slug)->count(),
+                'referrals' => Sale::where('affiliate_id', $affiliate->id)
+                                ->whereRaw("JSON_EXTRACT(webhook_data, '$.referral.referral_code') = ?", [$link->slug])
+                                ->count(),
+                'earnings'  => (float) Sale::where('affiliate_id', $affiliate->id)
+                                ->whereRaw("JSON_EXTRACT(webhook_data, '$.referral.referral_code') = ?", [$link->slug])
+                                ->sum('commission_amount'),
+                'type'      => 'link'
+            ];
+        })->toArray();
+
+        $mainClicks = Click::where('referral_code', $affiliate->referral_code)->count();
+        $mainEarnings = Sale::where('affiliate_id', $affiliate->id)
+                            ->where(function($q) use ($affiliate) {
+                                $q->whereRaw("JSON_EXTRACT(webhook_data, '$.referral.referral_code') = ?", [$affiliate->referral_code])
+                                  ->orWhereNull('webhook_data')
+                                  ->orWhere('webhook_data', '')
+                                  ->orWhereRaw("JSON_EXTRACT(webhook_data, '$.referral.referral_code') IS NULL");
+                            })
+                            ->sum('commission_amount');
+        $mainRefs = Sale::where('affiliate_id', $affiliate->id)
+                        ->where(function($q) use ($affiliate) {
+                            $q->whereRaw("JSON_EXTRACT(webhook_data, '$.referral.referral_code') = ?", [$affiliate->referral_code])
+                              ->orWhereNull('webhook_data')
+                              ->orWhere('webhook_data', '')
+                              ->orWhereRaw("JSON_EXTRACT(webhook_data, '$.referral.referral_code') IS NULL");
+                        })
+                        ->count();
+
+        $topLinks[] = [
+            'name'      => 'الرابط الرئيسي (Main)',
+            'url'       => 'falakcart.com/register?ref=' . $affiliate->referral_code,
+            'clicks'    => $mainClicks,
+            'referrals' => $mainRefs,
+            'earnings'  => (float) $mainEarnings,
+            'type'      => 'main'
+        ];
+
+        $sortedLinks = collect($topLinks)->sortByDesc('clicks');
+        $topLink = $sortedLinks->first();
+        $topLinks = $sortedLinks->take(6)->values();
 
         return response()->json([
             'summary' => [
                 'total_clicks'    => $totalClicks,
                 'total_referrals' => $totalRefs,
+                'total_subscriptions' => $totalSubscriptions,
                 'conversion_rate' => $conversionRate,
-                'total_earnings'  => (float) $totalEarnings,
+                'total_earnings'  => (float) $currTotalEarnings,
+                'all_time_earnings' => (float) $affiliate->total_earnings,
+                'click_trend'     => $clickTrend,
+                'earnings_trend'  => $earningsTrend,
+                'total_traffic'   => $totalForSources,
+                'top_link_name'   => $topLink ? $topLink['name'] : 'N/A',
+                'top_link_share'  => $topLink && $totalForSources > 0 ? round(($topLink['clicks'] / $totalForSources) * 100) : 0,
             ],
-            'earnings_over_time' => $earningsOverTime,
-            'clicks_per_day'     => $clicksPerDay,
-            'referrals_per_day'  => $referralsPerDay,
+            'earnings_over_time' => $filledEarnings,
+            'clicks_per_day'     => $filledClicks,
+            'referrals_per_day'  => $filledReferrals,
             'top_links'          => $topLinks,
+            'traffic_sources'    => $trafficSources,
         ]);
     }
 

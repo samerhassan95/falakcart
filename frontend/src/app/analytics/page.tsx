@@ -18,11 +18,16 @@ interface AnalyticsData {
     total_referrals: number;
     conversion_rate: number;
     total_earnings: number;
+    all_time_earnings: number;
+    click_trend: number;
+    earnings_trend: number;
+    total_traffic: number;
   };
   earnings_over_time: { date: string; total: number }[];
   clicks_per_day: { date: string; count: number }[];
   referrals_per_day: { date: string; count: number }[];
   top_links: { name: string; url: string; clicks: number; referrals: number; earnings: number }[];
+  traffic_sources: { name: string; value: number }[];
 }
 
 const PIE_COLORS = ['#050C9C', '#A7E6FF', '#CBD5E1'];
@@ -74,13 +79,13 @@ export default function AnalyticsPage() {
   );
 
   const s = data?.summary;
-  const trafficSources = [
-    { name: 'Direct', value: 45 },
-    { name: 'Social', value: 25 },
-    { name: 'Referral', value: 30 },
+  const trafficSources = data?.traffic_sources || [
+    { name: 'Direct', value: 0 },
+    { name: 'Social', value: 0 },
+    { name: 'Referral', value: 0 },
   ];
 
-  const totalTraffic = trafficSources.reduce((sum, t) => sum + t.value, 0);
+  const totalTraffic = s?.total_traffic || 0;
 
   return (
     <div className="space-y-4 sm:space-y-6 ">
@@ -102,8 +107,8 @@ export default function AnalyticsPage() {
             iconBgColor="#3ABEF91A"
             label={t('stats.totalClicks')}
             value={(s?.total_clicks || 0).toLocaleString()}
-            change="+12%"
-            isPositive={true}
+            change={`${(s?.click_trend || 0) >= 0 ? '+' : ''}${s?.click_trend || 0}%`}
+            isPositive={(s?.click_trend || 0) >= 0}
             backgroundSvg={
               <svg className="absolute -bottom-0 -end-0 opacity-[0.1]" width="81" height="81" viewBox="0 0 81 81" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M38.8 64C32.4 63.6667 27 61.2 22.6 56.6C18.2 52 16 46.4667 16 40C16 33.3333 18.3333 27.6667 23 23C27.6667 18.3333 33.3333 16 40 16C46.4667 16 52 18.2 56.6 22.6C61.2 27 63.6667 32.4 64 38.8L55.6 36.3C54.7333 32.7 52.8667 29.75 50 27.45C47.1333 25.15 43.8 24 40 24C35.6 24 31.8333 25.5667 28.7 28.7C25.5667 31.8333 24 35.6 24 40C24 43.8 25.15 47.1333 27.45 50C29.75 52.8667 32.7 54.7333 36.3 55.6L38.8 64ZM43.6 79.8C43 79.9333 42.4 80 41.8 80C41.2 80 40.6 80 40 80C34.4667 80 29.2667 78.95 24.4 76.85C19.5333 74.75 15.3 71.9 11.7 68.3C8.1 64.7 5.25 60.4667 3.15 55.6C1.05 50.7333 0 45.5333 0 40C0 34.4667 1.05 29.2667 3.15 24.4C5.25 19.5333 8.1 15.3 11.7 11.7C15.3 8.1 19.5333 5.25 24.4 3.15C29.2667 1.05 34.4667 0 40 0C45.5333 0 50.7333 1.05 55.6 3.15C60.4667 5.25 64.7 8.1 68.3 11.7C71.9 15.3 74.75 19.5333 76.85 24.4C78.95 29.2667 80 34.4667 80 40C80 40.6 80 41.2 80 41.8C80 42.4 79.9333 43 79.8 43.6L72 41.2V40C72 31.0667 68.9 23.5 62.7 17.3C56.5 11.1 48.9333 8 40 8C31.0667 8 23.5 11.1 17.3 17.3C11.1 23.5 8 31.0667 8 40C8 48.9333 11.1 56.5 17.3 62.7C23.5 68.9 31.0667 72 40 72C40.2 72 40.4 72 40.6 72C40.8 72 41 72 41.2 72L43.6 79.8ZM74.1 82L57 64.9L52 80L40 40L80 52L64.9 57L82 74.1L74.1 82Z" fill="#191C1E"/>
@@ -121,7 +126,7 @@ export default function AnalyticsPage() {
             iconBgColor="#EEF2FF"
             label={t('stats.totalReferrals')}
             value={(s?.total_referrals || 0).toLocaleString()}
-            change="+8%"
+            change={`${(s?.conversion_rate || 0) >= 0 ? '+' : ''}${s?.conversion_rate || 0}%`}
             isPositive={true}
             backgroundSvg={
               <svg className="absolute -bottom-0 -end-0 opacity-[0.1]" width="85" height="64" viewBox="0 0 85 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -159,8 +164,8 @@ export default function AnalyticsPage() {
             iconBgColor="#FFFFFF33"
             label={t('stats.totalEarnings')}
             value={`$${(s?.total_earnings || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
-            change="+15%"
-            isPositive={true}
+            change={`${(s?.earnings_trend || 0) >= 0 ? '+' : ''}${s?.earnings_trend || 0}%`}
+            isPositive={(s?.earnings_trend || 0) >= 0}
             gradient="linear-gradient(126.12deg, #2A14B4 0%, #4338CA 100%)"
             boxShadow="0px 8px 10px -6px #2A14B433, 0px 20px 25px -5px #2A14B433"
             textColor="#FFFFFF"
@@ -226,9 +231,23 @@ export default function AnalyticsPage() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data?.clicks_per_day}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
-                  <XAxis dataKey="date" stroke="#9ca3af" fontSize={10} tickLine={false} axisLine={false} />
+                  <XAxis 
+                    dataKey="date" 
+                    stroke="#9ca3af" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false}
+                    interval={'preserveStartEnd'}
+                    minTickGap={20}
+                  />
                   <YAxis stroke="#9ca3af" fontSize={10} tickLine={false} axisLine={false} />
-                  <Bar dataKey="count" fill="#4F46E5" radius={[6, 6, 0, 0]} />
+                  <Tooltip 
+                    cursor={{fill: '#F2F4F6'}}
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                  />
+                  <Bar dataKey="direct" stackId="a" fill="#050C9C" />
+                  <Bar dataKey="social" stackId="a" fill="#A7E6FF" />
+                  <Bar dataKey="referral" stackId="a" fill="#CBD5E1" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -258,7 +277,7 @@ export default function AnalyticsPage() {
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center">
                     <p className="text-sm text-[#9CA3AF] font-medium mb-1">{t('analytics.total')}</p>
-                    <p className="text-2xl font-bold text-[#191C1E]">14.2k</p>
+                    <p className="text-2xl font-bold text-[#191C1E]">{totalTraffic >= 1000 ? (totalTraffic/1000).toFixed(1) + 'k' : totalTraffic}</p>
                   </div>
                 </div>
               </div>
@@ -268,21 +287,21 @@ export default function AnalyticsPage() {
                     <span className="w-3 h-3 rounded-full bg-[#050C9C]"></span>
                     <span className="text-sm text-[#6B7280]">{t('analytics.direct')}</span>
                   </div>
-                  <span className="text-sm font-bold text-[#191C1E]">45%</span>
+                  <span className="text-sm font-bold text-[#191C1E]">{trafficSources.find(t => t.name === 'Direct')?.value || 0}%</span>
                 </div>
                 <div className="flex flex-wrap items-center justify-between">
                   <div className="flex flex-wrap items-center gap-3">
                     <span className="w-3 h-3 rounded-full bg-[#A7E6FF]"></span>
                     <span className="text-sm text-[#6B7280]">{t('analytics.social')}</span>
                   </div>
-                  <span className="text-sm font-bold text-[#191C1E]">25%</span>
+                  <span className="text-sm font-bold text-[#191C1E]">{trafficSources.find(t => t.name === 'Social')?.value || 0}%</span>
                 </div>
                 <div className="flex flex-wrap items-center justify-between">
                   <div className="flex flex-wrap items-center gap-3">
                     <span className="w-3 h-3 rounded-full bg-[#CBD5E1]"></span>
                     <span className="text-sm text-[#6B7280]">{t('analytics.referral')}</span>
                   </div>
-                  <span className="text-sm font-bold text-[#191C1E]">30%</span>
+                  <span className="text-sm font-bold text-[#191C1E]">{trafficSources.find(t => t.name === 'Referral')?.value || 0}%</span>
                 </div>
               </div>
             </div>
@@ -296,7 +315,7 @@ export default function AnalyticsPage() {
             <div className="space-y-4">
               <FunnelStep step="01" label={t('stats.totalClicks')} sub={t('analytics.entranceVisitors')} value={(s?.total_clicks || 0).toLocaleString()} color="bg-[#050C9C] text-white" />
               <FunnelStep step="02" label={t('analytics.referrals')} sub={`${s?.conversion_rate || 0}% ${t('analytics.conversion')}`} value={(s?.total_referrals || 0).toLocaleString()} color="bg-[#050C9C] text-white" />
-              <FunnelStep step="03" label={t('dashboard.subscriptions')} sub={`0.65% ${t('analytics.retention')}`} value="0" color="bg-[#050C9C] text-white" />
+              <FunnelStep step="03" label={t('dashboard.subscriptions')} sub={`${((s?.total_subscriptions || 0) / (s?.total_referrals || 1) * 100).toFixed(1)}% ${t('analytics.retention')}`} value={(s?.total_subscriptions || 0).toString()} color="bg-[#050C9C] text-white" />
             </div>
           </div>
 
@@ -309,7 +328,9 @@ export default function AnalyticsPage() {
               <InsightCard
                 icon={<Zap className="w-4 h-4 text-amber-600" />}
                 title={t('analytics.conversionJump')}
-                desc={t('analytics.conversionIncreased')}
+                desc={(s?.click_trend || 0) > 0 
+                  ? `زاد معدل النقرات الخاص بك بنسبة ${s.click_trend}% هذا الشهر مقارنة بالفترة الماضية.`
+                  : 'أداء النقرات مستقر حالياً، حاول تنويع مصادر الزيارات لزيادة النمو.'}
                 bgColor="bg-[#F2F4F6]"
               />
               <InsightCard
@@ -318,7 +339,7 @@ export default function AnalyticsPage() {
 </svg>
 }
                 title={t('analytics.topPerformer')}
-                desc={t('analytics.pricingPagePerformance')}
+                desc={`رابط ${s?.top_link_name || 'الرئيسي'} يستمر في الأداء الأفضل، ويساهم بنسبة ${s?.top_link_share || 0}% من إجمالي الزيارات.`}
                  bgColor="bg-[#F2F4F6]"
               />
             </div>

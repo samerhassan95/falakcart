@@ -124,6 +124,14 @@ class TrackingController extends Controller
         $affiliate->available_balance  += $commissionAmount;
         $affiliate->save();
 
+        // Create notification for affiliate
+        \App\Models\Notification::create([
+            'user_id' => $affiliate->user_id,
+            'type'    => 'commission_earned',
+            'title'   => 'New Commission Earned!',
+            'message' => 'You earned $' . number_format($commissionAmount, 2) . ' from a new sale.',
+        ]);
+
         return response()->json(['message' => 'sale_recorded', 'sale' => $sale]);
     }
 

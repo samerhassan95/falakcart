@@ -36,7 +36,7 @@ export default function AdminOverviewPage() {
       const [summaryRes, affiliatesRes, clicksRes] = await Promise.all([
         api.get('/admin/summary'),
         api.get('/admin/affiliates'),
-        api.get('/admin/clicks?days=30'),
+        api.get(`/admin/analytics/revenue-trend?period=${chartPeriod}`),
       ]);
       setSummary(summaryRes.data);
       setAffiliates(affiliatesRes.data);
@@ -46,7 +46,7 @@ export default function AdminOverviewPage() {
     } finally {
       setIsSyncing(false);
     }
-  }, []);
+  }, [chartPeriod]);
 
   useEffect(() => {
     if (loading) return;
@@ -83,10 +83,9 @@ export default function AdminOverviewPage() {
   const revenueTrend = totalRevenue > 5000 ? '-22.3%' : '+18.5%';
 
   const getChartData = () => {
-    if (chartPeriod === 'daily') return clickStats.slice(-7);
-    if (chartPeriod === 'weekly') return clickStats.slice(-4);
-    return clickStats.slice(-12);
+    return clickStats;
   };
+
 
   if (loading || isSyncing) {
     return (
@@ -584,13 +583,14 @@ export default function AdminOverviewPage() {
           <div className="bg-[#FFFFFF] rounded-xl p-6">
             <h3 className="text-[16px] font-bold uppercase tracking-wider text-[#505F76] mb-4">{t('admin.systemInviteCode')}</h3>
             <div className="flex items-center gap-3 bg-[#F2F4F6] rounded-xl p-4">
-              <span className="flex-1 text-[12px] font-mono text-[#475569] tracking-wide">STRATUM-ADMIN-2024-XQ92</span>
+              <span className="flex-1 text-[12px] font-mono text-[#475569] tracking-wide">falakcart.com</span>
               <button 
                 onClick={() => {
-                  navigator.clipboard.writeText('STRATUM-ADMIN-2024-XQ92');
+                  navigator.clipboard.writeText('falakcart.com');
                   setInviteCodeCopied(true);
                   setTimeout(() => setInviteCodeCopied(false), 2000);
                 }}
+
                 className="px-4 py-2 bg-[#050C9C] text-white text-[12px] font-semibold rounded-lg hover:bg-[#040a7a] transition-colors uppercase"
               >
                 {inviteCodeCopied ? t('common.copied').toUpperCase() : t('common.copy').toUpperCase()}

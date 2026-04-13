@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "loading": "Loading...",
     "save": "Save",
@@ -25,6 +25,7 @@
     "success": "Success",
     "warning": "Warning",
     "info": "Info",
+    "gotIt": "Got it!",
     "all": "All",
     "active": "Active",
     "pending": "Pending",
@@ -161,7 +162,9 @@
     "noTransactionsFound": "No transactions found.",
     "showing": "Showing",
     "of": "of",
-    "transactions": "transactions"
+    "transactions": "transactions",
+    "payoutRequested": "Payout Requested",
+    "payoutSuccessMessage": "Your payout request has been received. It will be processed and transferred to your bank account during the next window."
   },
   "links": {
     "title": "My Referral Links",
@@ -337,6 +340,7 @@
     "activeSubscriptions": "ACTIVE SUBSCRIPTIONS",
     "pendingEarnings": "PENDING EARNINGS",
     "paidEarnings": "PAID EARNINGS",
+    "totalEarnings": "TOTAL EARNINGS",
     "totalAffiliates": "TOTAL AFFILIATES",
     "activeAffiliates": "ACTIVE AFFILIATES",
     "totalClicks": "TOTAL CLICKS",
