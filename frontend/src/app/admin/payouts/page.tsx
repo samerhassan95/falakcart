@@ -74,7 +74,7 @@ export default function AdminPayoutsPage() {
 
   const filteredPayoutHistory = payoutHistory.filter((payout) => {
     if (historyFilter === 'all') return true;
-    if (historyFilter === 'paid') return payout.status === 'paid';
+    if (historyFilter === 'paid') return payout.status === 'paid' || payout.status === 'completed';
     return payout.status === 'failed';
   });
 

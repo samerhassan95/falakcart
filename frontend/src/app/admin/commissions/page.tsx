@@ -71,8 +71,10 @@ export default function AdminCommissionsPage() {
   }, []);
 
 
-  const pageCount = Math.max(1, Math.ceil(allCommissions.length / pageSize));
-  const paginatedCommissions = allCommissions.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  // Filtering is handled server-side; alias for CSV export
+  const filteredCommissions = allCommissions;
+  const pageCount = Math.max(1, Math.ceil(filteredCommissions.length / pageSize));
+  const paginatedCommissions = filteredCommissions.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
 
   const fetchCommissionsData = useCallback(async () => {
@@ -196,9 +198,10 @@ export default function AdminCommissionsPage() {
           iconBgColor="#FFFBEB"
           label={t('common.pending').toUpperCase()}
           value={`$${(commissionsSummary?.pending || 0).toLocaleString()}`}
-          change="+4.2%"
-          isPositive={true}
+          change={pendingCommissions.length > 0 ? `${pendingCommissions.length} ${t('admin.new')}` : ''}
+          isPositive={false}
           backgroundSvg={undefined}
+          changeColor="#F59E0B"
         />
         <StatCard
           icon={<svg width="38" height="37" viewBox="0 0 38 37" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -209,9 +212,10 @@ export default function AdminCommissionsPage() {
           iconBgColor="#EEF2FF"
           label={t('common.approved').toUpperCase()}
           value={`$${(commissionsSummary?.approved || 0).toLocaleString()}`}
-          change="+8.1%"
+          change={(commissionsSummary?.approved ?? 0) > 0 ? `$${(commissionsSummary!.approved).toLocaleString()}` : ''}
           isPositive={true}
           backgroundSvg={undefined}
+          changeColor="#3572EF"
         />
         <StatCard
           icon={<svg width="38" height="32" viewBox="0 0 38 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -222,9 +226,10 @@ export default function AdminCommissionsPage() {
           iconBgColor="#ECFDF5"
           label={t('admin.paid')}
           value={`$${(commissionsSummary?.paid || 0).toLocaleString()}`}
-          change="0.0%"
-          isPositive={false}
+          change={(commissionsSummary?.paid ?? 0) > 0 ? `$${(commissionsSummary!.paid).toLocaleString()}` : ''}
+          isPositive={true}
           backgroundSvg={undefined}
+          changeColor="#10B981"
         />
       </div>
 

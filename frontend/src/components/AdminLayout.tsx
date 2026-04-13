@@ -270,17 +270,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* Bottom Actions */}
         <div className="px-4 pb-6 space-y-3">
-          <Link
-            href="/links?create=true"
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="w-full flex items-center justify-center gap-2 px-5 py-3.5 text-white rounded-2xl text-sm font-bold transition-all shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/40"
-            style={{ background: 'linear-gradient(135deg, #2A14B4 0%, #4338CA 100%)' }}
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
-            </svg>
-            {t('navigation.generateLink')}
-          </Link>
+          {/* Removed generate link button from admin sidebar as it's an affiliate action */}
           <button
             onClick={logout}
             className="w-full flex items-center justify-start gap-3 px-5 py-3 text-[#64748B] hover:text-red-500 rounded-2xl text-sm font-semibold transition-colors hover:bg-red-50"

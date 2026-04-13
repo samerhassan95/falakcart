@@ -100,7 +100,7 @@ export default function AdminAffiliatesPage() {
           iconBgColor="#E3DFFF"
           label={t('admin.totalAffiliatesLabel')}
           value={stats.total.toLocaleString()}
-          change="+12%"
+          change={stats.total > 0 ? `${stats.total} ${t('common.active')}` : ''}
           isPositive={true}
           backgroundSvg={undefined}
         />
@@ -301,7 +301,7 @@ export default function AdminAffiliatesPage() {
                   <td className="px-6 py-5 text-center">
                     <div>
                       <p className="font-bold text-[#191C1E]">{aff.sales_count || 0}</p>
-                      <p className="text-xs text-green-600">+{aff.clicks_count || 0}%</p>
+                      <p className="text-xs text-blue-600">{aff.clicks_count || 0} {t('links.clicks')}</p>
                     </div>
                   </td>
                   <td className="px-6 py-5 text-center">
@@ -396,8 +396,8 @@ export default function AdminAffiliatesPage() {
             </div>
             
             <div className="space-y-6 pt-4">
-              {affiliates.slice(0, 3).map((aff: Affiliate, idx: number) => {
-                const maxEarnings = Math.max(...affiliates.slice(0, 3).map(a => a.total_earnings || 0));
+              {[...affiliates].sort((a,b)=>(b.total_earnings || 0) - (a.total_earnings || 0)).slice(0, 3).map((aff: Affiliate, idx: number) => {
+                const maxEarnings = Math.max(...affiliates.map(a => a.total_earnings || 0));
                 const progressWidth = maxEarnings > 0 ? ((aff.total_earnings || 0) / maxEarnings) * 100 : 0;
                 
                 return (

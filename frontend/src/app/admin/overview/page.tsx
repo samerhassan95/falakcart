@@ -76,11 +76,11 @@ export default function AdminOverviewPage() {
   const totalConversions = summary?.total_sales || 0;
   const totalRevenue = summary?.total_revenue || 0;
 
-  const affiliatesTrend = '+6.4%';
-  const activeTrend = '+9.1%';
-  const clicksTrend = totalClicks > 50 ? '-2.4%' : '+5.2%';
-  const conversionsTrend = totalConversions > 20 ? '-19.8%' : '+12.3%';
-  const revenueTrend = totalRevenue > 5000 ? '-22.3%' : '+18.5%';
+  const affiliatesTrend = summary?.total_affiliates_trend || '+0%';
+  const activeTrend = summary?.active_affiliates_trend || '+0%';
+  const clicksTrend = summary?.total_clicks_trend || '+0%';
+  const conversionsTrend = summary?.total_sales_trend || '+0%';
+  const revenueTrend = summary?.total_revenue_trend || '+0%';
 
   const getChartData = () => {
     return clickStats;

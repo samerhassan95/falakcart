@@ -39,14 +39,15 @@ export default function AdminAnalyticsPage() {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
+      const days = dateRange === '7days' ? 7 : dateRange === '30days' ? 30 : 90;
       try {
         const [summaryRes, affiliatesRes, clicksRes, devicesRes, geoRes, sourcesRes] = await Promise.all([
-          api.get('/admin/summary'),
-          api.get('/admin/affiliates'),
-          api.get('/admin/clicks?days=30'),
-          api.get('/admin/analytics/devices?days=30'),
-          api.get('/admin/analytics/geo?days=30'),
-          api.get('/admin/analytics/traffic-sources?days=30'),
+          api.get(`/admin/summary?days=${days}`),
+          api.get(`/admin/affiliates?days=${days}`),
+          api.get(`/admin/clicks?days=${days}`),
+          api.get(`/admin/analytics/devices?days=${days}`),
+          api.get(`/admin/analytics/geo?days=${days}`),
+          api.get(`/admin/analytics/traffic-sources?days=${days}`),
         ]);
 
         setSummary(summaryRes.data);
@@ -89,7 +90,7 @@ export default function AdminAnalyticsPage() {
     };
 
     fetchData();
-  }, []);
+  }, [dateRange]);
 
   const exportCSV = async () => {
     try {
@@ -197,10 +198,10 @@ export default function AdminAnalyticsPage() {
 </svg>
 }
           iconBgColor="#E3DFFF"
-          label="TOTAL REVENUE"
+          label={t('stats.totalRevenue').toUpperCase()}
           value={`$${totalRevenue.toLocaleString()}`}
-          change="+9%"
-          isPositive={true}
+          change={summary?.total_revenue_trend || '+0%'}
+          isPositive={(summary?.total_revenue_trend || '+0%').startsWith('+')}
           backgroundSvg={undefined}
         />
         <StatCard
@@ -209,10 +210,10 @@ export default function AdminAnalyticsPage() {
 </svg>
 }
           iconBgColor="#FFF7ED"
-          label="TOTAL CONVERSIONS"
+          label={t('stats.totalConversions').toUpperCase()}
           value={totalConversions.toLocaleString()}
-          change="+8%"
-          isPositive={true}
+          change={summary?.total_sales_trend || '+0%'}
+          isPositive={(summary?.total_sales_trend || '+0%').startsWith('+')}
           backgroundSvg={undefined}
         />
         <StatCard
@@ -221,9 +222,9 @@ export default function AdminAnalyticsPage() {
 </svg>
 }
           iconBgColor="#FFF7ED"
-          label="CONVERSION RATE"
+          label={t('analytics.conversionRate').toUpperCase()}
           value={`${conversionRate}%`}
-          change="+2.4%"
+          change=""
           isPositive={true}
           backgroundSvg={undefined}
         />
@@ -233,9 +234,9 @@ export default function AdminAnalyticsPage() {
 </svg>
 }
           iconBgColor="#E3DFFF"
-          label="AVG. ORDER VALUE"
+          label={t('analytics.avgOrderValue').toUpperCase()}
           value={`$${avgOrderValue}`}
-          change="+1.2%"
+          change=""
           isPositive={true}
           backgroundSvg={undefined}
         />
@@ -265,8 +266,7 @@ export default function AdminAnalyticsPage() {
                   <XAxis dataKey="date" stroke="#9ca3af" fontSize={11} tickLine={false} />
                   <YAxis stroke="#9ca3af" fontSize={11} tickLine={false} />
                   <Tooltip />
-                  <Bar dataKey="count" fill="#93C5FD" radius={[8, 8, 0, 0]} />
-                  <Bar dataKey="count" fill="#050C9C" radius={[8, 8, 0, 0]} />
+                  <Bar dataKey="count" fill="#050C9C" radius={[8, 8, 0, 0]} name={t('analytics.clicks')} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -340,21 +340,21 @@ export default function AdminAnalyticsPage() {
                 icon={<svg width="12" height="7" viewBox="0 0 12 7" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M0.816667 7L0 6.18333L4.31667 1.8375L6.65 4.17083L9.68333 1.16667H8.16667V0H11.6667V3.5H10.5V1.98333L6.65 5.83333L4.31667 3.5L0.816667 7Z" fill="#16A34A"/>
                 </svg>}
-                text={t('analytics.revenueIncreased')}
+                text={t('analytics.revenueIncreased', { rate: summary?.total_revenue_trend || '0%' })}
                 subtext={t('analytics.affiliateCampaigns')}
               />
               <InsightItem 
                 icon={<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M3.99583 8.64792L5.83333 7.53958L7.67083 8.6625L7.18958 6.5625L8.80833 5.1625L6.67917 4.97292L5.83333 2.98958L4.9875 4.95833L2.85833 5.14792L4.47708 6.5625L3.99583 8.64792ZM2.23125 11.0833L3.17917 6.98542L0 4.22917L4.2 3.86458L5.83333 0L7.46667 3.86458L11.6667 4.22917L8.4875 6.98542L9.43542 11.0833L5.83333 8.91042L2.23125 11.0833Z" fill="#050C9C"/>
                 </svg>}
-                text={t('analytics.topAffiliatesGenerate')}
+                text={t('analytics.topAffiliatesGenerate', { percent: affiliates.length > 0 ? Math.round((topAffiliates.length / affiliates.length) * 100) : 0 })}
                 subtext={t('analytics.diversifyBase')}
               />
               <InsightItem 
                 icon={<svg width="13" height="12" viewBox="0 0 13 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M0 11.0833L6.41667 0L12.8333 11.0833H0ZM2.0125 9.91667H10.8208L6.41667 2.33333L2.0125 9.91667ZM6.41667 9.33333C6.58194 9.33333 6.72049 9.27743 6.83229 9.16562C6.9441 9.05382 7 8.91528 7 8.75C7 8.58472 6.9441 8.44618 6.83229 8.33438C6.72049 8.22257 6.58194 8.16667 6.41667 8.16667C6.25139 8.16667 6.11285 8.22257 6.00104 8.33438C5.88924 8.44618 5.83333 8.58472 5.83333 8.75C5.83333 8.91528 5.88924 9.05382 6.00104 9.16562C6.11285 9.27743 6.25139 9.33333 6.41667 9.33333ZM5.83333 7.58333H7V4.66667H5.83333V7.58333Z" fill="#DC2626"/>
                 </svg>}
-                text={t('analytics.conversionDropped')}
+                text={t('analytics.conversionDropped', { rate: summary?.total_sales_trend || '0%' })}
                 subtext={t('analytics.mobileCheckoutFriction')}
               />
             </div>

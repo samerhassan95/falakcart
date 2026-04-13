@@ -4,11 +4,16 @@ import { type ReactNode } from 'react';
 // Types
 export interface Summary {
   total_affiliates: number;
+  total_affiliates_trend?: string;
   active_affiliates: number;
+  active_affiliates_trend?: string;
   total_sales: number;
+  total_sales_trend?: string;
   total_revenue: number;
+  total_revenue_trend?: string;
   total_commissions: number;
   total_clicks: number;
+  total_clicks_trend?: string;
 }
 
 export interface Affiliate {

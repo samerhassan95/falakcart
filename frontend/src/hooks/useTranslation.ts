@@ -26,7 +26,7 @@ export function useTranslation() {
     // Load translations
     const loadTranslations = (locale: 'ar' | 'en') => {
       // Force refresh for this specific update to solve the 22% bug
-      const cacheVersion = 'v3';
+      const cacheVersion = 'v4';
       const cacheKey = `translations_${locale}_${cacheVersion}`;
       const cached = sessionStorage.getItem(cacheKey);
       
