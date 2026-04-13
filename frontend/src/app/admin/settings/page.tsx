@@ -510,6 +510,16 @@ export default function AdminSettingsPage() {
                     </div>
                   </div>
                 </div>
+
+                <div className="flex justify-center pt-4">
+                  <button 
+                    onClick={handleSave}
+                    disabled={loading}
+                    className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white rounded-full font-semibold text-sm"
+                  >
+                    {loading ? t('common.saving') : t('common.save')}
+                  </button>
+                </div>
               </div>
             </div>
           )}
@@ -525,10 +535,10 @@ export default function AdminSettingsPage() {
                     <span className="text-white font-bold text-sm">F</span>
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold text-[#191C1E] text-sm">azlakCart</p>
+                    <p className="font-semibold text-[#191C1E] text-sm">FalakCart Tracking API</p>
                   </div>
-                  <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">
-                    {t('admin.connected')}
+                  <span className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">
+                    {integrationStatus}
                   </span>
                 </div>
 
@@ -548,6 +558,16 @@ export default function AdminSettingsPage() {
                       </svg>
                     </button>
                   </div>
+                </div>
+
+                <div className="flex justify-center pt-4">
+                  <button 
+                    onClick={handleSave}
+                    disabled={loading}
+                    className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white rounded-full font-semibold text-sm"
+                  >
+                    {loading ? t('common.saving') : t('common.save')}
+                  </button>
                 </div>
               </div>
             </div>

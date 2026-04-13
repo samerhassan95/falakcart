@@ -10,6 +10,12 @@ use Illuminate\Http\Request;
 
 class TrackingController extends Controller
 {
+    private function loadSettings(): array
+    {
+        $path = storage_path('app/settings.json');
+        return file_exists($path) ? json_decode(file_get_contents($path), true) : [];
+    }
+
     public function recordClick(Request $request)
     {
         $referralCode = $request->query('ref');
@@ -69,7 +75,10 @@ class TrackingController extends Controller
             return response()->json(['error' => 'affiliate_not_found'], 404);
         }
 
-        $rate     = (float) ($affiliate->commission_rate ?? 10.00);
+        $settings = $this->loadSettings();
+        $defaultRate = $settings['default_commission_rate'] ?? 10.00;
+
+        $rate     = (float) ($affiliate->commission_rate ?? $defaultRate);
         $type     = $affiliate->commission_type ?? 'percentage';
         $strategy = $affiliate->commission_strategy ?? 'flat';
 

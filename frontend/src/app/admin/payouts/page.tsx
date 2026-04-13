@@ -51,15 +51,24 @@ const formatCurrency = (value?: number | string | null) => {
   return amount.toFixed(2);
 };
 
+const getDefaultDateRange = () => {
+  const now = new Date();
+  const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  const fmt = (d: Date) => d.toISOString().split('T')[0];
+  return { start: fmt(firstDay), end: fmt(lastDay) };
+};
+
 export default function AdminPayoutsPage() {
   const { t } = useTranslation();
+  const { start: defaultStart, end: defaultEnd } = getDefaultDateRange();
   const [payoutsSummary, setPayoutsSummary] = useState<PayoutsSummary | null>(null);
   const [pendingPayouts, setPendingPayouts] = useState<PayoutAffiliate[]>([]);
   const [payoutHistory, setPayoutHistory] = useState<Sale[]>([]);
-  const [paymentHealth, setPaymentHealth] = useState({ successRate: 0, methods: { bankTransfer: 0, paypal: 0, crypto: 0 } });
+  const [paymentHealth, setPaymentHealth] = useState({ successRate: 0, processed: 0, total: 0, methods: { bankTransfer: 0, paypal: 0, crypto: 0 } });
   const [historyFilter, setHistoryFilter] = useState<'all' | 'paid' | 'failed'>('all');
-  const [startDate, setStartDate] = useState('2023-10-01');
-  const [endDate, setEndDate] = useState('2023-10-31');
+  const [startDate, setStartDate] = useState(defaultStart);
+  const [endDate, setEndDate] = useState(defaultEnd);
   const [currentHistoryPage, setCurrentHistoryPage] = useState(1);
   const historyPageSize = 10;
 
@@ -82,12 +91,15 @@ export default function AdminPayoutsPage() {
       setPayoutsSummary(summaryRes.data);
       setPendingPayouts(pendingRes.data);
       setPayoutHistory(historyRes.data);
+      const health = summaryRes.data.payment_health ?? {};
       setPaymentHealth({
-        successRate: summaryRes.data.payment_health?.success_rate ?? 0,
+        successRate: health.success_rate ?? 0,
+        processed: health.processed ?? 0,
+        total: health.total ?? 0,
         methods: {
-          bankTransfer: summaryRes.data.payment_health?.methods?.bank_transfer ?? 0,
-          paypal: summaryRes.data.payment_health?.methods?.paypal ?? 0,
-          crypto: summaryRes.data.payment_health?.methods?.crypto ?? 0,
+          bankTransfer: health.methods?.bank_transfer ?? 0,
+          paypal: health.methods?.paypal ?? 0,
+          crypto: health.methods?.crypto ?? 0,
         },
       });
     } catch (err) {
@@ -320,12 +332,14 @@ export default function AdminPayoutsPage() {
             <div>
               <div className="flex items-center justify-between mb-3">
                 <span className="text-[12px] font-semibold text-[#191C1E]">{t('payouts.payoutsProcessed')}</span>
-                <span className="text-[12px] font-bold text-[#191C1E]">482/490</span>
+                <span className="text-[12px] font-bold text-[#191C1E]">
+                  {paymentHealth.processed > 0 ? `${paymentHealth.processed}/${paymentHealth.total}` : `${payoutHistory.filter(p => p.status === 'paid' || p.status === 'completed').length}/${payoutHistory.length || 1}`}
+                </span>
               </div>
               <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-[#050C9C] rounded-full transition-all duration-500" 
-                  style={{ width: `${(482/490) * 100}%` }}
+                  style={{ width: `${paymentHealth.total > 0 ? (paymentHealth.processed / paymentHealth.total) * 100 : payoutHistory.length > 0 ? (payoutHistory.filter(p => p.status === 'paid' || p.status === 'completed').length / payoutHistory.length) * 100 : 0}%` }}
                 ></div>
               </div>
             </div>
@@ -518,7 +532,7 @@ function PayoutRequestRow({ name, id, amount, date, method, status, onApprove }:
             <CheckCircle className="w-4 h-4" />
           </button>
         )}
-        <button onClick={() => alert('Reject payout is not supported yet.')} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg">
+        <button onClick={() => console.warn('Reject payout feature coming soon.')} className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg" title="Reject (coming soon)">
           <XCircle className="w-4 h-4" />
         </button>
       </div>

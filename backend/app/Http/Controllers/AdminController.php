@@ -556,51 +556,60 @@ class AdminController extends Controller
 
     public function getPayoutsSummary(Request $request)
     {
-        $days = (int) $request->query('days', 30);
         $availableBalance = (float) Affiliate::sum('current_balance');
-        $pendingPayouts = (float) Affiliate::where('status', 'active')->sum('pending_balance');
+        $pendingPayouts   = (float) Affiliate::where('status', 'active')->sum('pending_balance');
 
-        $cutoffDate = now()->subDays($days);
-        $paidSales = Sale::where('status', 'paid')->where('updated_at', '>=', $cutoffDate);
-        $failedSales = Sale::where('status', 'failed')->where('updated_at', '>=', $cutoffDate);
+        // Support start_date/end_date range or fallback to days
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $start = $request->query('start_date') . ' 00:00:00';
+            $end   = $request->query('end_date')   . ' 23:59:59';
+            $baseQuery = function ($q) use ($start, $end) {
+                $q->whereBetween('updated_at', [$start, $end]);
+            };
+        } else {
+            $days = (int) $request->query('days', 30);
+            $cutoff = now()->subDays($days);
+            $baseQuery = function ($q) use ($cutoff) {
+                $q->where('updated_at', '>=', $cutoff);
+            };
+        }
 
-        $totalPaid = (float) $paidSales->sum('commission_amount');
-        $failedCount = $failedSales->count();
-        $paidCount = $paidSales->count();
+        $paidCount   = Sale::where('status', 'paid')->tap($baseQuery)->count();
+        $failedCount = Sale::where('status', 'failed')->tap($baseQuery)->count();
+        $totalPaid   = (float) Sale::where('status', 'paid')->tap($baseQuery)->sum('commission_amount');
+
         $totalTransactions = max(1, $paidCount + $failedCount);
         $successRate = round(100 * $paidCount / $totalTransactions, 1);
 
         $methodCounts = Sale::with('affiliate')
             ->whereIn('status', ['paid', 'failed'])
-            ->where('updated_at', '>=', $cutoffDate)
+            ->tap($baseQuery)
             ->get()
             ->groupBy(function ($sale) {
                 $bankName = strtolower($sale->affiliate->bank_name ?? '');
-                if (str_contains($bankName, 'paypal')) {
-                    return 'paypal';
-                }
-                if (str_contains($bankName, 'crypto') || str_contains($bankName, 'usdt')) {
-                    return 'crypto';
-                }
+                if (str_contains($bankName, 'paypal'))                             return 'paypal';
+                if (str_contains($bankName, 'crypto') || str_contains($bankName, 'usdt')) return 'crypto';
                 return 'bank_transfer';
             });
 
         $totalMethodCount = max(1, $methodCounts->sum->count());
-        $bankTransferPct = round(100 * ($methodCounts->get('bank_transfer')?->count() ?? 0) / $totalMethodCount);
-        $paypalPct = round(100 * ($methodCounts->get('paypal')?->count() ?? 0) / $totalMethodCount);
-        $cryptoPct = round(100 * ($methodCounts->get('crypto')?->count() ?? 0) / $totalMethodCount);
+        $bankTransferPct  = round(100 * ($methodCounts->get('bank_transfer')?->count() ?? 0) / $totalMethodCount);
+        $paypalPct        = round(100 * ($methodCounts->get('paypal')?->count()        ?? 0) / $totalMethodCount);
+        $cryptoPct        = round(100 * ($methodCounts->get('crypto')?->count()        ?? 0) / $totalMethodCount);
 
         return response()->json([
             'available_balance' => $availableBalance,
-            'total_paid' => $totalPaid,
-            'pending_payouts' => $pendingPayouts,
-            'failed_payouts' => $failedCount,
-            'payment_health' => [
+            'total_paid'        => $totalPaid,
+            'pending_payouts'   => $pendingPayouts,
+            'failed_payouts'    => $failedCount,
+            'payment_health'    => [
                 'success_rate' => $successRate,
-                'methods' => [
+                'processed'    => $paidCount,
+                'total'        => $totalTransactions,
+                'methods'      => [
                     'bank_transfer' => $bankTransferPct,
-                    'paypal' => $paypalPct,
-                    'crypto' => $cryptoPct,
+                    'paypal'        => $paypalPct,
+                    'crypto'        => $cryptoPct,
                 ],
             ],
         ]);
