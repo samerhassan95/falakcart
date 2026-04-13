@@ -6,6 +6,7 @@ import type { Affiliate } from '../shared';
 import { formatCurrency } from '../shared';
 import { StatCard } from '@/components/StatCard';
 import { useTranslation } from '@/hooks/useTranslation';
+import { Link2, Plus } from 'lucide-react';
 
 export default function AdminAffiliatesPage() {
   const { t, locale } = useTranslation();
@@ -15,6 +16,8 @@ export default function AdminAffiliatesPage() {
   const [sortBy, setSortBy] = useState<'performance' | 'name' | 'date'>('performance');
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [showCreateLink, setShowCreateLink] = useState(false);
+  const [newLinkName, setNewLinkName] = useState('');
   const pageSize = 4;
 
   const fetchData = useCallback(async () => {
@@ -53,6 +56,19 @@ export default function AdminAffiliatesPage() {
     }
   };
 
+  const createLink = async () => {
+    if (!newLinkName.trim()) return;
+    try {
+      const response = await api.post('/admin/links', { name: newLinkName });
+      setNewLinkName('');
+      setShowCreateLink(false);
+      // Show success message (you can add a toast notification here)
+      console.log('Link created successfully:', response.data);
+    } catch (err) {
+      console.error('Error creating link', err);
+    }
+  };
+
   const filteredAffiliates = affiliates.filter((aff: Affiliate) => {
     const matchesFilter = filter === 'all' || aff.status === filter;
     return matchesFilter;
@@ -88,6 +104,23 @@ export default function AdminAffiliatesPage() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
+
+      {/* Header with Create Link Button */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl sm:text-[44px] text-[#191C1E] tracking-tight">{t('admin.affiliates')}</h1>
+          <p className="text-[#505F76] mt-1 text-sm sm:text-[16px]">{t('admin.manageAffiliates')}</p>
+        </div>
+        <button
+          onClick={() => setShowCreateLink(true)}
+          className="flex items-center justify-center gap-2 px-5 py-2.5 text-white rounded-xl text-sm font-semibold transition-all shadow-lg"
+          style={{ background: 'linear-gradient(135deg, #2A14B4 0%, #4338CA 100%)' }}
+        >
+          <Link2 className="w-4 h-4" />
+          <span className="hidden sm:inline">{t('links.createNewLink')}</span>
+          <span className="sm:hidden">Create</span>
+        </button>
+      </div>
 
 
       {/* Stats Cards */}
@@ -508,6 +541,28 @@ export default function AdminAffiliatesPage() {
           </div>
         </div>
       </div>
+
+      {/* Create Link Modal */}
+      {showCreateLink && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+          <div className="bg-white rounded-2xl w-full max-w-md p-6 sm:p-8 shadow-2xl">
+            <h2 className="text-lg sm:text-xl font-bold text-[#191C1E] mb-4">{t('links.createNewLink')}</h2>
+            <input
+              type="text"
+              placeholder={t('links.campaignNamePlaceholder')}
+              value={newLinkName}
+              onChange={(e) => setNewLinkName(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 mb-4"
+            />
+            <div className="flex gap-3 justify-end">
+              <button onClick={() => setShowCreateLink(false)} className="px-5 py-2.5 text-[#505F76] hover:text-gray-700 text-sm font-medium">{t('common.cancel')}</button>
+              <button onClick={createLink} className="px-6 py-2.5 bg-indigo-600 hover:bg-[#050C9C] text-white rounded-xl text-sm font-semibold transition-colors flex items-center gap-2">
+                <Plus className="w-4 h-4" /> {t('links.createLink')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

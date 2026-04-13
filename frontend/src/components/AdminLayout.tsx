@@ -6,6 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useState, useRef, useEffect, useMemo } from 'react';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useTranslation } from '@/hooks/useTranslation';
+import { Plus } from 'lucide-react';
 import api from '@/lib/api';
 
 // Icons
@@ -84,16 +85,21 @@ const SettingsIcon = ({ className, isActive }: { className?: string; isActive?: 
 const navItems = [
   { label: 'admin.overview', href: '/admin/overview', icon: DashboardIcon },
   { label: 'admin.affiliates', href: '/admin/affiliates', icon: UsersIcon },
+  { label: 'admin.allLinks', href: '/admin/links', icon: ({ className, isActive }: { className?: string; isActive?: boolean }) => (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <path d="M8.1 10.8H4.5C3.15 10.8 2.025 9.675 2.025 8.325C2.025 6.975 3.15 5.85 4.5 5.85H8.1V7.2H4.5C3.9 7.2 3.375 7.725 3.375 8.325C3.375 8.925 3.9 9.45 4.5 9.45H8.1V10.8ZM5.4 9H12.6V7.65H5.4V9ZM9.9 10.8V9.45H13.5C14.1 9.45 14.625 8.925 14.625 8.325C14.625 7.725 14.1 7.2 13.5 7.2H9.9V5.85H13.5C14.85 5.85 15.975 6.975 15.975 8.325C15.975 9.675 14.85 10.8 13.5 10.8H9.9Z" stroke={isActive ? "#050C9C" : "currentColor"} strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ) },
   { label: 'admin.commissions', href: '/admin/commissions', icon: CommissionsIcon },
   { label: 'navigation.analytics', href: '/admin/analytics', icon: AnalyticsIcon },
   { label: 'admin.payouts', href: '/admin/payouts', icon: PayoutsIcon },
   { label: 'admin.settings', href: '/admin/settings', icon: SettingsIcon },
-];
+]; 
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -102,6 +108,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [currentLocale, setCurrentLocale] = useState('ar');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
+  const [showCreateLink, setShowCreateLink] = useState(false);
+  const [newLinkName, setNewLinkName] = useState('');
   const menuRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
@@ -182,6 +190,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       }
     } else {
       setShowNotifications(false);
+    }
+  };
+
+  const createLink = async () => {
+    if (!newLinkName.trim()) return;
+    try {
+      const response = await api.post('/admin/links', { name: newLinkName });
+      setNewLinkName('');
+      setShowCreateLink(false);
+      console.log('Link created successfully:', response.data);
+    } catch (err) {
+      console.error('Error creating link', err);
     }
   };
 
@@ -270,7 +290,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* Bottom Actions */}
         <div className="px-4 pb-6 space-y-3">
-          {/* Removed generate link button from admin sidebar as it's an affiliate action */}
+          <button
+            onClick={() => setShowCreateLink(true)}
+            className="w-full flex items-center justify-center gap-2 px-5 py-3.5 text-white rounded-2xl text-sm font-bold transition-all shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/40"
+            style={{ background: 'linear-gradient(135deg, #2A14B4 0%, #4338CA 100%)' }}
+          >
+            <Plus className="w-5 h-5" strokeWidth={2.5} />
+            {t('links.createNewLink')}
+          </button>
           <button
             onClick={logout}
             className="w-full flex items-center justify-start gap-3 px-5 py-3 text-[#64748B] hover:text-red-500 rounded-2xl text-sm font-semibold transition-colors hover:bg-red-50"
@@ -384,6 +411,28 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {children}
         </div>
       </main>
+
+      {/* Create Link Modal */}
+      {showCreateLink && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+          <div className="bg-white rounded-2xl w-full max-w-md p-6 sm:p-8 shadow-2xl">
+            <h2 className="text-lg sm:text-xl font-bold text-[#191C1E] mb-4">{t('links.createNewLink')}</h2>
+            <input
+              type="text"
+              placeholder={t('links.campaignNamePlaceholder')}
+              value={newLinkName}
+              onChange={(e) => setNewLinkName(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 mb-4"
+            />
+            <div className="flex gap-3 justify-end">
+              <button onClick={() => setShowCreateLink(false)} className="px-5 py-2.5 text-[#505F76] hover:text-gray-700 text-sm font-medium">{t('common.cancel')}</button>
+              <button onClick={createLink} className="px-6 py-2.5 bg-indigo-600 hover:bg-[#050C9C] text-white rounded-xl text-sm font-semibold transition-colors flex items-center gap-2">
+                <Plus className="w-4 h-4" /> {t('links.createLink')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

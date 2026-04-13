@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Affiliate;
+use App\Models\AffiliateLink;
 use App\Models\Click;
 use App\Models\Sale;
 use App\Models\User;
@@ -10,6 +11,7 @@ use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
@@ -733,5 +735,85 @@ class AdminController extends Controller
             ->update(['read_at' => now()]);
 
         return response()->json(['message' => 'Notifications marked as read']);
+    }
+
+    // ─── Admin Link Management ──────────────────────────────────────────────────
+
+    public function createLinkForAffiliate(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:100',
+            'affiliate_id' => 'nullable|exists:affiliates,id'
+        ]);
+
+        // If no affiliate_id provided, create for the first active affiliate
+        // or create a general system link
+        $affiliateId = $request->affiliate_id;
+        if (!$affiliateId) {
+            $affiliate = Affiliate::where('status', 'active')->first();
+            if (!$affiliate) {
+                // Create a system affiliate if none exists
+                $systemUser = User::where('role', 'admin')->first();
+                if (!$systemUser) {
+                    return response()->json(['error' => 'No admin user found'], 400);
+                }
+                
+                $affiliate = Affiliate::create([
+                    'user_id' => $systemUser->id,
+                    'referral_code' => 'SYSTEM',
+                    'status' => 'active',
+                ]);
+            }
+            $affiliateId = $affiliate->id;
+        }
+
+        $affiliate = Affiliate::findOrFail($affiliateId);
+        
+        $baseSlug = Str::slug($affiliate->referral_code . '-' . $request->name);
+        $slug = $baseSlug;
+        while (AffiliateLink::where('slug', $slug)->exists()) {
+            $slug = $baseSlug . '-' . Str::lower(Str::random(4));
+        }
+
+        $link = AffiliateLink::create([
+            'affiliate_id' => $affiliateId,
+            'name'         => $request->name,
+            'slug'         => $slug,
+            'source'       => $request->source ?? 'admin-created',
+            'is_active'    => true,
+        ]);
+
+        return response()->json([
+            'id' => $link->id,
+            'name' => $link->name,
+            'slug' => $link->slug,
+            'referral_url' => config('app.falakcart_main_url', 'https://falakcart.com') . '/register?ref=' . $link->slug,
+            'is_active' => $link->is_active,
+            'affiliate_name' => $affiliate->user->name,
+            'created_at' => $link->created_at->format('M d, Y'),
+        ], 201);
+    }
+
+    public function getAllLinks()
+    {
+        $links = AffiliateLink::with(['affiliate.user'])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($link) {
+                return [
+                    'id' => $link->id,
+                    'name' => $link->name,
+                    'slug' => $link->slug,
+                    'referral_url' => config('app.falakcart_main_url', 'https://falakcart.com') . '/register?ref=' . $link->slug,
+                    'is_active' => $link->is_active,
+                    'affiliate_name' => $link->affiliate->user->name,
+                    'affiliate_id' => $link->affiliate_id,
+                    'clicks' => $link->clicks_count ?? 0,
+                    'conversions' => $link->conversions_count ?? 0,
+                    'created_at' => $link->created_at->format('M d, Y'),
+                ];
+            });
+
+        return response()->json($links);
     }
 }

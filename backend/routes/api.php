@@ -102,6 +102,10 @@ Route::middleware(['auth:api'])->group(function () {
         // Admin notifications (separate from affiliate notifications)
         Route::get('notifications', [AdminController::class, 'getNotifications']);
         Route::post('notifications/read', [AdminController::class, 'markNotificationsRead']);
+        
+        // Admin link management
+        Route::post('links', [AdminController::class, 'createLinkForAffiliate']);
+        Route::get('links', [AdminController::class, 'getAllLinks']);
     });
 });
 
