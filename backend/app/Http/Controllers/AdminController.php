@@ -6,6 +6,7 @@ use App\Models\Affiliate;
 use App\Models\Click;
 use App\Models\Sale;
 use App\Models\User;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -29,13 +30,50 @@ class AdminController extends Controller
 
     public function getSummary()
     {
+        $lastMonthStart = now()->subDays(60);
+        $thisMonthStart = now()->subDays(30);
+
+        $calculateTrend = function ($currentCount, $pastCount) {
+            if ($pastCount > 0) return round((($currentCount - $pastCount) / $pastCount) * 100, 1) . '%';
+            return $currentCount > 0 ? '100%' : '0%';
+        };
+
+        // Affiliates
+        $totalAffiliates = Affiliate::count();
+        $totalAffiliatesPast = Affiliate::where('created_at', '<', $thisMonthStart)->count();
+        $activeAffiliates = Affiliate::where('status', 'active')->count();
+        $activeAffiliatesPast = Affiliate::where('status', 'active')->where('updated_at', '<', $thisMonthStart)->count();
+
+        // Sales & Revenue
+        $totalSales = Sale::count();
+        $totalSalesPast = Sale::where('created_at', '<', $thisMonthStart)
+            ->where('created_at', '>=', $lastMonthStart)
+            ->count();
+            
+        $totalRevenue = (float) Sale::sum('amount');
+        $totalRevenuePast = (float) Sale::where('created_at', '<', $thisMonthStart)
+             ->where('created_at', '>=', $lastMonthStart)
+             ->sum('amount');
+
+        $totalCommissions = (float) Sale::sum('commission_amount');
+        
+        $totalClicks = Click::count();
+        $totalClicksPast = Click::where('created_at', '<', $thisMonthStart)
+            ->where('created_at', '>=', $lastMonthStart)
+            ->count();
+
         return response()->json([
-            'total_affiliates'  => Affiliate::count(),
-            'active_affiliates' => Affiliate::where('status', 'active')->count(),
-            'total_sales'       => Sale::count(),
-            'total_revenue'     => (float) Sale::sum('amount'),
-            'total_commissions' => (float) Sale::sum('commission_amount'),
-            'total_clicks'      => Click::count(),
+            'total_affiliates'         => $totalAffiliates,
+            'total_affiliates_trend'   => (($totalAffiliates - $totalAffiliatesPast) >= 0 ? '+' : '') . $calculateTrend($totalAffiliates, $totalAffiliatesPast),
+            'active_affiliates'        => $activeAffiliates,
+            'active_affiliates_trend'  => (($activeAffiliates - $activeAffiliatesPast) >= 0 ? '+' : '') . $calculateTrend($activeAffiliates, $activeAffiliatesPast),
+            'total_sales'              => $totalSales,
+            'total_sales_trend'        => (($totalSales - $totalSalesPast) >= 0 ? '+' : '') . $calculateTrend($totalSales, $totalSalesPast),
+            'total_revenue'            => $totalRevenue,
+            'total_revenue_trend'      => (($totalRevenue - $totalRevenuePast) >= 0 ? '+' : '') . $calculateTrend($totalRevenue, $totalRevenuePast),
+            'total_commissions'        => $totalCommissions,
+            'total_clicks'             => $totalClicks,
+            'total_clicks_trend'       => (($totalClicks - $totalClicksPast) >= 0 ? '+' : '') . $calculateTrend($totalClicks, $totalClicksPast),
         ]);
     }
 
@@ -574,15 +612,15 @@ class AdminController extends Controller
             };
         }
 
-        $paidCount   = Sale::where('status', 'paid')->tap($baseQuery)->count();
+        $paidCount   = Sale::whereIn('status', ['paid', 'completed'])->tap($baseQuery)->count();
         $failedCount = Sale::where('status', 'failed')->tap($baseQuery)->count();
-        $totalPaid   = (float) Sale::where('status', 'paid')->tap($baseQuery)->sum('commission_amount');
+        $totalPaid   = (float) Sale::whereIn('status', ['paid', 'completed'])->tap($baseQuery)->sum('commission_amount');
 
         $totalTransactions = max(1, $paidCount + $failedCount);
         $successRate = round(100 * $paidCount / $totalTransactions, 1);
 
         $methodCounts = Sale::with('affiliate')
-            ->whereIn('status', ['paid', 'failed'])
+            ->whereIn('status', ['paid', 'completed', 'failed'])
             ->tap($baseQuery)
             ->get()
             ->groupBy(function ($sale) {
@@ -656,14 +694,20 @@ class AdminController extends Controller
 
     public function getPayoutHistory(Request $request)
     {
-        $days = (int) $request->query('days', 30);
-        $cutoffDate = now()->subDays($days);
+        $query = Sale::with('affiliate.user')
+            ->whereIn('status', ['paid', 'failed', 'completed']);
 
-        $sales = Sale::with('affiliate.user')
-            ->whereIn('status', ['paid', 'failed'])
-            ->where('updated_at', '>=', $cutoffDate)
-            ->orderByDesc('updated_at')
-            ->get();
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('updated_at', [
+                $request->query('start_date') . ' 00:00:00',
+                $request->query('end_date')   . ' 23:59:59',
+            ]);
+        } else {
+            $days = (int) $request->query('days', 30);
+            $query->where('updated_at', '>=', now()->subDays($days));
+        }
+
+        $sales = $query->orderByDesc('updated_at')->get();
 
         return response()->json($sales);
     }
