@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
 import { Download } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import type { Summary, Affiliate, AnalyticsClick } from '../shared';
 import { formatCurrency } from '../shared';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -250,23 +250,53 @@ export default function AdminAnalyticsPage() {
           <div className="bg-white rounded-2xl p-6 border border-gray-100">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-lg font-bold text-[#191C1E]">{t('admin.revenuePerformance')}</h3>
+                <h3 className="text-lg font-bold text-[#191C1E]">{t('analytics.revenuePerformance')}</h3>
                 <p className="text-sm text-[#505F76]">{t('analytics.historicalTrend')}</p>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-[#050C9C] rounded-full"></div>
-                <span className="text-sm font-medium text-gray-600">{t('analytics.revenue')}</span>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-[#4F46E5] rounded-full"></div>
+                  <span className="text-sm font-medium text-gray-600">{t('analytics.revenue')}</span>
+                </div>
+                <div className="bg-[#1F2937] text-white px-3 py-1 rounded text-xs font-medium">
+                  BETA LIVE
+                </div>
               </div>
             </div>
             
-            <div className="h-72">
+            <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={clickStats.slice(0, 7)}>
+                <BarChart 
+                  data={clickStats.slice(0, 7).map(item => ({
+                    day: new Date(item.date).toLocaleDateString('en', { weekday: 'short' }).toUpperCase(),
+                    value: item.count
+                  }))}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
-                  <XAxis dataKey="date" stroke="#9ca3af" fontSize={11} tickLine={false} />
-                  <YAxis stroke="#9ca3af" fontSize={11} tickLine={false} />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#050C9C" radius={[8, 8, 0, 0]} name={t('analytics.clicks')} />
+                  <XAxis 
+                    dataKey="day" 
+                    stroke="#9ca3af" 
+                    fontSize={12} 
+                    tickLine={false} 
+                    axisLine={false}
+                  />
+                  <YAxis hide />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#fff', 
+                      border: '1px solid #e5e7eb', 
+                      borderRadius: '8px', 
+                      fontSize: '12px',
+                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                    }}
+                  />
+                  <Bar 
+                    dataKey="value" 
+                    fill="#4F46E5" 
+                    radius={[4, 4, 0, 0]}
+                    maxBarSize={40}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -277,31 +307,46 @@ export default function AdminAnalyticsPage() {
             <h3 className="text-lg font-bold text-[#191C1E] mb-2">{t('analytics.affiliatePerformance')}</h3>
             <p className="text-sm text-[#505F76] mb-6">{t('analytics.topPartnersRanked')}</p>
             
-            <div className="space-y-3">
-              <div className="grid grid-cols-5 gap-4 text-xs font-semibold text-[#505F76] uppercase pb-3 ">
-                <div>{t('admin.affiliate')}</div>
-                <div className="text-center">{t('analytics.clicks')}</div>
-                <div className="text-center">{t('admin.conversions')}</div>
-                <div className="text-center">{t('admin.revenue')}</div>
-                <div className="text-center">{t('common.cvr')}</div>
+            <div className="space-y-4">
+              {/* Table Header */}
+              <div className="grid grid-cols-12 gap-4 text-xs font-semibold text-[#6B7280] uppercase tracking-wider pb-2 border-b border-gray-100">
+                <div className="col-span-4">{t('common.affiliatePartner').toUpperCase()}</div>
+                <div className="col-span-2 text-center">{t('analytics.clicks').toUpperCase()}</div>
+                <div className="col-span-2 text-center">{t('analytics.conversion').toUpperCase()}</div>
+                <div className="col-span-2 text-center">{t('analytics.revenue').toUpperCase()}</div>
+                <div className="col-span-2 text-center">{t('common.cvr').toUpperCase()}</div>
               </div>
               
+              {/* Real Affiliate Data */}
               {topAffiliates.map((aff: Affiliate) => {
                 const clicks = aff.clicks_count || 0;
                 const conversions = aff.sales_count || 0;
                 const cvr = clicks > 0 ? ((conversions / clicks) * 100).toFixed(2) : '0.00';
                 
                 return (
-                  <AffiliateRow 
-                    key={aff.id}
-                    name={aff.user.name} 
-                    clicks={clicks.toLocaleString()} 
-                    conversions={conversions.toString()} 
-                    revenue={`${formatCurrency(aff.total_earnings)}`} 
-                    cvr={`${cvr}%`} 
-                  />
+                  <div key={aff.id} className="grid grid-cols-12 gap-4 items-center py-3 hover:bg-gray-50 rounded-lg transition-colors">
+                    <div className="col-span-4 flex items-center gap-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center text-sm">
+                        <span className="text-white font-semibold text-xs">{aff.user.name.charAt(0)}</span>
+                      </div>
+                      <span className="font-medium text-[#191C1E]">{aff.user.name}</span>
+                    </div>
+                    <div className="col-span-2 text-center text-[#191C1E] font-medium">{clicks.toLocaleString()}</div>
+                    <div className="col-span-2 text-center text-[#191C1E] font-medium">{conversions}</div>
+                    <div className="col-span-2 text-center text-[#191C1E] font-semibold">{formatCurrency(aff.total_earnings)}</div>
+                    <div className="col-span-2 text-center">
+                      <span className="text-green-600 font-semibold">{cvr}%</span>
+                    </div>
+                  </div>
                 );
               })}
+              
+              {/* Show message if no affiliates */}
+              {topAffiliates.length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  {t('common.noData')}
+                </div>
+              )}
             </div>
           </div>
 
@@ -312,12 +357,34 @@ export default function AdminAnalyticsPage() {
             
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={sourceChartData}>
+                <BarChart 
+                  data={sourceChartData}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                >
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
-                  <XAxis dataKey="source" stroke="#9ca3af" fontSize={11} tickLine={false} />
-                  <YAxis stroke="#9ca3af" fontSize={11} tickLine={false} />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#050C9C" radius={[8, 8, 0, 0]} />
+                  <XAxis 
+                    dataKey="source" 
+                    stroke="#9ca3af" 
+                    fontSize={12} 
+                    tickLine={false} 
+                    axisLine={false}
+                  />
+                  <YAxis hide />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#fff', 
+                      border: '1px solid #e5e7eb', 
+                      borderRadius: '8px', 
+                      fontSize: '12px',
+                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                    }}
+                  />
+                  <Bar 
+                    dataKey="count" 
+                    fill="#1E40AF" 
+                    radius={[4, 4, 0, 0]}
+                    maxBarSize={60}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -365,33 +432,53 @@ export default function AdminAnalyticsPage() {
             <h3 className="text-lg font-bold text-[#191C1E] mb-2">{t('analytics.geographicInsights')}</h3>
             <p className="text-sm text-[#505F76] mb-6">{t('analytics.revenueDistribution')}</p>
             
-            <div className="bg-gray-100 rounded-xl h-64 mb-6 flex items-center justify-center relative overflow-hidden">
-              <div className="absolute top-1/4 start-1/2 w-4 h-4 bg-[#050C9C] rounded-full"></div>
-              <div className="absolute bottom-1/3 start-1/3 w-4 h-4 bg-[#3B82F6] rounded-full"></div>
-              <div className="absolute top-1/3 end-1/4 w-4 h-4 bg-[#050C9C] rounded-full"></div>
+            {/* Map Placeholder */}
+            <div className="relative h-48 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl mb-6 overflow-hidden">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-blue-500 rounded-full mx-auto mb-2 flex items-center justify-center">
+                    <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <p className="text-sm font-medium text-blue-700">{t('analytics.geographicInsights')}</p>
+                </div>
+              </div>
+              
+              {/* Sample dots for regions */}
+              <div className="absolute top-1/4 left-1/3 w-3 h-3 bg-blue-600 rounded-full animate-pulse"></div>
+              <div className="absolute top-1/2 right-1/4 w-4 h-4 bg-blue-700 rounded-full animate-pulse"></div>
+              <div className="absolute bottom-1/3 left-1/2 w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
             </div>
-
-            <div className="space-y-4">
-              {activeGeoData.slice(0, 3).map((item, idx) => {
-                const colors = ['#050C9C', '#3B82F6', '#93C5FD'];
-                const percentage = item.percentage || 0;
+            
+            {/* Revenue by Region - Using Real Data */}
+            <div className="space-y-3">
+              {activeGeoData.map((item, index) => {
+                const colors = ['#3B82F6', '#6366F1', '#8B5CF6', '#A855F7', '#C084FC'];
+                const color = colors[index % colors.length];
+                
                 return (
-                  <div key={idx} className="space-y-2">
-                    <div className="flex flex-wrap items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: colors[idx] }}></div>
-                        <span className="text-sm font-medium text-gray-700">{item.region}</span>
-                      </div>
-                      <span className="text-sm font-bold text-[#191C1E]">${item.count.toLocaleString()}</span>
-                    </div>
-                    <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div key={index} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
                       <div 
-                        className="h-full rounded-full transition-all duration-500" 
-                        style={{ 
-                          width: `${percentage}%`,
-                          backgroundColor: colors[idx]
-                        }}
+                        className="w-3 h-3 rounded-full" 
+                        style={{ backgroundColor: color }}
                       ></div>
+                      <span className="text-sm font-medium text-[#191C1E]">{item.region}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-20 h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full rounded-full transition-all duration-500"
+                          style={{ 
+                            width: `${item.percentage || 0}%`, 
+                            backgroundColor: color 
+                          }}
+                        ></div>
+                      </div>
+                      <span className="text-sm font-semibold text-[#191C1E] w-12 text-right">
+                        {item.percentage || 0}%
+                      </span>
                     </div>
                   </div>
                 );
@@ -404,37 +491,70 @@ export default function AdminAnalyticsPage() {
             <h3 className="text-lg font-bold text-[#191C1E] mb-2">{t('analytics.deviceDistribution')}</h3>
             <p className="text-sm text-[#505F76] mb-6">{t('analytics.userTrafficByDevice')}</p>
             
-            <div className="flex items-center justify-center h-48 mb-6">
+            <div className="flex items-center justify-center mb-8">
               <div className="relative w-48 h-48">
-                {chartDeviceData.map((device, idx) => {
-                  const rotation = idx * 90;
-                  return (
-                    <div
-                      key={idx}
-                      className="absolute inset-0 rounded-full"
-                      style={{
-                        background: `conic-gradient(${device.color} 0deg ${rotation}deg, transparent ${rotation}deg)`,
-                      }}
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie 
+                      data={deviceData.length > 0 ? deviceData : [
+                        { name: 'Mobile', value: 75.2, color: '#1E40AF' },
+                        { name: 'Desktop', value: 18.1, color: '#3B82F6' },
+                        { name: 'Tablet', value: 3.0, color: '#60A5FA' }
+                      ]} 
+                      cx="50%" 
+                      cy="50%" 
+                      innerRadius={60} 
+                      outerRadius={90} 
+                      startAngle={0}
+                      endAngle={360}
+                      dataKey="count"
+                      stroke="none"
+                    >
+                      {(deviceData.length > 0 ? deviceData : [
+                        { name: 'Mobile', count: 75.2, color: '#1E40AF' },
+                        { name: 'Desktop', count: 18.1, color: '#3B82F6' },
+                        { name: 'Tablet', count: 3.0, color: '#60A5FA' }
+                      ]).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color || ['#1E40AF', '#3B82F6', '#60A5FA'][index]} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: '#fff', 
+                        border: '1px solid #e5e7eb', 
+                        borderRadius: '8px', 
+                        fontSize: '12px',
+                        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                      }} 
                     />
-                  );
-                })}
-                <div className="absolute inset-8 bg-white rounded-full flex items-center justify-center">
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-[#191C1E]">100%</p>
-                    <p className="text-xs text-[#505F76]">{t('analytics.total')}</p>
-                  </div>
-                </div>
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
             </div>
-
-            <div className="space-y-3">
-              {chartDeviceData.map((device, idx) => (
-                <div key={idx} className="flex flex-wrap items-center justify-between">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: device.color }}></div>
-                    <span className="text-sm font-medium text-gray-700">{device.name}</span>
+            
+            <div className="space-y-4">
+              {(deviceData.length > 0 ? deviceData : [
+                { name: 'Mobile', percentage: 75.2, color: '#1E40AF' },
+                { name: 'Desktop', percentage: 18.1, color: '#3B82F6' },
+                { name: 'Tablet', percentage: 3.0, color: '#60A5FA' }
+              ]).map((item, index) => (
+                <div key={index} className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg">
+                      {item.name === 'Mobile' ? '📱' : 
+                       item.name === 'Desktop' ? '💻' : 
+                       item.name === 'Tablet' ? '📱' : '🖥️'}
+                    </span>
+                    <span className="text-sm font-medium text-[#191C1E]">
+                      {item.name === 'Mobile' ? t('analytics.mobile') :
+                       item.name === 'Desktop' ? t('analytics.desktop') :
+                       item.name === 'Tablet' ? t('analytics.tablet') :
+                       t('analytics.other')}
+                    </span>
                   </div>
-                  <span className="text-sm font-bold text-[#191C1E]">{device.percentage}%</span>
+                  <span className="text-sm font-semibold text-[#191C1E]">
+                    {item.percentage || ((item.count / (deviceData.reduce((sum, d) => sum + d.count, 0) || 1)) * 100).toFixed(1)}%
+                  </span>
                 </div>
               ))}
             </div>

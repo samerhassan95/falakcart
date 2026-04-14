@@ -26,8 +26,15 @@ export function useTranslation() {
     // Load translations
     const loadTranslations = (locale: 'ar' | 'en') => {
       // Force refresh for this specific update to solve the 22% bug
-      const cacheVersion = 'v4';
+      const cacheVersion = 'v6';
       const cacheKey = `translations_${locale}_${cacheVersion}`;
+      
+      // Clear old cache versions
+      for (let i = 1; i <= 5; i++) {
+        sessionStorage.removeItem(`translations_${locale}_v${i}`);
+        sessionStorage.removeItem(`translations_${locale}`);
+      }
+      
       const cached = sessionStorage.getItem(cacheKey);
       
       if (cached) {
@@ -57,7 +64,7 @@ export function useTranslation() {
       
       // If not cached, fetch from server
       setIsLoading(true);
-      fetch(`/locales/${locale}.json?v=${new Date().getTime()}`)
+      fetch(`/locales/${locale}.json?v=${new Date().getTime()}&cache=false`)
         .then(res => {
 
           if (!res.ok) {
@@ -162,7 +169,7 @@ export function useTranslation() {
     setIsLoading(true);
     
     // Load new translations
-    fetch(`/locales/${newLocale}.json`)
+    fetch(`/locales/${newLocale}.json?v=${new Date().getTime()}&cache=false`)
       .then(res => res.json())
       .then(data => {
         // Cache translations
@@ -215,6 +222,11 @@ export function useTranslation() {
         translation = translation[k];
       } else {
         // If key not found, return the original key
+        console.warn(`Translation key not found: ${key} for locale: ${locale}`, {
+          availableKeys: Object.keys(translations),
+          searchedPath: keys,
+          currentTranslation: translation
+        });
         translation = key;
         break;
       }
@@ -222,6 +234,7 @@ export function useTranslation() {
     
     // Ensure we have a string
     if (typeof translation !== 'string') {
+      console.warn(`Translation is not a string for key: ${key}, got:`, translation);
       translation = key;
     }
     

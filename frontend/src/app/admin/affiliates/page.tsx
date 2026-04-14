@@ -6,18 +6,30 @@ import type { Affiliate } from '../shared';
 import { formatCurrency } from '../shared';
 import { StatCard } from '@/components/StatCard';
 import { useTranslation } from '@/hooks/useTranslation';
-import { Link2, Plus } from 'lucide-react';
+import { Users, Plus } from 'lucide-react';
+
+interface AffiliateFormData {
+  name: string;
+  email: string;
+  website: string;
+  commission_rate: number;
+}
 
 export default function AdminAffiliatesPage() {
   const { t, locale } = useTranslation();
   const [affiliates, setAffiliates] = useState<Affiliate[]>([]);
-
   const [filter, setFilter] = useState<'all' | 'active' | 'pending' | 'suspended'>('all');
   const [sortBy, setSortBy] = useState<'performance' | 'name' | 'date'>('performance');
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [showCreateLink, setShowCreateLink] = useState(false);
-  const [newLinkName, setNewLinkName] = useState('');
+  const [showCreateAffiliate, setShowCreateAffiliate] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const [affiliateForm, setAffiliateForm] = useState<AffiliateFormData>({
+    name: '',
+    email: '',
+    website: '',
+    commission_rate: 10
+  });
   const pageSize = 4;
 
   const fetchData = useCallback(async () => {
@@ -56,16 +68,28 @@ export default function AdminAffiliatesPage() {
     }
   };
 
-  const createLink = async () => {
-    if (!newLinkName.trim()) return;
+  const createAffiliate = async () => {
+    if (!affiliateForm.name.trim() || !affiliateForm.email.trim()) return;
+    
+    setIsCreating(true);
     try {
-      const response = await api.post('/admin/links', { name: newLinkName });
-      setNewLinkName('');
-      setShowCreateLink(false);
-      // Show success message (you can add a toast notification here)
-      console.log('Link created successfully:', response.data);
+      await api.post('/admin/affiliates', {
+        name: affiliateForm.name,
+        email: affiliateForm.email,
+        password: 'defaultpass123', // You might want to generate a random password
+        commission_rate: affiliateForm.commission_rate,
+        website: affiliateForm.website
+      });
+      
+      setAffiliateForm({ name: '', email: '', website: '', commission_rate: 10 });
+      setShowCreateAffiliate(false);
+      fetchData(); // Refresh the list
+      alert(t('admin.affiliateCreated'));
     } catch (err) {
-      console.error('Error creating link', err);
+      console.error('Error creating affiliate', err);
+      alert('Error creating affiliate');
+    } finally {
+      setIsCreating(false);
     }
   };
 
@@ -105,20 +129,20 @@ export default function AdminAffiliatesPage() {
   return (
     <div className="space-y-4 sm:space-y-6">
 
-      {/* Header with Create Link Button */}
+      {/* Header with Create Affiliate Button */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl sm:text-[44px] text-[#191C1E] tracking-tight">{t('admin.affiliates')}</h1>
           <p className="text-[#505F76] mt-1 text-sm sm:text-[16px]">{t('admin.manageAffiliates')}</p>
         </div>
         <button
-          onClick={() => setShowCreateLink(true)}
+          onClick={() => setShowCreateAffiliate(true)}
           className="flex items-center justify-center gap-2 px-5 py-2.5 text-white rounded-xl text-sm font-semibold transition-all shadow-lg"
           style={{ background: 'linear-gradient(135deg, #2A14B4 0%, #4338CA 100%)' }}
         >
-          <Link2 className="w-4 h-4" />
-          <span className="hidden sm:inline">{t('links.createNewLink')}</span>
-          <span className="sm:hidden">Create</span>
+          <Users className="w-4 h-4" />
+          <span className="hidden sm:inline">{t('admin.createNewAffiliate')}</span>
+          <span className="sm:hidden">{t('admin.createShort')}</span>
         </button>
       </div>
 
@@ -542,22 +566,123 @@ export default function AdminAffiliatesPage() {
         </div>
       </div>
 
-      {/* Create Link Modal */}
-      {showCreateLink && (
+      {/* Create Affiliate Modal */}
+      {showCreateAffiliate && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-          <div className="bg-white rounded-2xl w-full max-w-md p-6 sm:p-8 shadow-2xl">
-            <h2 className="text-lg sm:text-xl font-bold text-[#191C1E] mb-4">{t('links.createNewLink')}</h2>
-            <input
-              type="text"
-              placeholder={t('links.campaignNamePlaceholder')}
-              value={newLinkName}
-              onChange={(e) => setNewLinkName(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300 mb-4"
-            />
-            <div className="flex gap-3 justify-end">
-              <button onClick={() => setShowCreateLink(false)} className="px-5 py-2.5 text-[#505F76] hover:text-gray-700 text-sm font-medium">{t('common.cancel')}</button>
-              <button onClick={createLink} className="px-6 py-2.5 bg-indigo-600 hover:bg-[#050C9C] text-white rounded-xl text-sm font-semibold transition-colors flex items-center gap-2">
-                <Plus className="w-4 h-4" /> {t('links.createLink')}
+          <div className="bg-white rounded-2xl w-full max-w-lg p-6 sm:p-8 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg sm:text-xl font-bold text-[#191C1E]">{t('admin.addNewAffiliate')}</h2>
+              <button 
+                onClick={() => setShowCreateAffiliate(false)}
+                className="text-gray-400 hover:text-gray-600 text-xl"
+              >
+                ×
+              </button>
+            </div>
+            
+            <p className="text-sm text-[#505F76] mb-6">{t('admin.inviteNewPartner')}</p>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs font-medium text-[#505F76] mb-2 uppercase tracking-wider">
+                  {t('admin.fullName')}
+                </label>
+                <input
+                  type="text"
+                  placeholder={t('admin.fullNamePlaceholder')}
+                  value={affiliateForm.name}
+                  onChange={(e) => setAffiliateForm(prev => ({ ...prev, name: e.target.value }))}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-xs font-medium text-[#505F76] mb-2 uppercase tracking-wider">
+                  {t('admin.emailAddress')}
+                </label>
+                <input
+                  type="email"
+                  placeholder={t('admin.emailPlaceholder')}
+                  value={affiliateForm.email}
+                  onChange={(e) => setAffiliateForm(prev => ({ ...prev, email: e.target.value }))}
+                  className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-xs font-medium text-[#505F76] mb-2 uppercase tracking-wider">
+                  {t('admin.websiteOrChannel')}
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
+                    </svg>
+                  </div>
+                  <input
+                    type="url"
+                    placeholder={t('admin.websitePlaceholder')}
+                    value={affiliateForm.website}
+                    onChange={(e) => setAffiliateForm(prev => ({ ...prev, website: e.target.value }))}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
+                  />
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-[#505F76] mb-2 uppercase tracking-wider">
+                    {t('admin.startingCommissionRate')}
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={affiliateForm.commission_rate}
+                      onChange={(e) => setAffiliateForm(prev => ({ ...prev, commission_rate: Number(e.target.value) }))}
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300"
+                    />
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                      <span className="text-gray-500 text-sm">%</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-xs font-medium text-[#505F76] mb-2 uppercase tracking-wider">
+                    {t('admin.assignToCampaign')}
+                  </label>
+                  <select className="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-300">
+                    <option>{t('admin.summerLaunch2024')}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex gap-3 justify-end mt-6">
+              <button 
+                onClick={() => setShowCreateAffiliate(false)} 
+                className="px-5 py-2.5 text-[#505F76] hover:text-gray-700 text-sm font-medium"
+              >
+                {t('common.cancel')}
+              </button>
+              <button 
+                onClick={createAffiliate}
+                disabled={isCreating || !affiliateForm.name.trim() || !affiliateForm.email.trim()}
+                className="px-6 py-2.5 bg-indigo-600 hover:bg-[#050C9C] text-white rounded-xl text-sm font-semibold transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isCreating ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    {t('admin.creating')}
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-4 h-4" />
+                    {t('admin.sendInvitation')}
+                  </>
+                )}
               </button>
             </div>
           </div>

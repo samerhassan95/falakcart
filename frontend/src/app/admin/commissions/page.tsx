@@ -239,7 +239,12 @@ export default function AdminCommissionsPage() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
             <div>
               <h3 className="text-base sm:text-lg font-bold text-[#191C1E]">{t('admin.commissionPerformance')}</h3>
-              <p className="text-xs sm:text-sm text-[#505F76]">{t('admin.historicalTrendEarnings')}</p>
+              <p className="text-xs sm:text-sm text-[#505F76]">
+                {t('admin.historicalTrendEarnings')}
+                {commissionTrend.length === 0 && (
+                  <span className="text-gray-500"> - لا توجد بيانات</span>
+                )}
+              </p>
             </div>
             <div className="flex bg-gray-100 rounded-xl p-1 w-full sm:w-auto">
               <button 
@@ -270,21 +275,115 @@ export default function AdminCommissionsPage() {
           </div>
           
           <div className="h-64 sm:h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={commissionTrend}>
-                <defs>
-                  <linearGradient id="colorCommission" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.12} />
-                    <stop offset="95%" stopColor="#4F46E5" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
-                <XAxis dataKey="period" stroke="#9ca3af" fontSize={10} tickLine={false} axisLine={false} />
-                <YAxis stroke="#9ca3af" fontSize={10} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px', fontSize: '12px', fontWeight: 600 }} />
-                <Line type="monotone" dataKey="value" stroke="#4F46E5" strokeWidth={2.5} dot={{ fill: '#4F46E5', r: 4 }} />
-              </LineChart>
-            </ResponsiveContainer>
+            {commissionTrend.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={commissionTrend} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorCommission" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.3} />
+                      <stop offset="50%" stopColor="#4F46E5" stopOpacity={0.1} />
+                      <stop offset="95%" stopColor="#4F46E5" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="strokeGradientCommission" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#4F46E5" />
+                      <stop offset="50%" stopColor="#7C3AED" />
+                      <stop offset="100%" stopColor="#EC4899" />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid 
+                    strokeDasharray="3 3" 
+                    stroke="#f0f0f0" 
+                    vertical={false} 
+                    horizontal={true}
+                  />
+                  <XAxis 
+                    dataKey="period" 
+                    stroke="#9ca3af" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false}
+                    tickFormatter={(value) => {
+                      const date = new Date(value);
+                      if (period === 'daily') {
+                        return date.getDate() + '/' + (date.getMonth() + 1);
+                      } else if (period === 'weekly') {
+                        return date.getDate() + '/' + (date.getMonth() + 1);
+                      } else if (period === 'monthly') {
+                        return date.toLocaleDateString('ar-EG', { month: 'short' });
+                      }
+                      return date.toLocaleDateString('ar-EG', { month: 'short', day: 'numeric' });
+                    }}
+                  />
+                  <YAxis 
+                    stroke="#9ca3af" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false}
+                    tickFormatter={(value) => {
+                      if (value >= 1000000) return `${(value / 1000000).toFixed(1)}م`;
+                      if (value >= 1000) return `${(value / 1000).toFixed(1)}ك`;
+                      return value.toString();
+                    }}
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#fff', 
+                      border: '1px solid #e5e7eb', 
+                      borderRadius: '12px', 
+                      fontSize: '12px', 
+                      fontWeight: 600,
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
+                    }}
+                    labelFormatter={(value) => {
+                      const date = new Date(value);
+                      if (period === 'daily') {
+                        return date.toLocaleDateString('ar-EG', { 
+                          weekday: 'long', 
+                          day: 'numeric', 
+                          month: 'long' 
+                        });
+                      } else if (period === 'weekly') {
+                        const weekStart = new Date(date);
+                        const weekEnd = new Date(date);
+                        weekEnd.setDate(weekEnd.getDate() + 6);
+                        return `الأسبوع: ${weekStart.getDate()}/${weekStart.getMonth() + 1} - ${weekEnd.getDate()}/${weekEnd.getMonth() + 1}`;
+                      } else if (period === 'monthly') {
+                        return date.toLocaleDateString('ar-EG', { 
+                          year: 'numeric', 
+                          month: 'long' 
+                        });
+                      }
+                      return date.toLocaleDateString('ar-EG');
+                    }}
+                    formatter={(value) => [`${value.toLocaleString()} ريال`, 'العمولات']}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="value" 
+                    stroke="url(#strokeGradientCommission)" 
+                    strokeWidth={3} 
+                    dot={false}
+                    activeDot={{ r: 6, stroke: '#4F46E5', strokeWidth: 2, fill: '#fff' }}
+                    connectNulls={true}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 3V21H21V3H3ZM19 19H5V5H19V19Z" fill="#9CA3AF"/>
+                      <path d="M7 17L10 14L13 16L17 12" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <h4 className="text-lg font-semibold text-gray-600 mb-2">لا توجد بيانات عمولات</h4>
+                  <p className="text-sm text-gray-500">
+                    لم يتم تسجيل أي عمولات في الفترة المحددة
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

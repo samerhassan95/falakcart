@@ -35,14 +35,24 @@ export default function AdminOverviewPage() {
   const fetchData = useCallback(async () => {
     setIsSyncing(true);
     try {
-      const [summaryRes, affiliatesRes, clicksRes] = await Promise.all([
+      const [summaryRes, affiliatesRes] = await Promise.all([
         api.get('/admin/summary'),
         api.get('/admin/affiliates'),
-        api.get(`/admin/analytics/revenue-trend?period=${chartPeriod}`),
       ]);
+      
       setSummary(summaryRes.data);
       setAffiliates(affiliatesRes.data);
-      setClickStats(clicksRes.data);
+      
+      // محاولة جلب بيانات الشارت مع معالجة الأخطاء
+      try {
+        const clicksRes = await api.get(`/admin/analytics/revenue-trend?period=${chartPeriod}`, {
+          timeout: 10000 // 10 ثواني timeout
+        });
+        setClickStats(clicksRes.data || []);
+      } catch (chartError) {
+        console.warn('Chart data fetch failed, using fallback data:', chartError);
+        setClickStats([]); // سيتم استخدام البيانات الوهمية
+      }
     } catch (err) {
       console.error('Error fetching admin data', err);
     } finally {
@@ -98,7 +108,18 @@ export default function AdminOverviewPage() {
   const revenueTrend = summary?.total_revenue_trend || '+0%';
 
   const getChartData = () => {
-    return clickStats;
+    // استخدام البيانات الحقيقية من الـ API فقط
+    if (clickStats && clickStats.length > 0) {
+      // تحويل البيانات الحقيقية للشكل المطلوب
+      return clickStats.map(item => ({
+        date: item.date,
+        revenue: item.count || item.revenue || 0,
+        count: Math.round((item.count || item.revenue || 0) / 2.5)
+      }));
+    }
+    
+    // إذا مفيش بيانات، ارجع array فاضي
+    return [];
   };
 
 
@@ -290,7 +311,12 @@ export default function AdminOverviewPage() {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
             <div>
               <h3 className="text-base sm:text-lg font-bold text-[#191C1E]">{t('admin.revenuePerformance')}</h3>
-              <p className="text-xs sm:text-sm text-[#505F76]">{t('admin.visualizingIncome')}</p>
+              <p className="text-xs sm:text-sm text-[#505F76]">
+                {t('admin.visualizingIncome')}
+                {(!clickStats || clickStats.length === 0) && (
+                  <span className="text-gray-500"> - لا توجد بيانات</span>
+                )}
+              </p>
             </div>
             <div className="flex bg-gray-100 rounded-xl p-1 w-full sm:w-auto">
               <button 
@@ -321,21 +347,123 @@ export default function AdminOverviewPage() {
           </div>
           
           <div className="h-64 sm:h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={getChartData()}>
-                <defs>
-                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.12} />
-                    <stop offset="95%" stopColor="#4F46E5" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
-                <XAxis dataKey="date" stroke="#9ca3af" fontSize={10} tickLine={false} axisLine={false} />
-                <YAxis stroke="#9ca3af" fontSize={10} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px', fontSize: '12px', fontWeight: 600 }} />
-                <Area type="monotone" dataKey="count" stroke="#4F46E5" strokeWidth={2.5} fillOpacity={1} fill="url(#colorRevenue)" />
-              </AreaChart>
-            </ResponsiveContainer>
+            {getChartData().length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart 
+                  data={getChartData()} 
+                  margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                >
+                  <defs>
+                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#4F46E5" stopOpacity={0.3} />
+                      <stop offset="50%" stopColor="#4F46E5" stopOpacity={0.1} />
+                      <stop offset="95%" stopColor="#4F46E5" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="strokeGradient" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#4F46E5" />
+                      <stop offset="50%" stopColor="#7C3AED" />
+                      <stop offset="100%" stopColor="#EC4899" />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid 
+                    strokeDasharray="3 3" 
+                    stroke="#f0f0f0" 
+                    vertical={false} 
+                    horizontal={true}
+                  />
+                  <XAxis 
+                    dataKey="date" 
+                    stroke="#9ca3af" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false}
+                    tickFormatter={(value) => {
+                      const date = new Date(value);
+                      if (chartPeriod === 'daily') {
+                        return date.getDate() + '/' + (date.getMonth() + 1);
+                      } else if (chartPeriod === 'weekly') {
+                        return date.getDate() + '/' + (date.getMonth() + 1);
+                      } else if (chartPeriod === 'monthly') {
+                        return date.toLocaleDateString('ar-EG', { month: 'short' });
+                      }
+                      return date.toLocaleDateString('ar-EG', { month: 'short', day: 'numeric' });
+                    }}
+                  />
+                  <YAxis 
+                    stroke="#9ca3af" 
+                    fontSize={10} 
+                    tickLine={false} 
+                    axisLine={false}
+                    tickFormatter={(value) => {
+                      if (value >= 1000000) return `${(value / 1000000).toFixed(1)}م`;
+                      if (value >= 1000) return `${(value / 1000).toFixed(1)}ك`;
+                      return value.toString();
+                    }}
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#fff', 
+                      border: '1px solid #e5e7eb', 
+                      borderRadius: '12px', 
+                      fontSize: '12px', 
+                      fontWeight: 600,
+                      boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
+                    }}
+                    labelFormatter={(value) => {
+                      const date = new Date(value);
+                      if (chartPeriod === 'daily') {
+                        return date.toLocaleDateString('ar-EG', { 
+                          weekday: 'long', 
+                          day: 'numeric', 
+                          month: 'long' 
+                        });
+                      } else if (chartPeriod === 'weekly') {
+                        const weekStart = new Date(date);
+                        const weekEnd = new Date(date);
+                        weekEnd.setDate(weekEnd.getDate() + 6);
+                        return `الأسبوع: ${weekStart.getDate()}/${weekStart.getMonth() + 1} - ${weekEnd.getDate()}/${weekEnd.getMonth() + 1}`;
+                      } else if (chartPeriod === 'monthly') {
+                        return date.toLocaleDateString('ar-EG', { 
+                          year: 'numeric', 
+                          month: 'long' 
+                        });
+                      }
+                      return date.toLocaleDateString('ar-EG');
+                    }}
+                    formatter={(value, name) => [
+                      `${value.toLocaleString()} ريال`,
+                      'الإيرادات'
+                    ]}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="revenue" 
+                    stroke="url(#strokeGradient)" 
+                    strokeWidth={3} 
+                    fillOpacity={1} 
+                    fill="url(#colorRevenue)"
+                    dot={false}
+                    activeDot={{ r: 6, stroke: '#4F46E5', strokeWidth: 2, fill: '#fff' }}
+                    connectNulls={true}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M3 3V21H21V3H3ZM19 19H5V5H19V19Z" fill="#9CA3AF"/>
+                      <path d="M7 17L10 14L13 16L17 12" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <h4 className="text-lg font-semibold text-gray-600 mb-2">لا توجد بيانات إيرادات</h4>
+                  <p className="text-sm text-gray-500">
+                    لم يتم تسجيل أي مبيعات في الفترة المحددة
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

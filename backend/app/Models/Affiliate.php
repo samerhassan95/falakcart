@@ -25,6 +25,8 @@ class Affiliate extends Model
         'minimum_payout',
         'bio',
         'avatar',
+        'phone',
+        'website',
         'email_notifications',
         'sms_notifications',
         'marketing_emails',

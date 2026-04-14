@@ -118,6 +118,7 @@ class AdminController extends Controller
             'email'           => 'required|string|email|max:255|unique:users',
             'password'        => 'required|string|min:6',
             'commission_rate' => 'nullable|numeric|min:0|max:100',
+            'website'         => 'nullable|string|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -139,6 +140,7 @@ class AdminController extends Controller
             'referral_code'   => Affiliate::generateUniqueCode(),
             'status'          => 'active',
             'commission_rate' => $request->commission_rate ?? $defaultRate,
+            'website'         => $request->website,
         ]);
 
         return response()->json($affiliate->load('user'), 201);
@@ -289,23 +291,71 @@ class AdminController extends Controller
         $query = Sale::query();
 
         if ($period === 'monthly') {
-            $query->selectRaw('DATE_FORMAT(created_at, "%b %Y") as date, SUM(amount) as count, MIN(created_at) as first_day')
+            // جلب آخر 12 شهر مع ضمان وجود بيانات لكل شهر
+            $query->selectRaw('DATE_FORMAT(created_at, "%Y-%m-01") as date, SUM(amount) as count')
                 ->where('created_at', '>=', now()->subMonths(12))
                 ->groupBy('date')
-                ->orderBy('first_day');
+                ->orderBy('date');
+                
+            $results = $query->get();
+            
+            // إضافة الشهور المفقودة بقيمة 0
+            $allMonths = [];
+            for ($i = 11; $i >= 0; $i--) {
+                $monthDate = now()->subMonths($i)->format('Y-m-01');
+                $found = $results->firstWhere('date', $monthDate);
+                $allMonths[] = [
+                    'date' => $monthDate,
+                    'count' => $found ? $found->count : 0
+                ];
+            }
+            
+            return response()->json($allMonths);
+            
         } elseif ($period === 'weekly') {
-            $query->selectRaw('CONCAT("Wk ", WEEK(created_at, 1), " ", YEAR(created_at)) as date, SUM(amount) as count, MIN(created_at) as first_day')
+            // جلب آخر 12 أسبوع مع ضمان وجود بيانات لكل أسبوع
+            $query->selectRaw('DATE(DATE_SUB(created_at, INTERVAL WEEKDAY(created_at) DAY)) as date, SUM(amount) as count')
                 ->where('created_at', '>=', now()->subWeeks(12))
                 ->groupBy('date')
-                ->orderBy('first_day');
+                ->orderBy('date');
+                
+            $results = $query->get();
+            
+            // إضافة الأسابيع المفقودة بقيمة 0
+            $allWeeks = [];
+            for ($i = 11; $i >= 0; $i--) {
+                $weekStart = now()->subWeeks($i)->startOfWeek()->format('Y-m-d');
+                $found = $results->firstWhere('date', $weekStart);
+                $allWeeks[] = [
+                    'date' => $weekStart,
+                    'count' => $found ? $found->count : 0
+                ];
+            }
+            
+            return response()->json($allWeeks);
+            
         } else {
+            // اليومي - جلب آخر 30 يوم مع ضمان وجود بيانات لكل يوم
             $query->selectRaw('DATE(created_at) as date, SUM(amount) as count')
                 ->where('created_at', '>=', now()->subDays($days))
                 ->groupBy('date')
                 ->orderBy('date');
+                
+            $results = $query->get();
+            
+            // إضافة الأيام المفقودة بقيمة 0
+            $allDays = [];
+            for ($i = $days - 1; $i >= 0; $i--) {
+                $dayDate = now()->subDays($i)->format('Y-m-d');
+                $found = $results->firstWhere('date', $dayDate);
+                $allDays[] = [
+                    'date' => $dayDate,
+                    'count' => $found ? $found->count : 0
+                ];
+            }
+            
+            return response()->json($allDays);
         }
-
-        return response()->json($query->get());
     }
 
     public function getDeviceAnalytics(Request $request)
@@ -389,23 +439,71 @@ class AdminController extends Controller
         $query = Sale::query();
 
         if ($period === 'monthly') {
-            $query->selectRaw('DATE_FORMAT(created_at, "%b %Y") as date, SUM(commission_amount) as count, MIN(created_at) as first_day')
+            // جلب آخر 12 شهر مع ضمان وجود بيانات لكل شهر
+            $query->selectRaw('DATE_FORMAT(created_at, "%Y-%m-01") as date, SUM(commission_amount) as count')
                 ->where('created_at', '>=', now()->subMonths(12))
                 ->groupBy('date')
-                ->orderBy('first_day');
+                ->orderBy('date');
+                
+            $results = $query->get();
+            
+            // إضافة الشهور المفقودة بقيمة 0
+            $allMonths = [];
+            for ($i = 11; $i >= 0; $i--) {
+                $monthDate = now()->subMonths($i)->format('Y-m-01');
+                $found = $results->firstWhere('date', $monthDate);
+                $allMonths[] = [
+                    'date' => $monthDate,
+                    'count' => $found ? $found->count : 0
+                ];
+            }
+            
+            return response()->json($allMonths);
+            
         } elseif ($period === 'weekly') {
-            $query->selectRaw('CONCAT("Wk ", WEEK(created_at, 1), " ", YEAR(created_at)) as date, SUM(commission_amount) as count, MIN(created_at) as first_day')
+            // جلب آخر 12 أسبوع مع ضمان وجود بيانات لكل أسبوع
+            $query->selectRaw('DATE(DATE_SUB(created_at, INTERVAL WEEKDAY(created_at) DAY)) as date, SUM(commission_amount) as count')
                 ->where('created_at', '>=', now()->subWeeks(12))
                 ->groupBy('date')
-                ->orderBy('first_day');
+                ->orderBy('date');
+                
+            $results = $query->get();
+            
+            // إضافة الأسابيع المفقودة بقيمة 0
+            $allWeeks = [];
+            for ($i = 11; $i >= 0; $i--) {
+                $weekStart = now()->subWeeks($i)->startOfWeek()->format('Y-m-d');
+                $found = $results->firstWhere('date', $weekStart);
+                $allWeeks[] = [
+                    'date' => $weekStart,
+                    'count' => $found ? $found->count : 0
+                ];
+            }
+            
+            return response()->json($allWeeks);
+            
         } else {
+            // اليومي - جلب آخر 30 يوم مع ضمان وجود بيانات لكل يوم
             $query->selectRaw('DATE(created_at) as date, SUM(commission_amount) as count')
                 ->where('created_at', '>=', now()->subDays($days))
                 ->groupBy('date')
                 ->orderBy('date');
+                
+            $results = $query->get();
+            
+            // إضافة الأيام المفقودة بقيمة 0
+            $allDays = [];
+            for ($i = $days - 1; $i >= 0; $i--) {
+                $dayDate = now()->subDays($i)->format('Y-m-d');
+                $found = $results->firstWhere('date', $dayDate);
+                $allDays[] = [
+                    'date' => $dayDate,
+                    'count' => $found ? $found->count : 0
+                ];
+            }
+            
+            return response()->json($allDays);
         }
-
-        return response()->json($query->get());
     }
 
 
