@@ -115,3 +115,13 @@ Route::post('track/sale', [TrackingController::class, 'recordSale']);
 
 // ── FalakCart Webhook Routes ──────────────────────────────────────────────────
 Route::post('webhook/falakcart', [TrackingController::class, 'handleFalakCartWebhook']);
+Route::post('webhook/falakcart-test', [TrackingController::class, 'handleFalakCartWebhookTest']);
+Route::get('webhook/falakcart', function() {
+    return response()->json([
+        'message' => 'FalakCart Webhook Endpoint',
+        'method' => 'POST',
+        'content_type' => 'application/json',
+        'headers' => ['X-Webhook-Signature'],
+        'status' => 'ready'
+    ]);
+});

@@ -135,4 +135,16 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Webhook Secret
+    |--------------------------------------------------------------------------
+    |
+    | This value is used to validate webhook signatures from external services
+    | like FalakCart. It should be a secure random string.
+    |
+    */
+
+    'webhook_secret' => env('WEBHOOK_SECRET', 'your-webhook-secret'),
+
 ];

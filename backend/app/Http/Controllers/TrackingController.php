@@ -144,6 +144,69 @@ class TrackingController extends Controller
         return response()->json(['message' => 'sale_recorded', 'sale' => $sale]);
     }
 
+    public function handleFalakCartWebhookTest(Request $request)
+    {
+        try {
+            \Log::info('Test Webhook received', ['payload' => $request->all()]);
+            
+            // Get the raw content and signature
+            $payload = $request->getContent();
+            $signature = $request->header('X-Webhook-Signature');
+            $secret = config('app.webhook_secret', 'your-webhook-secret');
+            
+            \Log::info('Test Webhook signature check', [
+                'payload' => $payload,
+                'signature' => $signature,
+                'secret' => $secret
+            ]);
+            
+            // Validate signature
+            if (empty($signature)) {
+                return response()->json(['error' => 'no_signature'], 400);
+            }
+            
+            $expectedSignature = 'sha256=' . hash_hmac('sha256', $payload, $secret);
+            $isValid = hash_equals($expectedSignature, $signature);
+            
+            \Log::info('Test Webhook signature validation', [
+                'expected' => $expectedSignature,
+                'received' => $signature,
+                'valid' => $isValid
+            ]);
+            
+            if (!$isValid) {
+                return response()->json([
+                    'error' => 'invalid_signature',
+                    'expected' => $expectedSignature,
+                    'received' => $signature,
+                    'payload_length' => strlen($payload)
+                ], 401);
+            }
+            
+            // Process the webhook
+            $data = $request->all();
+            $event = $data['event'] ?? null;
+            
+            switch ($event) {
+                case 'affiliate.user.registered':
+                    return $this->handleUserRegistration($data['data'] ?? []);
+                
+                case 'affiliate.subscription':
+                    return $this->handleSubscription($data['data'] ?? []);
+                
+                default:
+                    return response()->json(['error' => 'unknown_event', 'event' => $event], 400);
+            }
+
+        } catch (\Exception $e) {
+            \Log::error('Test Webhook processing error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['error' => 'processing_failed', 'message' => $e->getMessage()], 500);
+        }
+    }
+
     public function handleFalakCartWebhook(Request $request)
     {
         try {
@@ -408,13 +471,33 @@ class TrackingController extends Controller
 
     private function validateWebhookSignature($payload, $signature)
     {
-        // Skip validation in test environment or if no signature provided
-        if (app()->environment('local') || empty($signature)) {
-            return true;
+        // Skip validation if no signature provided
+        if (empty($signature)) {
+            \Log::warning('No webhook signature provided');
+            return false;
         }
         
         $secret = config('app.webhook_secret', 'your-webhook-secret');
         $expectedSignature = 'sha256=' . hash_hmac('sha256', $payload, $secret);
-        return hash_equals($expectedSignature, $signature);
+        
+        \Log::info('Webhook signature validation', [
+            'expected' => $expectedSignature,
+            'received' => $signature,
+            'secret_length' => strlen($secret),
+            'payload_length' => strlen($payload),
+            'payload_preview' => substr($payload, 0, 100)
+        ]);
+        
+        $isValid = hash_equals($expectedSignature, $signature);
+        
+        if (!$isValid) {
+            \Log::warning('Invalid webhook signature', [
+                'expected' => $expectedSignature,
+                'received' => $signature,
+                'payload' => $payload
+            ]);
+        }
+        
+        return $isValid;
     }
 }
