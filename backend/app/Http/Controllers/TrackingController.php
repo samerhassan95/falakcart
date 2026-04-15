@@ -374,6 +374,10 @@ class TrackingController extends Controller
             'currency'          => $currency,
             'billing_cycle'     => $subscription['billing_cycle'] ?? null,
             'falakcart_user_id' => $userId,
+            'tenant_id'         => $data['tenant']['id'] ?? null,
+            'tenant_name'       => $data['tenant']['name'] ?? null,
+            'tenant_subdomain'  => $data['tenant']['subdomain'] ?? null,
+            'tenant_status'     => $data['tenant']['status'] ?? null,
             'webhook_data'      => json_encode($data),
         ];
 

@@ -125,3 +125,43 @@ Route::get('webhook/falakcart', function() {
         'status' => 'ready'
     ]);
 });
+
+// Catch-all webhook endpoint to log any requests
+Route::any('webhook/catch-all', function() {
+    try {
+        $timestamp = date('Y-m-d H:i:s');
+        $method = request()->method();
+        $ip = request()->ip();
+        $userAgent = request()->userAgent();
+        $headers = request()->headers->all();
+        $body = request()->getContent();
+        
+        $logEntry = [
+            'timestamp' => $timestamp,
+            'method' => $method,
+            'ip' => $ip,
+            'user_agent' => $userAgent,
+            'headers' => $headers,
+            'body' => $body,
+            'body_length' => strlen($body),
+            'url' => request()->fullUrl()
+        ];
+        
+        // Log to a simple file
+        $logFile = storage_path('logs/catch_all_webhook.log');
+        file_put_contents($logFile, json_encode($logEntry, JSON_PRETTY_PRINT) . "\n" . str_repeat('=', 80) . "\n", FILE_APPEND);
+        
+        return response()->json([
+            'status' => 'logged',
+            'timestamp' => $timestamp,
+            'method' => $method,
+            'body_length' => strlen($body),
+            'message' => 'Request logged successfully'
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage()
+        ], 500);
+    }
+});

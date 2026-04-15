@@ -14,6 +14,9 @@ Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-R
 RewriteCond %{REQUEST_METHOD} OPTIONS
 RewriteRule ^(.*)$ $1 [R=200,L]
 
+# Debug webhook endpoint - Direct to PHP file
+RewriteRule ^webhook-debug/?$ backend/public/webhook-debug.php [L]
+
 # API Routes - Direct to Laravel backend
 RewriteCond %{REQUEST_URI} ^/api/
 RewriteRule ^(.*)$ backend/public/index.php [L]
