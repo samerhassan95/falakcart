@@ -482,22 +482,35 @@ class TrackingController extends Controller
         }
         
         $secret = config('app.webhook_secret', 'your-webhook-secret');
-        $expectedSignature = 'sha256=' . hash_hmac('sha256', $payload, $secret);
+        $expectedHash = hash_hmac('sha256', $payload, $secret);
+        
+        // Handle both formats: "sha256=hash" and just "hash"
+        $receivedHash = $signature;
+        if (strpos($signature, 'sha256=') === 0) {
+            $receivedHash = substr($signature, 7); // Remove "sha256=" prefix
+        }
+        
+        $expectedSignature = 'sha256=' . $expectedHash;
         
         \Log::info('Webhook signature validation', [
-            'expected' => $expectedSignature,
-            'received' => $signature,
+            'expected_hash' => $expectedHash,
+            'received_hash' => $receivedHash,
+            'expected_full' => $expectedSignature,
+            'received_full' => $signature,
             'secret_length' => strlen($secret),
             'payload_length' => strlen($payload),
             'payload_preview' => substr($payload, 0, 100)
         ]);
         
-        $isValid = hash_equals($expectedSignature, $signature);
+        // Compare the hash part only (without prefix)
+        $isValid = hash_equals($expectedHash, $receivedHash);
         
         if (!$isValid) {
             \Log::warning('Invalid webhook signature', [
-                'expected' => $expectedSignature,
-                'received' => $signature,
+                'expected_hash' => $expectedHash,
+                'received_hash' => $receivedHash,
+                'expected_full' => $expectedSignature,
+                'received_full' => $signature,
                 'payload' => $payload
             ]);
         }
